@@ -1,5 +1,4 @@
 "use client";
-import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import {
   Button,
@@ -23,7 +22,8 @@ export default function Login() {
     },
   });
 
-  const onSubmit = (data) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = (data: any) => {
     // Handle form submission
     console.log(data);
   };
