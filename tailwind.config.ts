@@ -15,7 +15,10 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
-      colors: {},
+      colors: {
+        green: "#4A5838",
+        brown: "#6A573A",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

@@ -5,6 +5,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "~/i18n/routing";
+import { Header } from "./_components/header";
+import { Footer } from "./_components/footer";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -30,7 +32,9 @@ export default async function RootLayout({
       <body>
         <TRPCReactProvider>
           <NextIntlClientProvider messages={messages}>
-            {children}
+            <Header />
+            <main className="container mx-auto px-4 py-8">{children}</main>
+            <Footer />
           </NextIntlClientProvider>
         </TRPCReactProvider>
       </body>
