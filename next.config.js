@@ -4,6 +4,10 @@ await import("./src/env.js");
 const withNextIntl = createNextIntlPlugin();
 
 /** @type {import("next").NextConfig} */
-const config = { images: { domains: ["s3-alpha-sig.figma.com"] } };
+const config = {
+  images: {
+    domains: [process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1] ?? ""],
+  },
+};
 
 export default withNextIntl(config);
