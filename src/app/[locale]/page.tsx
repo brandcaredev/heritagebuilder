@@ -7,13 +7,14 @@ import { Link } from "~/i18n/routing";
 export default async function MainPage() {
   const countries = await api.country.getCountries();
   const buildingTypes = await api.buildingType.getBuildingTypes();
+  const buildings = await api.building.getBuildings();
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const supabase = await createClient();
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
       {/* Main Content */}
-      <div>
-        <h1 className="mb-8 font-serif text-4xl text-stone-800">Discover</h1>
+      <div className="lg:w-4/6">
+        <h1 className="mb-8 text-4xl text-stone-800">Discover</h1>
 
         {/* Country Grid */}
         <div className="mb-8 grid gap-4 md:grid-cols-2">
@@ -38,7 +39,7 @@ export default async function MainPage() {
                   className="h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <h2 className="absolute bottom-4 left-4 font-serif text-3xl text-white">
+                <h2 className="absolute bottom-4 left-4 text-3xl text-white">
                   {country.name}
                 </h2>
               </Link>
@@ -80,41 +81,46 @@ export default async function MainPage() {
       <div className="hidden lg:block">
         <Divider />
       </div>
+
       {/* Latest Articles Sidebar */}
-      <aside>
-        <h2 className="mb-6 font-serif text-2xl text-stone-800">
-          Latest articles
-        </h2>
+      <div className="lg:w-2/6">
+        <h2 className="mb-6 text-2xl text-stone-800">Latest articles</h2>
         <div className="space-y-4">
-          {[
-            { title: "Dancing House", location: "PRAGUE, CZECH REPUBLIC" },
-            { title: "Fisherman's Bastion", location: "BUDAPEST, HUNGARY" },
-            { title: "Palais Coburg", location: "VIENNA, AUSTRIA" },
-            { title: "Tyn Church", location: "PRAGUE, CZECH REPUBLIC" },
-            { title: "Matthias Church", location: "BUDAPEST, HUNGARY" },
-          ].map((article, index) => (
-            <Link
-              key={index}
-              href={`/article/${article.title.toLowerCase().replace(" ", "-")}`}
-              className="group flex gap-4"
-            >
-              <Image
-                src={`/placeholder.svg?height=80&width=80`}
-                alt={article.title}
-                width={80}
-                height={80}
-                className="rounded object-cover"
-              />
-              <div>
-                <h3 className="font-serif text-stone-800 group-hover:text-stone-600">
-                  {article.title}
-                </h3>
-                <p className="text-xs text-stone-500">{article.location}</p>
-              </div>
-            </Link>
-          ))}
+          {[...buildings, ...buildings.splice(0, 3)].map((building) => {
+            const {
+              data: { publicUrl },
+            } = supabase.storage
+              .from("heritagebuilder-test")
+              .getPublicUrl(building.img ?? "");
+
+            return (
+              <Link
+                key={building.id}
+                href={`/${building.slug}`}
+                className="group relative flex items-center gap-4"
+              >
+                <div className="aspect-square">
+                  <Image
+                    src={publicUrl}
+                    alt={building.name ?? "Building"}
+                    width={50}
+                    height={50}
+                    className="h-full w-full rounded object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-brown font-bold group-hover:text-opacity-80">
+                    {building.name}
+                  </h3>
+                  <p className="text-brown-dark-20 font-source-sans-3 text-xs uppercase">
+                    {`${building.city?.name}, ${building.country?.name}`}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
-      </aside>
+      </div>
     </div>
   );
 }

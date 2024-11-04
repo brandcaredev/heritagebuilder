@@ -6,7 +6,7 @@ export function Header() {
     <header className="bg-brown text-stone-100">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="font-serif text-2xl">
+          <Link href="/" className="text-2xl">
             Heritage builder
           </Link>
           <nav className="hidden space-x-8 md:flex">

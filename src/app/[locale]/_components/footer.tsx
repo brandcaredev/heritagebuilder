@@ -7,7 +7,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <h2 className="mb-4 font-serif text-2xl">Heritage builder</h2>
+            <h2 className="mb-4 text-2xl">Heritage builder</h2>
             <div className="flex space-x-4">
               <Instagram className="h-5 w-5 cursor-pointer hover:text-stone-300" />
               <Facebook className="h-5 w-5 cursor-pointer hover:text-stone-300" />

@@ -1,6 +1,7 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { countryRouter } from "./routers/country";
-import { buildingTypeRouter } from "./routers/buildingtypes";
+import { buildingTypeRouter } from "./routers/buildingtype";
+import { buildingRouter } from "./routers/building";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { buildingTypeRouter } from "./routers/buildingtypes";
 export const appRouter = createTRPCRouter({
   country: countryRouter,
   buildingType: buildingTypeRouter,
+  building: buildingRouter,
 });
 
 // export type definition of API
