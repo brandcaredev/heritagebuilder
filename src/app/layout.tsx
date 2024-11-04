@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import "~/styles/globals.css";
+import "leaflet/dist/leaflet.css";
 
 type Props = {
   children: ReactNode;

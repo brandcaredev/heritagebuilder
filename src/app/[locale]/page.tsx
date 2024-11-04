@@ -1,161 +1,125 @@
-"use client";
-import { useTranslations } from "next-intl";
-import { useForm } from "react-hook-form";
-import {
-  Button,
-  Input,
-  Label,
-  Checkbox,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  FormField,
-} from "~/components/ui";
+import Image from "next/image";
+import Divider from "./_icons/divider";
+import { api } from "~/trpc/server";
+import { createClient } from "~/supabase/server";
+import { Link } from "~/i18n/routing";
 
-export default function Home() {
-  const form = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-      remember: false,
-    },
-  });
-
-  const onSubmit = (data) => {
-    // Handle form submission
-    console.log(data);
-  };
+export default async function MainPage() {
+  const countries = await api.country.getCountries();
+  const buildingTypes = await api.buildingType.getBuildingTypes();
+  const buildings = await api.building.getBuildings();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const supabase = await createClient();
   return (
-    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <img
-          alt="Your Company"
-          src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-          className="mx-auto h-10 w-auto"
-        />
-        <h2 className="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">
-          Sign in to your account
-        </h2>
-      </div>
+    <div className="flex flex-col gap-4 lg:flex-row">
+      {/* Main Content */}
+      <div className="lg:w-4/6">
+        <h1 className="mb-8 text-4xl text-stone-800">Discover</h1>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white px-6 py-12 shadow sm:rounded-lg">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email address</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="Email" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex items-center justify-between">
-                <FormField
-                  control={form.control}
-                  name="remember"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <Label htmlFor="remember" className="ml-2">
-                        Remember me
-                      </Label>
-                    </FormItem>
-                  )}
+        {/* Country Grid */}
+        <div className="mb-8 grid gap-4 md:grid-cols-2">
+          {countries.map(async (country) => {
+            const {
+              data: { publicUrl },
+            } = supabase.storage
+              .from("heritagebuilder-test")
+              .getPublicUrl(country.img ?? "");
+
+            return (
+              <Link
+                key={country.id}
+                href={`/${country.slug}`}
+                className="group relative aspect-[4/3] overflow-hidden rounded-lg"
+              >
+                <Image
+                  src={publicUrl ?? "/placeholder.svg"}
+                  alt={country.name ?? "Country"}
+                  width={600}
+                  height={400}
+                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
-                <div className="text-sm">
-                  <a
-                    href="#"
-                    className="font-medium text-indigo-600 hover:text-indigo-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-              </div>
-              <div>
-                <Button type="submit" className="w-full">
-                  Sign in
-                </Button>
-              </div>
-            </form>
-          </Form>
-
-          <div className="relative mt-10">
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 flex items-center"
-            >
-              <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-white px-2 text-gray-500">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            <Button variant="outline" className="w-full">
-              <svg
-                className="mr-2 h-5 w-5"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                {/* Google Icon SVG */}
-              </svg>
-              Google
-            </Button>
-            <Button variant="outline" className="w-full">
-              <svg
-                className="mr-2 h-5 w-5"
-                viewBox="0 0 20 20"
-                aria-hidden="true"
-              >
-                {/* GitHub Icon SVG */}
-              </svg>
-              GitHub
-            </Button>
-          </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <h2 className="absolute bottom-4 left-4 text-3xl text-white">
+                  {country.name}
+                </h2>
+              </Link>
+            );
+          })}
         </div>
 
-        <p className="mt-10 text-center text-sm text-gray-500">
-          Not a member?{" "}
-          <a
-            href="#"
-            className="font-medium text-indigo-600 hover:text-indigo-500"
-          >
-            Start a 14-day free trial
-          </a>
-        </p>
+        {/* Building Types Grid */}
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+          {buildingTypes.map((type) => {
+            const {
+              data: { publicUrl },
+            } = supabase.storage
+              .from("heritagebuilder-test")
+              .getPublicUrl(type.img ?? "");
+
+            return (
+              <Link
+                key={type.id}
+                href={`/${type.slug}`}
+                className="group relative aspect-square overflow-hidden rounded-lg"
+              >
+                <Image
+                  src={publicUrl ?? "/placeholder.svg"}
+                  alt={type.name ?? "Building Type"}
+                  width={200}
+                  height={200}
+                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <h3 className="absolute bottom-2 left-2 text-sm text-white">
+                  {type.name}
+                </h3>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+      <div className="hidden lg:block">
+        <Divider />
+      </div>
+
+      {/* Latest Articles Sidebar */}
+      <div className="lg:w-2/6">
+        <h2 className="mb-6 text-2xl text-stone-800">Latest articles</h2>
+        <div className="space-y-4">
+          {[...buildings, ...buildings.splice(0, 3)].map((building) => {
+            const {
+              data: { publicUrl },
+            } = supabase.storage
+              .from("heritagebuilder-test")
+              .getPublicUrl(building.img ?? "");
+
+            return (
+              <Link
+                key={building.id}
+                href={`/${building.slug}`}
+                className="group relative flex items-center gap-4"
+              >
+                <div className="aspect-square">
+                  <Image
+                    src={publicUrl}
+                    alt={building.name ?? "Building"}
+                    width={50}
+                    height={50}
+                    className="h-full w-full rounded object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-brown font-bold group-hover:text-opacity-80">
+                    {building.name}
+                  </h3>
+                  <p className="text-brown-dark-20 font-source-sans-3 text-xs uppercase">
+                    {`${building.city?.name}, ${building.country?.name}`}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
