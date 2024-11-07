@@ -28,7 +28,7 @@ export default async function MainPage() {
             return (
               <Link
                 key={country.id}
-                href={`/${country.slug}`}
+                href={`/country/${country.slug}`}
                 className="group relative aspect-[4/3] overflow-hidden rounded-lg"
               >
                 <Image

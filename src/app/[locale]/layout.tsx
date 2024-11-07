@@ -38,19 +38,14 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html
-      lang="en"
-      className={`${playfairDisplay.variable} ${sourceSans3.variable}`}
-    >
-      <body>
-        <TRPCReactProvider>
-          <NextIntlClientProvider messages={messages}>
-            <Header />
-            <main className="container mx-auto px-4 py-8">{children}</main>
-            <Footer />
-          </NextIntlClientProvider>
-        </TRPCReactProvider>
-      </body>
-    </html>
+    <div className={`${playfairDisplay.variable} ${sourceSans3.variable}`}>
+      <TRPCReactProvider>
+        <NextIntlClientProvider messages={messages}>
+          <Header />
+          <main className="container mx-auto px-4 py-8">{children}</main>
+          <Footer />
+        </NextIntlClientProvider>
+      </TRPCReactProvider>
+    </div>
   );
 }

@@ -2,7 +2,14 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import { relations, sql } from "drizzle-orm";
-import { integer, serial, timestamp, pgTable, text } from "drizzle-orm/pg-core";
+import {
+  integer,
+  serial,
+  timestamp,
+  pgTable,
+  text,
+  geometry,
+} from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -11,11 +18,16 @@ import { integer, serial, timestamp, pgTable, text } from "drizzle-orm/pg-core";
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 
-export const countries = pgTable("Country", {
+export const countriesTable = pgTable("Country", {
   id: serial("id").primaryKey(),
-  slug: text("slug").unique(),
-  name: text("name"),
-  img: text("img"),
+  slug: text("slug").unique().notNull(),
+  name: text("name").notNull(),
+  img: text("img").notNull(),
+  position: geometry("location", {
+    type: "point",
+    mode: "tuple",
+    srid: 4326,
+  }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -24,15 +36,19 @@ export const countries = pgTable("Country", {
   ),
 });
 
-export const countriesRelations = relations(countries, ({ many }) => ({
-  buildings: many(buildings),
+export const countriesRelations = relations(countriesTable, ({ many }) => ({
+  buildings: many(buildingsTable),
+  regions: many(regionsTable),
+  cities: many(citiesTable),
 }));
 
-export const regions = pgTable("Region", {
+export const regionsTable = pgTable("Region", {
   id: serial("id").primaryKey(),
-  slug: text("slug").unique(),
-  name: text("name"),
-  countryid: integer("countryid").references(() => countries.id),
+  slug: text("slug").unique().notNull(),
+  name: text("name").notNull(),
+  countryid: integer("countryid")
+    .references(() => countriesTable.id)
+    .notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -41,20 +57,24 @@ export const regions = pgTable("Region", {
   ),
 });
 
-export const regionsRelations = relations(regions, ({ many, one }) => ({
-  buildings: many(buildings),
-  country: one(countries, {
-    fields: [regions.countryid],
-    references: [countries.id],
+export const regionsRelations = relations(regionsTable, ({ many, one }) => ({
+  buildings: many(buildingsTable),
+  country: one(countriesTable, {
+    fields: [regionsTable.countryid],
+    references: [countriesTable.id],
   }),
 }));
 
-export const cities = pgTable("City", {
+export const citiesTable = pgTable("City", {
   id: serial("id").primaryKey(),
-  slug: text("slug").unique(),
-  name: text("name"),
-  countryid: integer("countryid").references(() => countries.id),
-  regionid: integer("regionid").references(() => regions.id),
+  slug: text("slug").unique().notNull(),
+  name: text("name").notNull(),
+  countryid: integer("countryid")
+    .references(() => countriesTable.id)
+    .notNull(),
+  regionid: integer("regionid")
+    .references(() => regionsTable.id)
+    .notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -63,27 +83,31 @@ export const cities = pgTable("City", {
   ),
 });
 
-export const citiesRelations = relations(cities, ({ many, one }) => ({
-  buildings: many(buildings),
-  country: one(countries, {
-    fields: [cities.countryid],
-    references: [countries.id],
+export const citiesRelations = relations(citiesTable, ({ many, one }) => ({
+  buildings: many(buildingsTable),
+  country: one(countriesTable, {
+    fields: [citiesTable.countryid],
+    references: [countriesTable.id],
   }),
-  region: one(regions, {
-    fields: [cities.regionid],
-    references: [regions.id],
+  region: one(regionsTable, {
+    fields: [citiesTable.regionid],
+    references: [regionsTable.id],
   }),
 }));
 
-export const buildings = pgTable("Building", {
+export const buildingsTable = pgTable("Building", {
   id: serial("id").primaryKey(),
-  slug: text("slug").unique(),
-  name: text("name"),
-  img: text("img"),
-  cityid: integer("cityid").references(() => cities.id),
-  buildingtypeid: integer("buildingtypeid").references(() => buildingTypes.id),
-  countryid: integer("countryid").references(() => countries.id),
-  regionid: integer("regionid").references(() => regions.id),
+  slug: text("slug").unique().notNull(),
+  name: text("name").notNull(),
+  img: text("img").notNull(),
+  cityid: integer("cityid")
+    .references(() => citiesTable.id)
+    .notNull(),
+  buildingtypeid: integer("buildingtypeid").references(
+    () => buildingTypesTable.id,
+  ),
+  countryid: integer("countryid").references(() => countriesTable.id),
+  regionid: integer("regionid").references(() => regionsTable.id),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -92,31 +116,34 @@ export const buildings = pgTable("Building", {
   ),
 });
 
-export const buildingRelations = relations(buildings, ({ one }) => ({
-  author: one(cities, { fields: [buildings.cityid], references: [cities.id] }),
-  buildingType: one(buildingTypes, {
-    fields: [buildings.buildingtypeid],
-    references: [buildingTypes.id],
+export const buildingRelations = relations(buildingsTable, ({ one }) => ({
+  author: one(citiesTable, {
+    fields: [buildingsTable.cityid],
+    references: [citiesTable.id],
   }),
-  country: one(countries, {
-    fields: [buildings.countryid],
-    references: [countries.id],
+  buildingType: one(buildingTypesTable, {
+    fields: [buildingsTable.buildingtypeid],
+    references: [buildingTypesTable.id],
   }),
-  region: one(regions, {
-    fields: [buildings.regionid],
-    references: [regions.id],
+  country: one(countriesTable, {
+    fields: [buildingsTable.countryid],
+    references: [countriesTable.id],
   }),
-  city: one(cities, {
-    fields: [buildings.cityid],
-    references: [cities.id],
+  region: one(regionsTable, {
+    fields: [buildingsTable.regionid],
+    references: [regionsTable.id],
+  }),
+  city: one(citiesTable, {
+    fields: [buildingsTable.cityid],
+    references: [citiesTable.id],
   }),
 }));
 
-export const buildingTypes = pgTable("BuildingType", {
+export const buildingTypesTable = pgTable("BuildingType", {
   id: serial("id").primaryKey(),
-  slug: text("slug").unique(),
-  name: text("name"),
-  img: text("img"),
+  slug: text("slug").unique().notNull(),
+  name: text("name").notNull(),
+  img: text("img").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -125,6 +152,9 @@ export const buildingTypes = pgTable("BuildingType", {
   ),
 });
 
-export const buildingTypesRelations = relations(buildingTypes, ({ many }) => ({
-  buildings: many(buildings),
-}));
+export const buildingTypesRelations = relations(
+  buildingTypesTable,
+  ({ many }) => ({
+    buildings: many(buildingsTable),
+  }),
+);
