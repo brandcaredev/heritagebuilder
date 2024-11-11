@@ -9,7 +9,7 @@ import { notFound } from "next/navigation";
 import { routing } from "~/i18n/routing";
 import { Header } from "./_components/header";
 import { Footer } from "./_components/footer";
-import { Playfair_Display, Source_Sans_3 } from "@next/font/google";
+import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 export const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair-display",

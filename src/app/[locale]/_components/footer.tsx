@@ -19,22 +19,46 @@ export function Footer() {
             <h3 className="mb-2 font-bold">Countries</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/romania" className="hover:text-stone-300">
+                <Link
+                  href={{
+                    pathname: "/country/[slug]",
+                    params: { slug: "romania" },
+                  }}
+                  className="hover:text-stone-300"
+                >
                   Romania
                 </Link>
               </li>
               <li>
-                <Link href="/serbia" className="hover:text-stone-300">
+                <Link
+                  href={{
+                    pathname: "/country/[slug]",
+                    params: { slug: "serbia" },
+                  }}
+                  className="hover:text-stone-300"
+                >
                   Serbia
                 </Link>
               </li>
               <li>
-                <Link href="/slovakia" className="hover:text-stone-300">
+                <Link
+                  href={{
+                    pathname: "/country/[slug]",
+                    params: { slug: "slovakia" },
+                  }}
+                  className="hover:text-stone-300"
+                >
                   Slovakia
                 </Link>
               </li>
               <li>
-                <Link href="/ukraine" className="hover:text-stone-300">
+                <Link
+                  href={{
+                    pathname: "/country/[slug]",
+                    params: { slug: "ukraine" },
+                  }}
+                  className="hover:text-stone-300"
+                >
                   Ukraine
                 </Link>
               </li>

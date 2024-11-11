@@ -6,7 +6,12 @@ const withNextIntl = createNextIntlPlugin();
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: [process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1] ?? ""],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1] ?? "",
+      },
+    ],
   },
 };
 

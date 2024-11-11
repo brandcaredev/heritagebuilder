@@ -10,6 +10,8 @@ import { Search } from "lucide-react";
 import { BuildingTypes, CountryExtended } from "~/server/db/zodSchemaTypes";
 import Divider from "../../_icons/divider";
 import { createClient } from "~/supabase/client";
+import Serbia from "../../_icons/serbia";
+import clsx from "clsx";
 
 export default function CountryPage({
   country,
@@ -23,23 +25,19 @@ export default function CountryPage({
   const [countiesSearch, setCountiesSearch] = useState("");
   const [citiesSearch, setCitiesSearch] = useState("");
   const [articleSearch, setArticleSearch] = useState("");
+  const [buildingTypeFilter, setBuildingTypeFilter] = useState<null | number>(
+    null,
+  );
   const supabase = createClient();
 
   return (
-    <div className="bg-background min-h-screen p-6">
+    <div>
       <h1 className="text-brown mb-8 text-4xl font-bold">{country.name}</h1>
 
-      <div className="flex flex-col gap-4 lg:flex-row">
+      <div className="flex flex-col gap-10 lg:flex-row">
         {/* Map Section */}
-        <div className="relative h-[600px] w-full overflow-hidden rounded-lg border lg:w-2/3">
-          <MapContainer
-            center={country.position ?? [44.0165, 21.0059]}
-            zoom={7}
-            className="h-full w-full"
-          >
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            {countryJson && <GeoJSON data={JSON.parse(countryJson)} />}
-          </MapContainer>
+        <div className="relative h-[800px]">
+          <Serbia />
         </div>
 
         {/* Decorative Divider */}
@@ -48,54 +46,64 @@ export default function CountryPage({
         </div>
 
         {/* Lists Section */}
-        <div className="flex justify-center gap-10">
+        <div className="flex max-h-[800px] w-full justify-center gap-4">
           {/* Counties */}
-          <div className="overflow-hidden">
+          <div className="relative w-1/2 overflow-hidden">
             <h2 className="text-brown mb-4 text-2xl font-bold">Counties</h2>
-            <div className="relative mb-4">
-              <Search className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4 bg-transparent" />
+            <div className="relative mx-1 mb-4">
+              <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
                 placeholder="search"
                 value={countiesSearch}
                 onChange={(e) => setCountiesSearch(e.target.value)}
-                className="pl-8"
+                className="rounded-xl pl-8"
               />
             </div>
-            <div className="grid max-h-[600px] gap-2 overflow-y-auto overflow-x-hidden">
-              {country.regions.map((region) => (
-                <Button
-                  key={region.id}
-                  variant="ghost"
-                  className="text-green font-source-sans-3 justify-start font-semibold"
-                >
-                  {region.name}
-                </Button>
-              ))}
+            <div className="grid h-4/5 gap-1 overflow-y-auto overflow-x-hidden">
+              {country.regions
+                .filter((region) =>
+                  region.name
+                    .toLowerCase()
+                    .includes(countiesSearch.toLowerCase()),
+                )
+                .map((region) => (
+                  <Button
+                    key={region.id}
+                    variant="ghost"
+                    className="text-green font-source-sans-3 justify-start overflow-ellipsis font-semibold"
+                  >
+                    {region.name}
+                  </Button>
+                ))}
             </div>
           </div>
 
           {/* Cities */}
-          <div>
+          <div className="relative w-1/2 overflow-hidden">
             <h2 className="text-brown mb-4 text-2xl font-bold">Cities</h2>
-            <div className="relative mb-4">
-              <Search className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4 bg-transparent" />
+            <div className="relative mx-1 mb-4">
+              <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
                 placeholder="search"
                 value={citiesSearch}
                 onChange={(e) => setCitiesSearch(e.target.value)}
-                className="pl-8"
+                className="rounded-xl pl-8"
               />
             </div>
-            <div className="grid max-h-[600px] gap-2 overflow-auto">
-              {country.cities.map((city) => (
-                <Button
-                  key={city.id}
-                  variant="ghost"
-                  className="text-green font-source-sans-3 justify-start font-semibold"
-                >
-                  {city.name}
-                </Button>
-              ))}
+            <div className="grid h-4/5 gap-1 overflow-auto">
+              {country.cities
+                .filter((city) =>
+                  city.name.toLowerCase().includes(citiesSearch.toLowerCase()),
+                )
+                .map((city) => (
+                  <Button
+                    key={city.id}
+                    variant="ghost"
+                    className="text-green font-source-sans-3 justify-start font-semibold"
+                  >
+                    {city.name}
+                  </Button>
+                ))}
             </div>
           </div>
         </div>
@@ -106,12 +114,12 @@ export default function CountryPage({
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-brown text-2xl font-bold">Articles</h2>
           <div className="relative w-72">
-            <Search className="text-muted-foreground absolute left-2 top-2.5 h-4 w-4" />
+            <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
             <Input
               placeholder="search"
               value={articleSearch}
               onChange={(e) => setArticleSearch(e.target.value)}
-              className="pl-8"
+              className="rounded-xl pl-8"
             />
           </div>
         </div>
@@ -121,7 +129,17 @@ export default function CountryPage({
             <Button
               key={buildingType.id}
               variant="outline"
-              className="whitespace-nowrap"
+              className={clsx(
+                "hover:bg-green whitespace-nowrap hover:text-white",
+                buildingTypeFilter === buildingType.id
+                  ? "bg-green text-white"
+                  : "text-green",
+              )}
+              onClick={() =>
+                setBuildingTypeFilter((prev) =>
+                  prev === buildingType.id ? null : buildingType.id,
+                )
+              }
             >
               {buildingType.name}
             </Button>
@@ -129,30 +147,39 @@ export default function CountryPage({
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {country.buildings.map((building) => {
-            const {
-              data: { publicUrl },
-            } = supabase.storage
-              .from("heritagebuilder-test")
-              .getPublicUrl(building.img ?? "");
+          {country.buildings
+            .filter(
+              (building) =>
+                building.name
+                  .toLowerCase()
+                  .includes(articleSearch.toLowerCase()) &&
+                (!buildingTypeFilter ||
+                  building.buildingtypeid === buildingTypeFilter),
+            )
+            .map((building) => {
+              const {
+                data: { publicUrl },
+              } = supabase.storage
+                .from("heritagebuilder-test")
+                .getPublicUrl(building.img ?? "");
 
-            return (
-              <Card key={building.id} className="relative overflow-hidden">
-                <div className="aspect-square">
-                  <Image
-                    src={publicUrl}
-                    alt={building.name ?? "Building"}
-                    width={50}
-                    height={50}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-xl">{building.name}</h3>
-                </div>
-              </Card>
-            );
-          })}
+              return (
+                <Card key={building.id} className="relative overflow-hidden">
+                  <div className="aspect-square">
+                    <Image
+                      src={publicUrl}
+                      alt={building.name ?? "Building"}
+                      width={300}
+                      height={300}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-xl">{building.name}</h3>
+                  </div>
+                </Card>
+              );
+            })}
         </div>
       </section>
     </div>
