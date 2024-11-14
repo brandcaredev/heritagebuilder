@@ -3,8 +3,8 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const buildingRouter = createTRPCRouter({
-  getBuildings: publicProcedure.input(z.undefined()).query(({ ctx }) => {
-    const buildings = ctx.db.query.buildings.findMany({
+  getBuildings: publicProcedure.input(z.undefined()).query(async ({ ctx }) => {
+    const buildings = await ctx.db.query.buildingsTable.findMany({
       with: {
         region: {
           columns: {

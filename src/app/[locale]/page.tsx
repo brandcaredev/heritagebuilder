@@ -28,7 +28,10 @@ export default async function MainPage() {
             return (
               <Link
                 key={country.id}
-                href={`/${country.slug}`}
+                href={{
+                  pathname: "/country/[slug]",
+                  params: { slug: country.slug },
+                }}
                 className="group relative aspect-[4/3] overflow-hidden rounded-lg"
               >
                 <Image
@@ -59,7 +62,10 @@ export default async function MainPage() {
             return (
               <Link
                 key={type.id}
-                href={`/${type.slug}`}
+                href={{
+                  pathname: "/building-type/[slug]",
+                  params: { slug: type.slug },
+                }}
                 className="group relative aspect-square overflow-hidden rounded-lg"
               >
                 <Image
@@ -96,7 +102,10 @@ export default async function MainPage() {
             return (
               <Link
                 key={building.id}
-                href={`/${building.slug}`}
+                href={{
+                  pathname: "/building/[slug]",
+                  params: { slug: building.slug },
+                }}
                 className="group relative flex items-center gap-4"
               >
                 <div className="aspect-square">

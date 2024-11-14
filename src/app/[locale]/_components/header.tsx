@@ -1,4 +1,4 @@
-import { Search, User } from "lucide-react";
+import { PlusCircle, PlusCircleIcon, Search, User } from "lucide-react";
 import { Link } from "~/i18n/routing";
 
 export function Header() {
@@ -10,16 +10,37 @@ export function Header() {
             Heritage builder
           </Link>
           <nav className="hidden space-x-8 md:flex">
-            <Link href="/romania" className="hover:text-stone-300">
+            <Link
+              href={{
+                pathname: "/country/[slug]",
+                params: { slug: "romania" },
+              }}
+              className="hover:text-stone-300"
+            >
               Romania
             </Link>
-            <Link href="/serbia" className="hover:text-stone-300">
+            <Link
+              href={{ pathname: "/country/[slug]", params: { slug: "serbia" } }}
+              className="hover:text-stone-300"
+            >
               Serbia
             </Link>
-            <Link href="/slovakia" className="hover:text-stone-300">
+            <Link
+              href={{
+                pathname: "/country/[slug]",
+                params: { slug: "slovakia" },
+              }}
+              className="hover:text-stone-300"
+            >
               Slovakia
             </Link>
-            <Link href="/ukraine" className="hover:text-stone-300">
+            <Link
+              href={{
+                pathname: "/country/[slug]",
+                params: { slug: "ukraine" },
+              }}
+              className="hover:text-stone-300"
+            >
               Ukraine
             </Link>
           </nav>
@@ -29,6 +50,9 @@ export function Header() {
             </button>
             <button aria-label="User account" className="hover:text-stone-300">
               <User className="h-5 w-5" />
+            </button>
+            <button aria-label="New building" className="hover:text-stone-300">
+              <PlusCircleIcon className="h-5 w-5" />
             </button>
           </div>
         </div>

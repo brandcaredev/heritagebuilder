@@ -9,7 +9,7 @@ import { notFound } from "next/navigation";
 import { routing } from "~/i18n/routing";
 import { Header } from "./_components/header";
 import { Footer } from "./_components/footer";
-import { Playfair_Display, Source_Sans_3 } from "@next/font/google";
+import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 export const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair-display",
@@ -38,19 +38,14 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html
-      lang="en"
-      className={`${playfairDisplay.variable} ${sourceSans3.variable}`}
-    >
-      <body>
-        <TRPCReactProvider>
-          <NextIntlClientProvider messages={messages}>
-            <Header />
-            <main className="container mx-auto px-4 py-8">{children}</main>
-            <Footer />
-          </NextIntlClientProvider>
-        </TRPCReactProvider>
-      </body>
-    </html>
+    <div className={`${playfairDisplay.variable} ${sourceSans3.variable}`}>
+      <TRPCReactProvider>
+        <NextIntlClientProvider messages={messages}>
+          <Header />
+          <main className="container mx-auto px-4 py-8">{children}</main>
+          <Footer />
+        </NextIntlClientProvider>
+      </TRPCReactProvider>
+    </div>
   );
 }
