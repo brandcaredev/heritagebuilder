@@ -1,9 +1,160 @@
 {
-  "id": "c62d2c35-e5e2-4876-96ae-0ca298c4da7e",
+  "id": "8ff1e219-9ec5-4297-acfc-d7e1dd587904",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.BuildingData": {
+      "name": "BuildingData",
+      "schema": "",
+      "columns": {
+        "buildingid": {
+          "name": "buildingid",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "history": {
+          "name": "history",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "style": {
+          "name": "style",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "presentday": {
+          "name": "presentday",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "famousresidents": {
+          "name": "famousresidents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "renovation": {
+          "name": "renovation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "BuildingData_buildingid_Building_id_fk": {
+          "name": "BuildingData_buildingid_Building_id_fk",
+          "tableFrom": "BuildingData",
+          "tableTo": "Building",
+          "columnsFrom": [
+            "buildingid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "BuildingData_slug_unique": {
+          "name": "BuildingData_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        },
+        "BuildingData_language_slug_unique": {
+          "name": "BuildingData_language_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "language",
+            "slug"
+          ]
+        }
+      }
+    },
+    "public.BuildingTypeData": {
+      "name": "BuildingTypeData",
+      "schema": "",
+      "columns": {
+        "buildingtypeid": {
+          "name": "buildingtypeid",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "languageid": {
+          "name": "languageid",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "BuildingTypeData_buildingtypeid_BuildingType_id_fk": {
+          "name": "BuildingTypeData_buildingtypeid_BuildingType_id_fk",
+          "tableFrom": "BuildingTypeData",
+          "tableTo": "BuildingType",
+          "columnsFrom": [
+            "buildingtypeid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "BuildingTypeData_languageid_slug_unique": {
+          "name": "BuildingTypeData_languageid_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "languageid",
+            "slug"
+          ]
+        }
+      }
+    },
     "public.BuildingType": {
       "name": "BuildingType",
       "schema": "",
@@ -14,23 +165,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "img": {
           "name": "img",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -49,15 +188,7 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "BuildingType_slug_unique": {
-          "name": "BuildingType_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
-        }
-      }
+      "uniqueConstraints": {}
     },
     "public.Building": {
       "name": "Building",
@@ -69,47 +200,54 @@
           "primaryKey": true,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
+        "featuredimage": {
+          "name": "featuredimage",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "text",
+        "images": {
+          "name": "images",
+          "type": "text[]",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "img": {
-          "name": "img",
-          "type": "text",
+        "disabled": {
+          "name": "disabled",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": true
+        },
+        "position": {
+          "name": "position",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
         },
         "cityid": {
           "name": "cityid",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "buildingtypeid": {
           "name": "buildingtypeid",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "countryid": {
           "name": "countryid",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "regionid": {
           "name": "regionid",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -181,11 +319,60 @@
         }
       },
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.CityData": {
+      "name": "CityData",
+      "schema": "",
+      "columns": {
+        "cityid": {
+          "name": "cityid",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "CityData_cityid_City_id_fk": {
+          "name": "CityData_cityid_City_id_fk",
+          "tableFrom": "CityData",
+          "tableTo": "City",
+          "columnsFrom": [
+            "cityid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "Building_slug_unique": {
-          "name": "Building_slug_unique",
+        "CityData_language_slug_unique": {
+          "name": "CityData_language_slug_unique",
           "nullsNotDistinct": false,
           "columns": [
+            "language",
             "slug"
           ]
         }
@@ -201,23 +388,17 @@
           "primaryKey": true,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
+        "countryid": {
+          "name": "countryid",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "text",
+        "regionid": {
+          "name": "regionid",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false
-        },
-        "img": {
-          "name": "img",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -234,17 +415,36 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "City_slug_unique": {
-          "name": "City_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+      "foreignKeys": {
+        "City_countryid_Country_id_fk": {
+          "name": "City_countryid_Country_id_fk",
+          "tableFrom": "City",
+          "tableTo": "Country",
+          "columnsFrom": [
+            "countryid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "City_regionid_Region_id_fk": {
+          "name": "City_regionid_Region_id_fk",
+          "tableFrom": "City",
+          "tableTo": "Region",
+          "columnsFrom": [
+            "regionid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
-      }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "public.Country": {
       "name": "Country",
@@ -252,27 +452,21 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
-        },
-        "slug": {
-          "name": "slug",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
         },
         "img": {
           "name": "img",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
+        },
+        "position": {
+          "name": "position",
+          "type": "geometry(point)",
+          "primaryKey": false,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -291,11 +485,103 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.CountryData": {
+      "name": "CountryData",
+      "schema": "",
+      "columns": {
+        "countryid": {
+          "name": "countryid",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "Country_slug_unique": {
-          "name": "Country_slug_unique",
+        "CountryData_language_slug_unique": {
+          "name": "CountryData_language_slug_unique",
           "nullsNotDistinct": false,
           "columns": [
+            "language",
+            "slug"
+          ]
+        }
+      }
+    },
+    "public.RegionData": {
+      "name": "RegionData",
+      "schema": "",
+      "columns": {
+        "regionid": {
+          "name": "regionid",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "language": {
+          "name": "language",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "RegionData_regionid_Region_id_fk": {
+          "name": "RegionData_regionid_Region_id_fk",
+          "tableFrom": "RegionData",
+          "tableTo": "Region",
+          "columnsFrom": [
+            "regionid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "RegionData_language_slug_unique": {
+          "name": "RegionData_language_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "language",
             "slug"
           ]
         }
@@ -311,23 +597,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "slug": {
-          "name": "slug",
+        "countryid": {
+          "name": "countryid",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "img": {
-          "name": "img",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
@@ -344,17 +618,23 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "Region_slug_unique": {
-          "name": "Region_slug_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+      "foreignKeys": {
+        "Region_countryid_Country_id_fk": {
+          "name": "Region_countryid_Country_id_fk",
+          "tableFrom": "Region",
+          "tableTo": "Country",
+          "columnsFrom": [
+            "countryid"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
-      }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     }
   },
   "enums": {},

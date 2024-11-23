@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { type Metadata } from "next";
-import { TRPCReactProvider } from "~/trpc/react";
+import { TRPCReactProvider } from "@/trpc/react";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { routing } from "~/i18n/routing";
+import { routing } from "@/i18n/routing";
 import { Header } from "./_components/header";
 import { Footer } from "./_components/footer";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
@@ -42,7 +42,7 @@ export default async function RootLayout({
       <TRPCReactProvider>
         <NextIntlClientProvider messages={messages}>
           <Header />
-          <main className="container mx-auto px-4 py-8">{children}</main>
+          <main className="container mx-auto p-8">{children}</main>
           <Footer />
         </NextIntlClientProvider>
       </TRPCReactProvider>

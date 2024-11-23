@@ -1,26 +1,24 @@
 "use client";
 
-import { TileLayer, GeoJSON, MapContainer } from "react-leaflet";
 import Image from "next/image";
 import { useState } from "react";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Card } from "~/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
 import { Search } from "lucide-react";
-import { BuildingTypes, CountryExtended } from "~/server/db/zodSchemaTypes";
-import Divider from "../../_icons/divider";
-import { createClient } from "~/supabase/client";
-import Serbia from "../../_icons/serbia";
-import clsx from "clsx";
+import { BuildingTypes, CountryExtended } from "@/server/db/zodSchemaTypes";
+import Divider from "../../../../components/icons/divider";
+import { createClient } from "@/supabase/client";
+import Serbia from "../../../../components/icons/serbia";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function CountryPage({
   country,
   buildingTypes,
-  countryJson,
 }: {
   country: CountryExtended;
   buildingTypes: BuildingTypes[];
-  countryJson: string | null;
 }) {
   const [countiesSearch, setCountiesSearch] = useState("");
   const [citiesSearch, setCitiesSearch] = useState("");
@@ -29,10 +27,10 @@ export default function CountryPage({
     null,
   );
   const supabase = createClient();
-
+  console.log(country);
   return (
     <div>
-      <h1 className="text-brown mb-8 text-4xl font-bold">{country.name}</h1>
+      <h1 className="mb-8 text-4xl font-bold text-brown">{country.name}</h1>
 
       <div className="flex flex-col gap-10 lg:flex-row">
         {/* Map Section */}
@@ -49,7 +47,7 @@ export default function CountryPage({
         <div className="flex max-h-[800px] w-full justify-center gap-4">
           {/* Counties */}
           <div className="relative w-1/2 overflow-hidden">
-            <h2 className="text-brown mb-4 text-2xl font-bold">Counties</h2>
+            <h2 className="mb-4 text-2xl font-bold text-brown">Counties</h2>
             <div className="relative mx-1 mb-4">
               <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
@@ -59,28 +57,28 @@ export default function CountryPage({
                 className="rounded-xl pl-8"
               />
             </div>
-            <div className="grid h-4/5 gap-1 overflow-y-auto overflow-x-hidden">
-              {country.regions
-                .filter((region) =>
-                  region.name
+            <ScrollArea className="grid h-4/5 gap-1 overflow-x-hidden">
+              {country.counties
+                .filter((county) =>
+                  county.name
                     .toLowerCase()
                     .includes(countiesSearch.toLowerCase()),
                 )
-                .map((region) => (
+                .map((county) => (
                   <Button
-                    key={region.id}
+                    key={county.id}
                     variant="ghost"
-                    className="text-green font-source-sans-3 justify-start overflow-ellipsis font-semibold"
+                    className="w-full justify-start overflow-ellipsis font-source-sans-3 font-semibold text-green"
                   >
-                    {region.name}
+                    {county.name}
                   </Button>
                 ))}
-            </div>
+            </ScrollArea>
           </div>
 
           {/* Cities */}
           <div className="relative w-1/2 overflow-hidden">
-            <h2 className="text-brown mb-4 text-2xl font-bold">Cities</h2>
+            <h2 className="mb-4 text-2xl font-bold text-brown">Cities</h2>
             <div className="relative mx-1 mb-4">
               <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
@@ -90,7 +88,7 @@ export default function CountryPage({
                 className="rounded-xl pl-8"
               />
             </div>
-            <div className="grid h-4/5 gap-1 overflow-auto">
+            <ScrollArea className="grid h-4/5 gap-1 overflow-x-hidden">
               {country.cities
                 .filter((city) =>
                   city.name.toLowerCase().includes(citiesSearch.toLowerCase()),
@@ -99,12 +97,12 @@ export default function CountryPage({
                   <Button
                     key={city.id}
                     variant="ghost"
-                    className="text-green font-source-sans-3 justify-start font-semibold"
+                    className="w-full justify-start font-source-sans-3 font-semibold text-green"
                   >
                     {city.name}
                   </Button>
                 ))}
-            </div>
+            </ScrollArea>
           </div>
         </div>
       </div>
@@ -112,7 +110,7 @@ export default function CountryPage({
       {/* Articles Section */}
       <section className="mt-16">
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-brown text-2xl font-bold">Articles</h2>
+          <h2 className="text-2xl font-bold text-brown">Articles</h2>
           <div className="relative w-72">
             <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
             <Input
@@ -129,8 +127,8 @@ export default function CountryPage({
             <Button
               key={buildingType.id}
               variant="outline"
-              className={clsx(
-                "hover:bg-green whitespace-nowrap hover:text-white",
+              className={cn(
+                "whitespace-nowrap hover:bg-green hover:text-white",
                 buildingTypeFilter === buildingType.id
                   ? "bg-green text-white"
                   : "text-green",
@@ -161,7 +159,7 @@ export default function CountryPage({
                 data: { publicUrl },
               } = supabase.storage
                 .from("heritagebuilder-test")
-                .getPublicUrl(building.img ?? "");
+                .getPublicUrl(building.featuredImage ?? "");
 
               return (
                 <Card key={building.id} className="relative overflow-hidden">

@@ -1,13 +1,19 @@
 import Image from "next/image";
-import Divider from "./_icons/divider";
-import { api } from "~/trpc/server";
-import { createClient } from "~/supabase/server";
-import { Link } from "~/i18n/routing";
+import Divider from "../../components/icons/divider";
+import { api } from "@/trpc/server";
+import { createClient } from "@/supabase/server";
+import { Link } from "@/i18n/routing";
 
-export default async function MainPage() {
-  const countries = await api.country.getCountries();
-  const buildingTypes = await api.buildingType.getBuildingTypes();
-  const buildings = await api.building.getBuildings();
+export default async function MainPage({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  const countries = await api.country.getCountries({ lang: locale });
+  const buildingTypes = await api.buildingType.getBuildingTypes({
+    lang: locale,
+  });
+  const buildings = await api.building.getBuildings({ lang: locale });
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const supabase = await createClient();
   return (
@@ -97,14 +103,14 @@ export default async function MainPage() {
               data: { publicUrl },
             } = supabase.storage
               .from("heritagebuilder-test")
-              .getPublicUrl(building.img ?? "");
+              .getPublicUrl(building.featuredImage ?? "");
 
             return (
               <Link
                 key={building.id}
                 href={{
                   pathname: "/building/[slug]",
-                  params: { slug: building.slug },
+                  params: { slug: building.slug! },
                 }}
                 className="group relative flex items-center gap-4"
               >
@@ -118,10 +124,10 @@ export default async function MainPage() {
                   />
                 </div>
                 <div>
-                  <h3 className="text-brown font-bold group-hover:text-opacity-80">
+                  <h3 className="font-bold text-brown group-hover:text-opacity-80">
                     {building.name}
                   </h3>
-                  <p className="text-brown-dark-20 font-source-sans-3 text-xs uppercase">
+                  <p className="font-source-sans-3 text-xs uppercase text-brown-dark-20">
                     {`${building.city?.name}, ${building.country?.name}`}
                   </p>
                 </div>

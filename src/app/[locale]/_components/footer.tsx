@@ -1,5 +1,5 @@
 import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
-import { Link } from "~/i18n/routing";
+import { Link } from "@/i18n/routing";
 
 export function Footer() {
   return (
