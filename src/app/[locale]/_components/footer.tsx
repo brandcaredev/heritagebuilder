@@ -69,7 +69,10 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/buildings/temples"
+                  href={{
+                    pathname: "/building-type/[slug]",
+                    params: { slug: "temples" },
+                  }}
                   className="hover:text-stone-300"
                 >
                   Temples
@@ -77,7 +80,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/buildings/castles"
+                  href={{
+                    pathname: "/building-type/[slug]",
+                    params: { slug: "castles" },
+                  }}
                   className="hover:text-stone-300"
                 >
                   Castles
@@ -85,7 +91,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/buildings/fortresses"
+                  href={{
+                    pathname: "/building-type/[slug]",
+                    params: { slug: "fortresses" },
+                  }}
                   className="hover:text-stone-300"
                 >
                   Fortresses
@@ -93,7 +102,10 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/buildings/common-buildings"
+                  href={{
+                    pathname: "/building-type/[slug]",
+                    params: { slug: "common-buildings" },
+                  }}
                   className="hover:text-stone-300"
                 >
                   Common Buildings
@@ -105,22 +117,34 @@ export function Footer() {
             <h3 className="mb-2 font-bold">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/terms" className="hover:text-stone-300">
+                <Link
+                  href={{ pathname: "/terms-of-service" }}
+                  className="hover:text-stone-300"
+                >
                   Terms Of Service
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-stone-300">
+                <Link
+                  href={{ pathname: "/privacy-policy" }}
+                  className="hover:text-stone-300"
+                >
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/cookies" className="hover:text-stone-300">
+                <Link
+                  href={{ pathname: "/cookies-policy" }}
+                  className="hover:text-stone-300"
+                >
                   Cookies Policy
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-stone-300">
+                <Link
+                  href={{ pathname: "/about-us" }}
+                  className="hover:text-stone-300"
+                >
                   About Us
                 </Link>
               </li>

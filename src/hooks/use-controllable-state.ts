@@ -17,7 +17,7 @@ type SetStateFn<T> = (prevState?: T) => T;
 function useControllableState<T>({
   prop,
   defaultProp,
-  onChange = () => {},
+  onChange,
 }: UseControllableStateParams<T>) {
   const [uncontrolledProp, setUncontrolledProp] = useUncontrolledState({
     defaultProp,

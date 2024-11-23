@@ -30,6 +30,22 @@ export const routing = defineRouting({
       en: "/building-type/[slug]",
       hu: "/épület-típus/[slug]",
     },
+    "/terms-of-service": {
+      en: "/terms-of-service",
+      hu: "/szerződés",
+    },
+    "/privacy-policy": {
+      en: "/privacy-policy",
+      hu: "/adatvédelmi-irányelvek",
+    },
+    "/cookies-policy": {
+      en: "/cookies-policy",
+      hu: "/süti-irányelvek",
+    },
+    "/about-us": {
+      en: "/about-us",
+      hu: "/rólunk",
+    },
     "/new": {
       en: "/new",
       hu: "/új",

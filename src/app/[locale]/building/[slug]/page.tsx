@@ -19,12 +19,12 @@ export default async function BuildingPage({
 
   const supabase = await createClient();
 
-  building.featuredImage = await supabase.storage
+  building.featuredImage = supabase.storage
     .from("heritagebuilder-test")
     .getPublicUrl(building.featuredImage ?? "").data.publicUrl;
   building.images = await Promise.all(
     building.images.map(async (image) => {
-      const { data } = await supabase.storage
+      const { data } = supabase.storage
         .from("heritagebuilder-test")
         .getPublicUrl(image);
       return data.publicUrl;
