@@ -11,7 +11,7 @@ import {
   FormControl,
   FormMessage,
   FormField,
-} from "~/components/ui";
+} from "@/components/ui";
 
 export default function Login() {
   const form = useForm({

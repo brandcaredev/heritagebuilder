@@ -1,11 +1,10 @@
 import { defineRouting } from "next-intl/routing";
 import { createNavigation } from "next-intl/navigation";
-
-export const locales = ["en", "hu"];
+import { locales } from "@/lib/constans";
 
 export const routing = defineRouting({
   // A list of all locales that are supported
-  locales: locales,
+  locales: Object.keys(locales),
 
   // Used when no locale matches
   defaultLocale: "en",
@@ -19,9 +18,37 @@ export const routing = defineRouting({
       en: "/country/[slug]",
       hu: "/orszag/[slug]",
     },
-    "/region/[slug]": {
-      en: "/region/[slug]",
-      hu: "/regio/[slug]",
+    "/county/[slug]": {
+      en: "/county/[slug]",
+      hu: "/county/[slug]",
+    },
+    "/building/[slug]": {
+      en: "/building/[slug]",
+      hu: "/épület/[slug]",
+    },
+    "/building-type/[slug]": {
+      en: "/building-type/[slug]",
+      hu: "/épület-típus/[slug]",
+    },
+    "/terms-of-service": {
+      en: "/terms-of-service",
+      hu: "/szerződés",
+    },
+    "/privacy-policy": {
+      en: "/privacy-policy",
+      hu: "/adatvédelmi-irányelvek",
+    },
+    "/cookies-policy": {
+      en: "/cookies-policy",
+      hu: "/süti-irányelvek",
+    },
+    "/about-us": {
+      en: "/about-us",
+      hu: "/rólunk",
+    },
+    "/new": {
+      en: "/new",
+      hu: "/új",
     },
   },
 });

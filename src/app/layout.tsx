@@ -1,6 +1,8 @@
 import { type ReactNode } from "react";
-import "~/styles/globals.css";
+import "@/styles/globals.css";
 import "leaflet/dist/leaflet.css";
+import "leaflet-geosearch/dist/geosearch.css";
+import { Toaster } from "sonner";
 
 type Props = {
   children: ReactNode;
@@ -11,7 +13,10 @@ type Props = {
 export default function RootLayout({ children }: Props) {
   return (
     <html>
-      <body> {children} </body>
+      <body>
+        {children}
+        <Toaster richColors />
+      </body>
     </html>
   );
 }
