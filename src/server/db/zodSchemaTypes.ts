@@ -14,6 +14,8 @@ import {
 } from "./schemas";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { type locales } from "@/lib/constans";
+import { type inferRouterOutputs } from "@trpc/server";
+import { type AppRouter } from "../api/root";
 
 // country
 export const CountryDataSchema = createSelectSchema(countriesDataTable);
@@ -117,3 +119,6 @@ export const BuildingTypeSchema = createSelectSchema(buildingTypesTable);
 export type BuildingTypeData = z.infer<typeof BuildingTypeDataSchema>;
 export type BuildingTypes = z.infer<typeof BuildingTypeSchema> &
   BuildingTypeData;
+
+// ------------------------------------------------
+export type RouterOutput = inferRouterOutputs<AppRouter>;

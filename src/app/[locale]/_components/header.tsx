@@ -1,4 +1,4 @@
-import { PlusCircle, PlusCircleIcon, Search, User } from "lucide-react";
+import { MapIcon, PlusCircleIcon, Search, User } from "lucide-react";
 import { Link } from "@/i18n/routing";
 
 export function Header() {
@@ -45,6 +45,9 @@ export function Header() {
             </Link>
           </nav>
           <div className="flex items-center space-x-4">
+            <Link href={{ pathname: "/map" }} className="hover:text-stone-300">
+              <MapIcon className="h-5 w-5" />
+            </Link>
             <button aria-label="Search" className="hover:text-stone-300">
               <Search className="h-5 w-5" />
             </button>

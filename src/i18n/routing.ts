@@ -46,6 +46,10 @@ export const routing = defineRouting({
       en: "/about-us",
       hu: "/rólunk",
     },
+    "/map": {
+      en: "/map",
+      hu: "/térkép",
+    },
     "/new": {
       en: "/new",
       hu: "/új",

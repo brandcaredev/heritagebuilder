@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Search } from "lucide-react";
-import { BuildingTypes, CountryExtended } from "@/server/db/zodSchemaTypes";
+import {
+  type BuildingTypes,
+  type CountryExtended,
+} from "@/server/db/zodSchemaTypes";
 import Divider from "../../../../components/icons/divider";
 import { createClient } from "@/supabase/client";
 import Serbia from "../../../../components/icons/serbia";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link } from "@/i18n/routing";
 
 export default function CountryPage({
   country,
@@ -162,20 +166,28 @@ export default function CountryPage({
                 .getPublicUrl(building.featuredImage ?? "");
 
               return (
-                <Card key={building.id} className="relative overflow-hidden">
-                  <div className="aspect-square">
-                    <Image
-                      src={publicUrl}
-                      alt={building.name ?? "Building"}
-                      width={300}
-                      height={300}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-xl">{building.name}</h3>
-                  </div>
-                </Card>
+                <Link
+                  key={building.id}
+                  href={{
+                    pathname: "/building/[slug]",
+                    params: { slug: building.slug },
+                  }}
+                >
+                  <Card className="relative overflow-hidden">
+                    <div className="aspect-square">
+                      <Image
+                        src={publicUrl}
+                        alt={building.name ?? "Building"}
+                        width={300}
+                        height={300}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-xl">{building.name}</h3>
+                    </div>
+                  </Card>
+                </Link>
               );
             })}
         </div>
