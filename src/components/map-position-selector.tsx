@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import { useEffect } from "react";
 import { type LatLng } from "leaflet";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChurchIcon } from "./icons/leaflet-icons";
+import {
+  CastleIcon,
+  ChurchIcon,
+  CommonBuildingIcon,
+  IndustrialIcon,
+  ResidentalBuildingIcon,
+} from "./icons/leaflet-icons";
 import { type LocaleType } from "@/lib/constans";
 
 type LocationData = {
@@ -61,12 +67,14 @@ const MapPositionSelector = ({
   setCountry,
   setCounty,
   setCity,
+  type,
 }: {
   position: [number, number];
   setPosition: (value: [number, number]) => void;
   setCountry: (value: string) => void;
   setCounty: (value: string, lang: LocaleType) => void;
   setCity: (value: string, lang: LocaleType) => void;
+  type?: number;
 }) => {
   const { mutate } = useMutation({ mutationFn: getPositionData });
 
@@ -131,6 +139,23 @@ const MapPositionSelector = ({
     return null;
   };
 
+  const typeBasedIcon = useCallback(() => {
+    switch (type) {
+      case 1:
+        return ChurchIcon;
+      case 2:
+        return CastleIcon;
+      case 4:
+        return CommonBuildingIcon;
+      case 5:
+        return IndustrialIcon;
+      case 6:
+        return ResidentalBuildingIcon;
+      default:
+        return ChurchIcon;
+    }
+  }, [type]);
+
   return (
     <MapContainer
       center={[45.9432, 24.9668]}
@@ -143,7 +168,7 @@ const MapPositionSelector = ({
         // attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
       />
       <SearchControl />
-      {position && <Marker position={position} icon={ChurchIcon} />}
+      {position && <Marker position={position} icon={typeBasedIcon()} />}
     </MapContainer>
   );
 };

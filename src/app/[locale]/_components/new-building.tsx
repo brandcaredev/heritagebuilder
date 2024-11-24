@@ -493,6 +493,7 @@ export default function BuildingForm({
                   <FormLabel>Position</FormLabel>
                   <FormControl>
                     <MapPositionSelector
+                      type={parseInt(form.getValues().type ?? "1")}
                       position={value}
                       setPosition={(value) => onChange(value)}
                       setCountry={(value: string) =>

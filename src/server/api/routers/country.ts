@@ -80,6 +80,7 @@ export const countryRouter = createTRPCRouter({
                 columns: {
                   name: true,
                   language: true,
+                  slug: true,
                 },
               },
             },
@@ -94,6 +95,7 @@ export const countryRouter = createTRPCRouter({
                 columns: {
                   name: true,
                   language: true,
+                  slug: true,
                 },
               },
             },
@@ -118,9 +120,9 @@ export const countryRouter = createTRPCRouter({
             },
           },
           data: {
-            where: and(
-              eq(countriesDataTable.slug, slug),
+            where: or(
               eq(countriesDataTable.language, lang),
+              eq(countriesDataTable.language, "hu"),
             ),
           },
         },
@@ -133,6 +135,7 @@ export const countryRouter = createTRPCRouter({
         });
       const mergedCountry = mergeLanguageData(country, lang);
       const countryMapped = {
+        ...mergedCountry,
         counties: country.counties.map((county) => {
           const countyMapped = mergeLanguageData(county, lang);
           return {
@@ -151,9 +154,7 @@ export const countryRouter = createTRPCRouter({
             ...buildingMapped,
           };
         }),
-        ...mergedCountry,
       };
-
       return countryMapped;
     }),
 });

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { api } from "@/trpc/server";
 import CountryPage from "./country";
-import { CountryExtended } from "@/server/db/zodSchemaTypes";
+import { type CountryExtended } from "@/server/db/zodSchemaTypes";
 
 export default async function CountryMainPage({
   params: { slug, locale },

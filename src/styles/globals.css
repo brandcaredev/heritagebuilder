@@ -3,11 +3,34 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
 }
 
 html {
   font-family: var(--font-playfair-display);
-  background: #EDEEEB;
+  background: #edeeeb;
+}
+
+.custom-marker-cluster {
+  background: #4a5838;
+  border-radius: 50%;
+  color: #ffffff;
+  line-height: 37px;
+  text-align: center;
+  font-size: x-large;
+  padding-top: 5px;
+}
+
+.leaflet-popup-content{
+  margin: 0 !important;
+  width: fit-content !important;
+}
+
+.leaflet-popup-tip-container{
+  display: none !important;
+}
+
+.leaflet-popup-content-wrapper{
+  padding: 0 !important;
 }
