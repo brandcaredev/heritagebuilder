@@ -89,7 +89,6 @@ const BuildingsMap = ({
 
   const createClusterCustomIcon = function (cluster: MarkerCluster) {
     return L.divIcon({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       html: `<span>${cluster.getChildCount()}</span>`,
       className: "custom-marker-cluster",
       iconSize: L.point(50, 50, true),
@@ -112,16 +111,13 @@ const BuildingsMap = ({
           iconCreateFunction={createClusterCustomIcon}
           chunkedLoading
           onClick={(e: any) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
             setClusterPosition((prev) => (prev ? null : e.latlng));
             setHoveredCluster((prev) =>
               prev
                 ? null
-                : // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-                  (e.layer
+                : (e.layer
                     .getAllChildMarkers()
                     //@ts-expect-error
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
                     .map((marker) => marker.options.data) as BuildingIcon[]),
             );
           }}

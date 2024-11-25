@@ -38,6 +38,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import Building from "./building";
+import imageCompression from "browser-image-compression";
 
 const MapPositionSelector = dynamic(
   () => import("@/components/map-position-selector"),
@@ -102,6 +103,20 @@ export default function BuildingForm({
     },
   });
 
+  const compressImage = async (file: File) => {
+    const options = {
+      maxSizeMB: 1,
+      useWebWorker: true,
+    };
+    try {
+      const compressedFile = await imageCompression(file, options);
+      return compressedFile;
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      return file;
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const baseFolder = `building/${slugify(values.hu.name)}`;
     const featuredImage = values.featuredImage[0];
@@ -120,23 +135,31 @@ export default function BuildingForm({
       toast.loading("Creating the building...", {
         id: "building-creation-toast",
       });
-      // // Upload featured image and other images to Supabase
+
+      // Compress featured image if larger than 1MB
+      const featuredImageToUpload =
+        featuredImage.size > 1024 * 1024
+          ? await compressImage(featuredImage)
+          : featuredImage;
 
       const { error: featuredError } = await supabaseClient.storage
         .from("heritagebuilder-test")
-        .upload(featuredPath, featuredImage);
+        .upload(featuredPath, featuredImageToUpload);
 
       if (featuredError) throw featuredError;
 
-      // Upload additional images
+      // Upload and compress additional images if needed
       const uploadedImagePaths = await Promise.all(
         values.images.map(async (image, i) => {
           const fileExtension = image.name.split(".").pop();
           const filePath = `${baseFolder}/${i + 1}.${fileExtension}`;
 
+          const imageToUpload =
+            image.size > 1024 * 1024 ? await compressImage(image) : image;
+
           const { error } = await supabaseClient.storage
             .from("heritagebuilder-test")
-            .upload(filePath, image);
+            .upload(filePath, imageToUpload);
 
           if (error) throw error;
           return filePath;
