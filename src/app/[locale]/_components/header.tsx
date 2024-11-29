@@ -1,11 +1,8 @@
-import { MapIcon, PlusCircleIcon, Search, User } from "lucide-react";
 import { Link } from "@/i18n/routing";
-import { createClient } from "@/supabase/server";
+import { MapIcon, Search } from "lucide-react";
+import AccountButton from "./account-button";
 
 export async function Header() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-  console.log("user", data.user);
   return (
     <header className="bg-brown text-stone-100">
       <div className="container mx-auto px-8 py-2">
@@ -55,16 +52,7 @@ export async function Header() {
             <button aria-label="Search" className="hover:text-stone-300">
               <Search className="h-5 w-5" />
             </button>
-            <button aria-label="User account" className="hover:text-stone-300">
-              <User className="h-5 w-5" />
-            </button>
-            <Link
-              href={{ pathname: "/new" }}
-              aria-label="New building"
-              className="hover:text-stone-300"
-            >
-              <PlusCircleIcon className="h-5 w-5" />
-            </Link>
+            <AccountButton />
           </div>
         </div>
       </div>

@@ -7,8 +7,6 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { Header } from "./_components/header";
-import { Footer } from "./_components/footer";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 export const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -41,9 +39,7 @@ export default async function RootLayout({
     <div className={`${playfairDisplay.variable} ${sourceSans3.variable}`}>
       <TRPCReactProvider>
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="container mx-auto p-8">{children}</main>
-          <Footer />
+          <main>{children}</main>
         </NextIntlClientProvider>
       </TRPCReactProvider>
     </div>

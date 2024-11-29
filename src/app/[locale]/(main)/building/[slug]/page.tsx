@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { api } from "@/trpc/server";
-import BuildingComponent from "../../_components/building";
+import BuildingComponent from "@/_components/building";
 import { createClient } from "@/supabase/server";
 
 export default async function BuildingPage({

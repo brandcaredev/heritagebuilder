@@ -2,34 +2,24 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
-import { signUpWithEmail, signInWithProvider } from "@/lib/supabase/auth";
+import { signInWithProvider } from "@/lib/supabase/auth";
 import { toast } from "sonner";
+import { loginSchema } from "./login-schema";
+import { type z } from "zod";
+import { signInWithEmail } from "./login-action";
+import { Link } from "@/i18n/routing";
+import { getQueryClient } from "@/trpc/react";
+import { createClient } from "@/supabase/client";
 
-const signUpSchema = z
-  .object({
-    email: z.string().email("Invalid email address"),
-    password: z
-      .string()
-      .min(6, "Password must be at least 6 characters")
-      .max(72, "Password must be less than 72 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+type LoginValues = z.infer<typeof loginSchema>;
 
-type SignUpValues = z.infer<typeof signUpSchema>;
-
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,22 +27,28 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SignUpValues>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
   });
 
-  async function onSubmit(data: SignUpValues) {
+  async function onSubmit(data: LoginValues) {
     try {
       setIsLoading(true);
-      const { error } = await signUpWithEmail(data.email, data.password);
+      const formData = new FormData();
+      formData.append("password", data.password);
+      formData.append("email", data.email);
+      const { message, isSuccess, user } = await signInWithEmail(formData);
 
-      if (error) {
-        toast.error(error.message);
+      if (!isSuccess) {
+        toast.error(message);
         return;
       }
 
-      toast.success("Check your email to confirm your account");
-      router.push("/login");
+      toast.success(message);
+      const queryClient = getQueryClient();
+      await queryClient.setQueryData(["user"], { user });
+      router.push("/");
+      router.refresh();
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -60,7 +56,7 @@ export default function RegisterPage() {
     }
   }
 
-  const handleGoogleSignUp = async () => {
+  const handleGoogleLogin = async () => {
     try {
       setIsLoading(true);
       const { error } = await signInWithProvider("google");
@@ -80,7 +76,7 @@ export default function RegisterPage() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-brown">
-            Create an account
+            Heritagebuilder
           </h1>
         </div>
 
@@ -121,22 +117,6 @@ export default function RegisterPage() {
                   </p>
                 )}
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="confirmPassword" className="text-green-dark-60">
-                  Confirm Password
-                </Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  disabled={isLoading}
-                  {...register("confirmPassword")}
-                />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-red-500">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
               <Button
                 disabled={isLoading}
                 className="bg-brown hover:bg-brown-dark-40"
@@ -144,7 +124,7 @@ export default function RegisterPage() {
                 {isLoading && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Sign Up
+                Sign In
               </Button>
             </div>
           </form>
@@ -162,24 +142,32 @@ export default function RegisterPage() {
             variant="outline"
             type="button"
             disabled={isLoading}
-            onClick={handleGoogleSignUp}
+            onClick={handleGoogleLogin}
             className="bg-green text-white hover:bg-green-dark-40 hover:text-white"
           >
             {isLoading ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Icons.google className="mr-2 h-4 w-4" />
-            )}{" "}
+            )}
             Google
           </Button>
         </div>
         <p className="text-muted-foreground px-8 text-center text-sm text-green-dark-60">
-          Already have an account?{" "}
           <Link
-            href="/login"
+            href="/reset-password"
             className="hover:text-brand underline underline-offset-4"
           >
-            Sign in
+            Forgot your password?
+          </Link>
+        </p>
+        <p className="text-muted-foreground px-8 text-center text-sm text-green-dark-60">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="hover:text-brand underline underline-offset-4"
+          >
+            Sign up
           </Link>
         </p>
       </div>

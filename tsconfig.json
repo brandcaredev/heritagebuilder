@@ -33,7 +33,10 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ]
+      ],
+      "@/_components/*": [
+        "./src/app/[locale]/_components/*"
+      ],
     }
   },
   "include": [

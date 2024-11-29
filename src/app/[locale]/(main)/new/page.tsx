@@ -1,5 +1,5 @@
 import { api } from "@/trpc/server";
-import NewBuildingForm from "../_components/new-building";
+import NewBuildingForm from "@/_components/new-building";
 
 export default async function NewBuilding({
   params: { locale },

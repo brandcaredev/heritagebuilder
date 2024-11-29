@@ -1,8 +1,10 @@
 import Image from "next/image";
-import Divider from "../../components/icons/divider";
 import { api } from "@/trpc/server";
 import { createClient } from "@/supabase/server";
 import { Link } from "@/i18n/routing";
+import Divider from "@/components/icons/divider";
+
+// export const dynamic = "force-static";
 
 export default async function MainPage({
   params: { locale },
@@ -14,7 +16,6 @@ export default async function MainPage({
     lang: locale,
   });
   const buildings = await api.building.getBuildings({ lang: locale });
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const supabase = await createClient();
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
@@ -94,9 +95,10 @@ export default async function MainPage({
         <Divider />
       </div>
 
-      {/* Latest Articles Sidebar */}
+      {/* TODO: Should be LATEST top 6 not every /*}
+      {/* Latest Buildings Sidebar */}
       <div className="lg:w-2/6">
-        <h2 className="mb-6 text-2xl text-stone-800">Latest articles</h2>
+        <h2 className="mb-6 text-2xl text-stone-800">Latest buildings</h2>
         <div className="space-y-4">
           {[...buildings, ...buildings.splice(0, 3)].map((building) => {
             const {
