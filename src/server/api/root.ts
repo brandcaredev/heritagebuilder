@@ -4,6 +4,7 @@ import { buildingTypeRouter } from "./routers/buildingtype";
 import { buildingRouter } from "./routers/building";
 import { cityRouter } from "./routers/city";
 import { countyRouter } from "./routers/county";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -16,6 +17,7 @@ export const appRouter = createTRPCRouter({
   building: buildingRouter,
   city: cityRouter,
   county: countyRouter,
+  user: userRouter,
 });
 
 // export type definition of API

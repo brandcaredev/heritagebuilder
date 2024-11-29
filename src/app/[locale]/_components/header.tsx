@@ -1,7 +1,11 @@
 import { MapIcon, PlusCircleIcon, Search, User } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { createClient } from "@/supabase/server";
 
-export function Header() {
+export async function Header() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  console.log("user", data.user);
   return (
     <header className="bg-brown text-stone-100">
       <div className="container mx-auto px-8 py-2">

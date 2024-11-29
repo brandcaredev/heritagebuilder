@@ -20,7 +20,7 @@ export const countyRouter = createTRPCRouter({
           eq(countiesDataTable.language, lang),
         ),
       });
-      console.log(county);
+
       if (!county)
         throw new TRPCError({
           code: "NOT_FOUND",

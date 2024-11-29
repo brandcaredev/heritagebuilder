@@ -1,6 +1,5 @@
 import { relations, sql } from "drizzle-orm";
 import {
-  boolean,
   geometry,
   integer,
   pgTable,
@@ -17,7 +16,7 @@ export const buildingsTable = pgTable("Building", {
   id: serial("id").primaryKey(),
   featuredImage: text("featuredimage").notNull(),
   images: text("images").array().notNull(),
-  disabled: boolean("disabled").default(true),
+  status: text("status").default("pending"),
   position: geometry("position", {
     type: "point",
     mode: "tuple",

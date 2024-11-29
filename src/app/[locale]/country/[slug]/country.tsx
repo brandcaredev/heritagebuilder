@@ -31,7 +31,7 @@ export default function CountryPage({
     null,
   );
   const supabase = createClient();
-  console.log(country);
+
   return (
     <div>
       <h1 className="mb-8 text-4xl font-bold text-brown">{country.name}</h1>
