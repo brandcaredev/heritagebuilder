@@ -4,7 +4,7 @@ import { createClient } from "@/supabase/server";
 import { Link } from "@/i18n/routing";
 import Divider from "@/components/icons/divider";
 
-// export const dynamic = "force-static";
+export const dynamic = "force-static";
 
 export default async function MainPage({
   params: { locale },

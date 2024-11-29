@@ -8,12 +8,12 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
-export const playfairDisplay = Playfair_Display({
+const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair-display",
 });
 
-export const sourceSans3 = Source_Sans_3({
+const sourceSans3 = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-source-sans-3",
 });

@@ -57,6 +57,7 @@
     "react-leaflet-cluster": "^2.1.0",
     "server-only": "^0.0.1",
     "shadcn": "^2.1.6",
+    "sharp": "^0.33.5",
     "sonner": "^1.7.0",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.5.3",
