@@ -42,6 +42,7 @@ export const countiesDataTable = pgTable(
     language: text("language").notNull(),
     slug: text("slug").notNull(),
     name: text("name").notNull(),
+    description: text("description"),
   },
   (table) => ({
     unq: unique().on(table.language, table.slug),
