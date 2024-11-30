@@ -18,10 +18,13 @@ export async function signUpWithEmail(data: FormData) {
   const headersList = headers();
   const host = headersList.get("X-Forwarded-Host");
   const proto = headersList.get("X-Forwarded-Proto");
-  console.log("HOST, PROTO", host, proto);
+
   const { error } = await supabase.auth.signUp({
     email: parsedData.email,
     password: parsedData.password,
+    options: {
+      emailRedirectTo: `${proto}://${host}/`,
+    },
   });
 
   if (error) {
