@@ -7,7 +7,7 @@ export const routing = defineRouting({
   locales: Object.keys(locales),
 
   // Used when no locale matches
-  defaultLocale: "en",
+  defaultLocale: "hu",
 
   // The `pathnames` object holds pairs of internal and
   // external paths. Based on the locale, the external
@@ -53,6 +53,18 @@ export const routing = defineRouting({
     "/new": {
       en: "/new",
       hu: "/új",
+    },
+    "/login": {
+      en: "/login",
+      hu: "/bejelentkezés",
+    },
+    "/register": {
+      en: "/register",
+      hu: "/regisztráció",
+    },
+    "/reset-password": {
+      en: "/reset-password",
+      hu: "/jelszó-visszaállítás",
     },
   },
 });

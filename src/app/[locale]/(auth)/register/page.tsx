@@ -5,22 +5,19 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import type * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icons } from "@/components/icons";
-import { signInWithEmail, signInWithProvider } from "@/lib/supabase/auth";
+import { signInWithProvider } from "@/lib/supabase/auth";
 import { toast } from "sonner";
+import { signUpSchema } from "./signup-schema";
+import { signUpWithEmail } from "./signup-action";
 
-const loginSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
+type SignUpValues = z.infer<typeof signUpSchema>;
 
-type LoginValues = z.infer<typeof loginSchema>;
-
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,23 +25,26 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginValues>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignUpValues>({
+    resolver: zodResolver(signUpSchema),
   });
 
-  async function onSubmit(data: LoginValues) {
+  async function onSubmit(data: SignUpValues) {
     try {
       setIsLoading(true);
-      const { error } = await signInWithEmail(data.email, data.password);
+      const formData = new FormData();
+      formData.append("password", data.password);
+      formData.append("email", data.email);
+      formData.append("confirmPassword", data.confirmPassword);
+      const { message, isSuccess } = await signUpWithEmail(formData);
 
-      if (error) {
-        toast.error(error.message);
+      if (!isSuccess) {
+        toast.error(message);
         return;
       }
 
-      toast.success("Logged in successfully");
-      router.push("/");
-      router.refresh();
+      toast.success("Check your email to confirm your account");
+      router.push("/login");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -52,7 +52,7 @@ export default function LoginPage() {
     }
   }
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       setIsLoading(true);
       const { error } = await signInWithProvider("google");
@@ -72,7 +72,7 @@ export default function LoginPage() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-brown">
-            Heritagebuilder
+            Create an account
           </h1>
         </div>
 
@@ -113,6 +113,22 @@ export default function LoginPage() {
                   </p>
                 )}
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="confirmPassword" className="text-green-dark-60">
+                  Confirm Password
+                </Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  disabled={isLoading}
+                  {...register("confirmPassword")}
+                />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-500">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
+              </div>
               <Button
                 disabled={isLoading}
                 className="bg-brown hover:bg-brown-dark-40"
@@ -120,7 +136,7 @@ export default function LoginPage() {
                 {isLoading && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Sign In
+                Sign Up
               </Button>
             </div>
           </form>
@@ -138,7 +154,7 @@ export default function LoginPage() {
             variant="outline"
             type="button"
             disabled={isLoading}
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignUp}
             className="bg-green text-white hover:bg-green-dark-40 hover:text-white"
           >
             {isLoading ? (
@@ -150,20 +166,12 @@ export default function LoginPage() {
           </Button>
         </div>
         <p className="text-muted-foreground px-8 text-center text-sm text-green-dark-60">
+          Already have an account?{" "}
           <Link
-            href="/auth/reset-password"
+            href="/login"
             className="hover:text-brand underline underline-offset-4"
           >
-            Forgot your password?
-          </Link>
-        </p>
-        <p className="text-muted-foreground px-8 text-center text-sm text-green-dark-60">
-          Don&apos;t have an account?{" "}
-          <Link
-            href="/register"
-            className="hover:text-brand underline underline-offset-4"
-          >
-            Sign up
+            Sign in
           </Link>
         </p>
       </div>

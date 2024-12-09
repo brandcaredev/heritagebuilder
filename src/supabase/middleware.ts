@@ -1,9 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
-import { type NextResponse, type NextRequest } from "next/server";
+import {
+  NextResponse,
+  type NextRequest,
+  type NextResponse as NextResponseType,
+} from "next/server";
 
 export async function updateSession(
   request: NextRequest,
-  response: NextResponse,
+  response: NextResponseType,
 ) {
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -14,9 +18,12 @@ export async function updateSession(
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
+          cookiesToSet.forEach(({ name, value, options }) =>
             request.cookies.set(name, value),
           );
+          response = NextResponse.next({
+            request,
+          });
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
           );
@@ -29,7 +36,12 @@ export async function updateSession(
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log("middleware", user);
+  const decodedUrl = decodeURIComponent(request.nextUrl.pathname).split("/")[2];
+  if (!user && ["új", "new"].includes(decodedUrl ?? "")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
 
   return response;
 }

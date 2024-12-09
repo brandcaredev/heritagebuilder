@@ -10,12 +10,12 @@ import {
   type BuildingTypes,
   type CountryExtended,
 } from "@/server/db/zodSchemaTypes";
-import Divider from "../../../../components/icons/divider";
 import { createClient } from "@/supabase/client";
-import Serbia from "../../../../components/icons/serbia";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link } from "@/i18n/routing";
+import Divider from "@/components/icons/divider";
+import Serbia from "@/components/icons/serbia";
 
 export default function CountryPage({
   country,

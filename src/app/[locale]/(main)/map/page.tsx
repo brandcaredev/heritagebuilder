@@ -1,6 +1,6 @@
 import { api } from "@/trpc/server";
 import dynamic from "next/dynamic";
-const BuildingsMap = dynamic(() => import("../_components/buildings-map"), {
+const BuildingsMap = dynamic(() => import("@/_components/buildings-map"), {
   ssr: false,
 });
 

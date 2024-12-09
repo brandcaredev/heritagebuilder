@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { routing } from "./i18n/routing";
@@ -6,17 +5,9 @@ import { updateSession } from "./supabase/middleware";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-const nonTranslatedPage = ["/login", "/register"];
-
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next();
-
   // Handle i18n routing first
   const intlResponse = intlMiddleware(request);
-
-  if (nonTranslatedPage.includes(request.nextUrl.pathname)) {
-    return await updateSession(request, response);
-  }
 
   return await updateSession(request, intlResponse);
 }
