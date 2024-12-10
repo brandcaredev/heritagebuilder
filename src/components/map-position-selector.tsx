@@ -9,7 +9,9 @@ import {
   CastleIcon,
   ChurchIcon,
   CommonBuildingIcon,
+  FortressIcon,
   IndustrialIcon,
+  MapPinIcon,
   ResidentalBuildingIcon,
 } from "./icons/leaflet-icons";
 import { type LocaleType } from "@/lib/constans";
@@ -69,52 +71,56 @@ const MapPositionSelector = ({
   setCity,
   type,
 }: {
-  position: [number, number];
+  position?: [number, number];
   setPosition: (value: [number, number]) => void;
-  setCountry: (value: string) => void;
-  setCounty: (value: string, lang: LocaleType) => void;
-  setCity: (value: string, lang: LocaleType) => void;
+  setCountry?: (value: string) => void;
+  setCounty?: (value: string, lang: LocaleType) => void;
+  setCity?: (value: string, lang: LocaleType) => void;
   type?: number;
 }) => {
   const { mutate } = useMutation({ mutationFn: getPositionData });
-
   const SearchControl = () => {
     const map = useMapEvents({
       click(e) {
-        mutate(
-          { position: e.latlng, lang: "en" },
-          {
-            onSuccess: (data) => {
-              if (
-                data.address.country_code !== "ro" &&
-                data.address.country_code !== "rs"
-              ) {
-                toast.error(
-                  "Invalid location, please select a location in Romania or Serbia",
-                );
-                return;
-              }
-              setTimeout(() => {
-                mutate(
-                  { position: e.latlng, lang: "hu" },
-                  {
-                    onSuccess: (datahu) => {
-                      setCity(data.address.city ?? data.address.village!, "en");
-                      setCity(
-                        datahu.address.city ?? datahu.address.village!,
-                        "hu",
-                      );
-                      setCounty(data.address.county, "en");
-                      setCounty(datahu.address.county, "hu");
-                      setCountry(data.address.country_code);
-                      setPosition([e.latlng.lat, e.latlng.lng]);
+        setPosition([e.latlng.lat, e.latlng.lng]);
+        if (setCountry && setCounty && setCity) {
+          mutate(
+            { position: e.latlng, lang: "en" },
+            {
+              onSuccess: (data) => {
+                if (
+                  data.address.country_code !== "ro" &&
+                  data.address.country_code !== "rs"
+                ) {
+                  toast.error(
+                    "Invalid location, please select a location in Romania or Serbia",
+                  );
+                  return;
+                }
+                setTimeout(() => {
+                  mutate(
+                    { position: e.latlng, lang: "hu" },
+                    {
+                      onSuccess: (datahu) => {
+                        setCity(
+                          data.address.city ?? data.address.village!,
+                          "en",
+                        );
+                        setCity(
+                          datahu.address.city ?? datahu.address.village!,
+                          "hu",
+                        );
+                        setCounty(data.address.county, "en");
+                        setCounty(datahu.address.county, "hu");
+                        setCountry(data.address.country_code);
+                      },
                     },
-                  },
-                );
-              }, 100);
+                  );
+                }, 100);
+              },
             },
-          },
-        );
+          );
+        }
       },
     });
 
@@ -145,6 +151,8 @@ const MapPositionSelector = ({
         return ChurchIcon;
       case 2:
         return CastleIcon;
+      case 3:
+        return FortressIcon;
       case 4:
         return CommonBuildingIcon;
       case 5:
@@ -152,7 +160,7 @@ const MapPositionSelector = ({
       case 6:
         return ResidentalBuildingIcon;
       default:
-        return ChurchIcon;
+        return MapPinIcon;
     }
   }, [type]);
 

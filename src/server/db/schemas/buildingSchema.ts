@@ -43,10 +43,6 @@ export const buildingsTable = pgTable("Building", {
 });
 
 export const buildingRelations = relations(buildingsTable, ({ one, many }) => ({
-  author: one(citiesTable, {
-    fields: [buildingsTable.cityid],
-    references: [citiesTable.id],
-  }),
   buildingType: one(buildingTypesTable, {
     fields: [buildingsTable.buildingtypeid],
     references: [buildingTypesTable.id],

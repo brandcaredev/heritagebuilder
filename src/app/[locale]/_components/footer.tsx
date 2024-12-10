@@ -40,28 +40,6 @@ export function Footer() {
                   Serbia
                 </Link>
               </li>
-              <li>
-                <Link
-                  href={{
-                    pathname: "/country/[slug]",
-                    params: { slug: "slovakia" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Slovakia
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{
-                    pathname: "/country/[slug]",
-                    params: { slug: "ukraine" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Ukraine
-                </Link>
-              </li>
             </ul>
           </div>
           <div>

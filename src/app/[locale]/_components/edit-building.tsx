@@ -26,24 +26,18 @@ import {
   type BuildingCreate,
   type BuildingData,
   type BuildingTypes,
-  type CityCreate,
-  type CountyCreate,
 } from "@/server/db/zodSchemaTypes";
 import { createClient } from "@/supabase/client";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import dynamic from "next/dynamic";
+import imageCompression from "browser-image-compression";
+import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import Building from "./building";
-import imageCompression from "browser-image-compression";
-
-const MapPositionSelector = dynamic(
-  () => import("@/components/map-position-selector"),
-  { ssr: false },
-);
+import { useRouter } from "@/i18n/routing";
 
 const fileSchema = z.instanceof(File);
 
@@ -54,8 +48,6 @@ const translatedContentSchema = z.object({
   presentday: z.string(),
   famousresidents: z.string().optional(),
   renovation: z.string().optional(),
-  city: z.string(),
-  county: z.string(),
 });
 
 const formSchema = z.object({
@@ -63,45 +55,68 @@ const formSchema = z.object({
   type: z.string().optional(),
   en: translatedContentSchema,
   hu: translatedContentSchema,
-  featuredImage: z.array(fileSchema),
-  images: z.array(fileSchema),
+  featuredImage: z.array(fileSchema).optional(),
+  images: z.array(fileSchema).optional(),
   position: z.tuple([z.number(), z.number()]),
 });
 
-export default function BuildingForm({
+interface ExistingBuilding {
+  id: number;
+  featuredImage: string;
+  images: string[];
+  countryid: string;
+  countyid: number;
+  cityid: number;
+  buildingtypeid: number;
+  position: [number, number];
+  en?: BuildingData;
+  hu: BuildingData;
+}
+
+export default function EditBuildingForm({
   buildingTypes,
+  building,
 }: {
   buildingTypes: BuildingTypes[];
+  building: ExistingBuilding;
 }) {
-  const { mutateAsync: createBuilding } =
-    api.building.createBuilding.useMutation();
-  const { mutateAsync: createCounty } = api.county.createCounty.useMutation();
-  const { mutateAsync: createCity } = api.city.createCity.useMutation();
-  const trpc = api.useUtils();
+  const router = useRouter();
+  const supabase = createClient();
+  const { mutateAsync: updateBuilding } =
+    api.building.updateBuilding.useMutation();
   const [preview, setPreview] = useState<boolean>(false);
   const [activeLanguage, setActiveLanguage] = useState<LocaleType>("en");
   const supabaseClient = createClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      country: building.countryid,
+      type: building.buildingtypeid.toString(),
+      position: building.position,
       en: {
-        name: "",
-        history: "",
-        style: "",
-        presentday: "",
-        famousresidents: "",
-        renovation: "",
+        name: building.en?.name ?? "",
+        history: building.en?.history ?? "",
+        style: building.en?.style ?? "",
+        presentday: building.en?.presentday ?? "",
+        famousresidents: building.en?.famousresidents ?? "",
+        renovation: building.en?.renovation ?? "",
       },
       hu: {
-        name: "",
-        history: "",
-        style: "",
-        presentday: "",
-        famousresidents: "",
-        renovation: "",
+        name: building.hu.name,
+        history: building.hu.history,
+        style: building.hu.style,
+        presentday: building.hu.presentday,
+        famousresidents: building.hu.famousresidents ?? "",
+        renovation: building.hu.renovation ?? "",
       },
     },
   });
+
+  const {
+    data: { publicUrl: featuredImagePublicUrl },
+  } = supabase.storage
+    .from("heritagebuilder-test")
+    .getPublicUrl(building.featuredImage ?? "");
 
   const compressImage = async (file: File) => {
     const options = {
@@ -119,132 +134,74 @@ export default function BuildingForm({
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const baseFolder = `building/${slugify(values.hu.name)}`;
-    const featuredImage = values.featuredImage[0];
-    if (!featuredImage) {
-      toast.error(
-        "Something went wrong while creating the building - Featured image failed",
-        {
-          id: "building-creation-toast",
-        },
-      );
-      return;
-    }
-    const featuredFileExt = featuredImage.name.split(".").pop();
-    const featuredPath = `${baseFolder}/featured.${featuredFileExt}`;
+    let featuredImagePath = building.featuredImage;
+    let imagesPaths = building.images;
+
     try {
-      toast.loading("Creating the building...", {
-        id: "building-creation-toast",
+      toast.loading("Updating the building...", {
+        id: "building-update-toast",
       });
 
-      // Compress featured image if larger than 1MB
-      const featuredImageToUpload =
-        featuredImage.size > 1024 * 1024
-          ? await compressImage(featuredImage)
-          : featuredImage;
+      // Handle featured image update if provided
+      if (values.featuredImage?.[0]) {
+        const featuredImage = values.featuredImage[0];
+        const featuredFileExt = featuredImage.name.split(".").pop();
+        featuredImagePath = `${baseFolder}/featured.${featuredFileExt}`;
 
-      const { error: featuredError } = await supabaseClient.storage
-        .from("heritagebuilder-test")
-        .upload(featuredPath, featuredImageToUpload);
+        const featuredImageToUpload =
+          featuredImage.size > 1024 * 1024
+            ? await compressImage(featuredImage)
+            : featuredImage;
 
-      if (featuredError) throw featuredError;
+        // Delete old featured image
+        await supabaseClient.storage
+          .from("heritagebuilder-test")
+          .remove([building.featuredImage]);
 
-      // Upload and compress additional images if needed
-      const uploadedImagePaths = await Promise.all(
-        values.images.map(async (image, i) => {
-          const fileExtension = image.name.split(".").pop();
-          const filePath = `${baseFolder}/${i + 1}.${fileExtension}`;
+        const { error: featuredError } = await supabaseClient.storage
+          .from("heritagebuilder-test")
+          .upload(featuredImagePath, featuredImageToUpload);
 
-          const imageToUpload =
-            image.size > 1024 * 1024 ? await compressImage(image) : image;
+        if (featuredError) throw featuredError;
+      }
 
-          const { error } = await supabaseClient.storage
-            .from("heritagebuilder-test")
-            .upload(filePath, imageToUpload);
+      // Handle additional images update if provided
+      if (values.images?.length) {
+        // Delete old images
+        await supabaseClient.storage
+          .from("heritagebuilder-test")
+          .remove(building.images);
 
-          if (error) throw error;
-          return filePath;
-        }),
-      );
-      // get countyid if exits, insert a new county if not
-      let countyid = await trpc.county.getCountyIdBySlug
-        .fetch({
-          slug: slugify(values.en.county),
-          lang: "en",
-        })
-        .catch(() => undefined);
-      if (!countyid) {
-        const countyData: CountyCreate = {
-          countryid: values.country,
-          en: {
-            slug: slugify(values.en.county),
-            name: values.en.county,
-            language: "en",
-          },
-          hu: {
-            slug: slugify(values.hu.county) || slugify(values.en.county),
-            name: values.hu.county,
-            language: "hu",
-          },
-          regionid: null,
-          position: null,
-        };
+        // Upload new images
+        imagesPaths = await Promise.all(
+          values.images.map(async (image, i) => {
+            const fileExtension = image.name.split(".").pop();
+            const filePath = `${baseFolder}/${i + 1}.${fileExtension}`;
 
-        await createCounty(
-          { ...countyData },
-          {
-            onSuccess: (data) => (countyid = data),
-            onError: () => {
-              throw new Error();
-            },
-          },
+            const imageToUpload =
+              image.size > 1024 * 1024 ? await compressImage(image) : image;
+
+            const { error } = await supabaseClient.storage
+              .from("heritagebuilder-test")
+              .upload(filePath, imageToUpload);
+
+            if (error) throw error;
+            return filePath;
+          }),
         );
       }
-      if (!countyid) throw new Error();
-      //get cityid if exits, insert a new city if not
-      let cityid = await trpc.city.getCityIdBySlug
-        .fetch({
-          slug: slugify(values.en.city),
-          lang: "en",
-        })
-        .catch(() => undefined);
-      if (!cityid) {
-        const cityData: CityCreate = {
-          countryid: values.country,
-          countyid,
-          en: {
-            slug: slugify(values.en.city),
-            name: values.en.city,
-            language: "en",
-          },
-          hu: {
-            slug: slugify(values.hu.city) || slugify(values.en.city),
-            name: values.hu.city,
-            language: "hu",
-          },
-          position: null,
-        };
 
-        await createCity(
-          { ...cityData },
-          {
-            onSuccess: (data) => (cityid = data),
-            onError: () => {
-              throw new Error();
-            },
-          },
-        );
-      }
-      if (!cityid) throw new Error();
       // Prepare building data
       const buildingData = {
-        featuredImage: featuredPath,
-        images: uploadedImagePaths,
+        id: building.id,
+        featuredImage: featuredImagePath,
+        images: imagesPaths,
         countryid: values.country,
-        countyid,
-        cityid,
+        countyid: building.countyid,
+        cityid: building.cityid,
         buildingtypeid: parseInt(values.type ?? "1"),
-        status: "pending",
         position: values.position,
+        status: "pending",
       };
 
       // Prepare translation data
@@ -268,51 +225,56 @@ export default function BuildingForm({
         hu: BuildingData;
       };
 
-      const insertBuilding: BuildingCreate = {
+      const updateBuildingData: BuildingCreate & { id: number } = {
         ...buildingData,
         ...translationData,
       };
-      await createBuilding(insertBuilding, {
+
+      await updateBuilding(updateBuildingData, {
         onSuccess: () => {
-          toast.success("Building created successfully", {
-            id: "building-creation-toast",
+          toast.success("Building updated successfully", {
+            id: "building-update-toast",
           });
+          router.refresh();
         },
       });
     } catch (error) {
-      const filePaths = values.images.map((image, i) => {
-        const fileExtension = image.name.split(".").pop();
-        const filePath = `${baseFolder}/${i + 1}.${fileExtension}`;
-        return filePath;
-      });
-      await supabaseClient.storage
-        .from("heritagebuilder-test")
-        .remove([...filePaths, featuredPath]);
-      console.error("Error submitting form:", error);
-      toast.error("Something went wrong while creating the building", {
-        id: "building-creation-toast",
+      console.error("Error updating building:", error);
+      toast.error("Something went wrong while updating the building", {
+        id: "building-update-toast",
       });
     }
   };
 
   const getPreviewComponent = () => {
     const formData = form.getValues();
-    const { en, hu, type, ...rest } = formData;
+    const { en, hu, ...rest } = formData;
     const languageData = activeLanguage === "en" ? en : hu;
+
+    // For preview, use either the new uploaded images or existing ones
+    const previewImages = formData.images
+      ? formData.images.map(
+          (img) => (img as File & { preview: string }).preview,
+        )
+      : building.images.map((img) => {
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("heritagebuilder-test").getPublicUrl(img);
+          return publicUrl;
+        });
+
+    const previewFeaturedImage = formData.featuredImage?.[0]
+      ? (formData.featuredImage[0] as File & { preview: string }).preview
+      : featuredImagePublicUrl;
+
     const previewData = {
       ...rest,
       ...languageData,
-      images: formData.images.map(
-        (img) => (img as File & { preview: string }).preview,
-      ),
-      featuredImage: (
-        formData.featuredImage[0] as File & {
-          preview: string;
-        }
-      ).preview,
+      images: previewImages,
+      featuredImage: previewFeaturedImage,
       famousresidents: languageData.famousresidents ?? null,
       renovation: languageData.renovation ?? null,
-      buildingtypeid: parseInt(type ?? "0"),
+      buildingtypeid: parseInt(rest.type ?? "0"),
     };
     return <Building building={previewData} />;
   };
@@ -470,75 +432,84 @@ export default function BuildingForm({
               ))}
             </Tabs>
 
-            <FormField
-              control={form.control}
-              name="featuredImage"
-              render={({ field }) => (
-                <div className="space-y-6">
-                  <FormItem className="w-full">
-                    <FormLabel>Featured image</FormLabel>
-                    <FormControl>
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        maxFileCount={1}
-                        maxSize={4 * 1024 * 1024}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </div>
-              )}
-            />
+            <div>
+              <h3 className="mb-4 text-lg font-medium">
+                Current Featured Image
+              </h3>
+              <div className="relative mb-4 h-48 w-48">
+                <Image
+                  src={featuredImagePublicUrl}
+                  alt="Featured"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="featuredImage"
+                render={({ field }) => (
+                  <div className="space-y-6">
+                    <FormItem className="w-full">
+                      <FormLabel>Update Featured Image</FormLabel>
+                      <FormControl>
+                        <FileUploader
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          maxFileCount={1}
+                          maxSize={4 * 1024 * 1024}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </div>
+                )}
+              />
+            </div>
 
-            <FormField
-              control={form.control}
-              name="images"
-              render={({ field }) => (
-                <div className="space-y-6">
-                  <FormItem className="w-full">
-                    <FormLabel>Images</FormLabel>
-                    <FormControl>
-                      <FileUploader
-                        value={field.value}
-                        onValueChange={field.onChange}
-                        maxFileCount={4}
-                        maxSize={4 * 1024 * 1024}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </div>
-              )}
-            />
+            <div>
+              <h3 className="mb-4 text-lg font-medium">Current Images</h3>
+              <div className="mb-4 grid grid-cols-4 gap-4">
+                {building.images.map((image, index) => {
+                  const {
+                    data: { publicUrl },
+                  } = supabase.storage
+                    .from("heritagebuilder-test")
+                    .getPublicUrl(image);
 
-            <FormField
-              control={form.control}
-              name="position"
-              render={({ field: { value, onChange } }) => (
-                <FormItem>
-                  <FormLabel>Position</FormLabel>
-                  <FormControl>
-                    <MapPositionSelector
-                      type={parseInt(form.getValues().type ?? "1")}
-                      position={value}
-                      setPosition={(value) => onChange(value)}
-                      setCountry={(value: string) =>
-                        form.setValue(`country`, value)
-                      }
-                      setCounty={async (value: string, lang: LocaleType) =>
-                        form.setValue(`${lang}.county`, value)
-                      }
-                      setCity={async (value: string, lang: LocaleType) =>
-                        form.setValue(`${lang}.city`, value)
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit">Submit</Button>
+                  return (
+                    <div key={index} className="relative h-32 w-32">
+                      <Image
+                        src={publicUrl}
+                        alt={`Image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <div className="space-y-6">
+                    <FormItem className="w-full">
+                      <FormLabel>Update Images</FormLabel>
+                      <FormControl>
+                        <FileUploader
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          maxFileCount={4}
+                          maxSize={4 * 1024 * 1024}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </div>
+                )}
+              />
+            </div>
+            <Button type="submit">Update Building</Button>
           </form>
         </Form>
       )}

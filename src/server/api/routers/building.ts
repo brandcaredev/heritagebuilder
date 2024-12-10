@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import {
   BuildingDataInsertSchema,
   BuildingSchema,
@@ -12,21 +12,24 @@ import {
   citiesDataTable,
   countriesDataTable,
   countiesDataTable,
+  citiesTable,
+  countiesTable,
 } from "@/server/db/schemas";
 import { TRPCError } from "@trpc/server";
 import { mergeLanguageData } from "@/lib/utils";
+import { db } from "@/server/db";
 
 export const buildingRouter = createTRPCRouter({
   getBuildings: publicProcedure
     .input(z.object({ lang: z.string() }))
-    .query(async ({ input, ctx }) => {
-      const buildings = await ctx.db.query.buildingsTable.findMany({
+    .query(async ({ input: { lang } }) => {
+      const buildings = await db.query.buildingsTable.findMany({
         with: {
           county: {
             with: {
               data: {
                 where: or(
-                  eq(countiesDataTable.language, input.lang),
+                  eq(countiesDataTable.language, lang),
                   eq(countiesDataTable.language, "hu"),
                 ),
                 columns: {
@@ -35,12 +38,15 @@ export const buildingRouter = createTRPCRouter({
                 },
               },
             },
+            columns: {
+              position: false,
+            },
           },
           country: {
             with: {
               data: {
                 where: or(
-                  eq(countriesDataTable.language, input.lang),
+                  eq(countriesDataTable.language, lang),
                   eq(countriesDataTable.language, "hu"),
                 ),
                 columns: {
@@ -54,7 +60,7 @@ export const buildingRouter = createTRPCRouter({
             with: {
               data: {
                 where: or(
-                  eq(citiesDataTable.language, input.lang),
+                  eq(citiesDataTable.language, lang),
                   eq(citiesDataTable.language, "hu"),
                 ),
                 columns: {
@@ -63,11 +69,14 @@ export const buildingRouter = createTRPCRouter({
                 },
               },
             },
+            columns: {
+              position: false,
+            },
           },
           data: {
             // get the requested language and hungarian which is the fallback
             where: or(
-              eq(buildingDataTable.language, input.lang),
+              eq(buildingDataTable.language, lang),
               eq(buildingDataTable.language, "hu"),
             ),
           },
@@ -75,13 +84,12 @@ export const buildingRouter = createTRPCRouter({
       });
 
       const buildingsMapped = buildings.map((building) => ({
-        ...mergeLanguageData(building, input.lang),
-        city: mergeLanguageData(building.city, input.lang),
-        country: mergeLanguageData(building.country, input.lang),
-        county: mergeLanguageData(building.county, input.lang),
+        ...mergeLanguageData(building, lang),
+        city: mergeLanguageData(building.city, lang),
+        country: mergeLanguageData(building.country, lang),
+        county: mergeLanguageData(building.county, lang),
       }));
-
-      return buildingsMapped.filter((building) => building !== undefined);
+      return buildingsMapped;
     }),
   getBuildingBySlug: publicProcedure
     .input(z.object({ slug: z.string(), lang: z.string() }))
@@ -144,6 +152,149 @@ export const buildingRouter = createTRPCRouter({
             { ...en, buildingid },
             { ...hu, buildingid },
           ]);
+        });
+        return "Building successfully created";
+      } catch (error) {
+        console.error("Error creating building - createBuilding:", error);
+        throw new Error("Error creating building");
+      }
+    }),
+  getPendingBuildings: publicProcedure.query(async ({ ctx }) => {
+    try {
+      const buildings = await ctx.db.query.buildingsTable.findMany({
+        where: eq(buildingsTable.status, "pending"),
+        with: {
+          city: {
+            with: {
+              data: true,
+            },
+            extras: {
+              x: sql<number>`ST_X(${citiesTable.position})`.as("x"),
+              y: sql<number>`ST_Y(${citiesTable.position})`.as("y"),
+            },
+            columns: {
+              position: false,
+            },
+          },
+          country: {
+            with: {
+              data: true,
+            },
+          },
+          county: {
+            with: {
+              data: true,
+            },
+            extras: {
+              x: sql<number>`ST_X(${countiesTable.position})`.as("x"),
+              y: sql<number>`ST_Y(${countiesTable.position})`.as("y"),
+            },
+            columns: {
+              position: false,
+            },
+          },
+          buildingType: {
+            with: {
+              data: true,
+            },
+          },
+          data: true,
+        },
+      });
+
+      return buildings.map((building) => ({
+        ...building,
+        country: {
+          ...building.country,
+          en: building.country.data.find((d) => d.language === "en"),
+          hu: building.country.data.find((d) => d.language === "hu")!,
+        },
+        city: {
+          ...building.city,
+          position:
+            building.city.x && building.city.y
+              ? [building.city.x, building.city.y]
+              : null,
+          en: building.city.data.find((d) => d.language === "en"),
+          hu: building.city.data.find((d) => d.language === "hu")!,
+        },
+        buildingType: {
+          ...building.buildingType,
+          en: building.buildingType.data.find((d) => d.language === "en"),
+          hu: building.buildingType.data.find((d) => d.language === "hu")!,
+        },
+        county: {
+          ...building.county,
+          position:
+            building.county.x && building.county.y
+              ? [building.county.x, building.county.y]
+              : null,
+          en: building.county.data.find((d) => d.language === "en"),
+          hu: building.county.data.find((d) => d.language === "hu")!,
+        },
+        en: building.data.find((d) => d.language === "en"),
+        hu: building.data.find((d) => d.language === "hu")!,
+      }));
+    } catch (error) {
+      console.error("Error fetching pending buildings:", error);
+      throw new Error("Failed to fetch pending buildings");
+    }
+  }),
+  approveBuilding: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        await ctx.db
+          .update(buildingsTable)
+          .set({ status: "approved" })
+          .where(eq(buildingsTable.id, input.id));
+        return "Building approved successfully";
+      } catch (error) {
+        console.error("Error approving building:", error);
+        throw new Error("Failed to approve building");
+      }
+    }),
+  updateBuilding: publicProcedure
+    .input(
+      BuildingSchema.omit({
+        createdAt: true,
+        updatedAt: true,
+      }).extend({
+        en: BuildingDataInsertSchema.omit({ buildingid: true }),
+        hu: BuildingDataInsertSchema.omit({ buildingid: true }),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { en, hu, id, ...baseData } = input;
+      try {
+        await ctx.db.transaction(async (tx) => {
+          await tx
+            .update(buildingsTable)
+            .set(baseData)
+            .where(sql`${buildingsTable.id} = ${id}`);
+
+          await tx
+            .update(buildingDataTable)
+            .set(en)
+            .where(
+              and(
+                eq(buildingDataTable.buildingid, id),
+                eq(buildingDataTable.language, "en"),
+              ),
+            );
+          await tx
+            .update(buildingDataTable)
+            .set(hu)
+            .where(
+              and(
+                eq(buildingDataTable.buildingid, id),
+                eq(buildingDataTable.language, "hu"),
+              ),
+            );
         });
         return "Building successfully created";
       } catch (error) {

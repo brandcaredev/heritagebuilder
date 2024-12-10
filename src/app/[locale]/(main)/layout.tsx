@@ -7,9 +7,12 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-}: Readonly<{
+  params: { locale },
+}: {
   children: React.ReactNode;
-}>) {
+  params: { locale: string };
+}) {
+  console.log("LOCALE", locale);
   return (
     <>
       <Header />

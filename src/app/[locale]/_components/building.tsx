@@ -7,7 +7,12 @@ import {
 } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { type BuildingPreviewData } from "@/lib/types";
+import dynamic from "next/dynamic";
 import Image from "next/image";
+
+const MapPosition = dynamic(() => import("@/components/map-position"), {
+  ssr: false,
+});
 
 export default function BuildingComponent({
   building,
@@ -17,9 +22,9 @@ export default function BuildingComponent({
   const buildingImages = [building.featuredImage, ...building.images];
   return (
     <div className="flex flex-col gap-10 lg:flex-row">
-      <div className="lg:w-1/2 flex flex-col">
+      <div className="flex flex-col gap-4 lg:w-1/2">
         <Carousel>
-          <CarouselMainContainer className="h-[600px]">
+          <CarouselMainContainer className="h-[400px] md:h-[600px]">
             {buildingImages.map((img, index) => (
               <SliderMainItem
                 key={index}
@@ -53,20 +58,21 @@ export default function BuildingComponent({
             ))}
           </CarouselThumbsContainer>
         </Carousel>
+        <MapPosition
+          position={building.position}
+          type={building.buildingtypeid}
+          className="h-[400px] w-full md:h-[600px]"
+        />
       </div>
       <ScrollArea className="lg:max-h-screen lg:w-1/2">
         <div className="flex flex-col gap-4">
           <h1 className="text-4xl font-bold text-brown">{building.name}</h1>
 
           <h3 className="text-2xl font-bold text-brown">History</h3>
-          <span className="text-justify font-source-sans-3">
-            {building.history}
-          </span>
+          <span className="font-source-sans-3">{building.history}</span>
 
           <h3 className="text- text-2xl font-bold text-brown">Style</h3>
-          <span className="text-justify font-source-sans-3">
-            {building.style}
-          </span>
+          <span className="font-source-sans-3">{building.style}</span>
 
           {building.famousresidents && (
             <>

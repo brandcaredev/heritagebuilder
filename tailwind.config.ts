@@ -23,42 +23,19 @@ export default {
       colors: {
         green: {
           DEFAULT: "#4A5838",
-          "dark-10": "#434f32", // slightly darker
-          "dark-20": "#3b462d", // darker
-          "dark-30": "#343e27", // more dark
-          "dark-40": "#2c3522", // even darker
-          "dark-50": "#252c1c", // much darker
-          "dark-60": "#1e2316", // very dark
-          "dark-70": "#161a11", // near black
-          "dark-80": "#0f120b", // almost black
-          "dark-90": "#070906", // very close to black
+          "2": "#6E7960",
+          "3": "#343E27",
+          "4": "#252C1C",
         },
         brown: {
-          DEFAULT: "#6a573a", // Base color
-          // Lightening shades
-          "light-10": "#79684e", // slightly lighter
-          "light-20": "#887961", // lighter
-          "light-30": "#978975", // even lighter
-          "light-40": "#a69889", // more light
-          "light-50": "#b5a89d", // much lighter
-          "light-60": "#c3bcb0", // very light
-          "light-70": "#d2cdc4", // near white
-          "light-80": "#e1ddd8", // almost white
-          "light-90": "#f0eeeb", // very close to white
-
-          // Darkening shades
-          "dark-10": "#5f4e34", // slightly darker
-          "dark-20": "#55462e", // darker
-          "dark-30": "#4a3d29", // more dark
-          "dark-40": "#403423", // even darker
-          "dark-50": "#352c1d", // much darker
-          "dark-60": "#2a2317", // very dark
-          "dark-70": "#201a11", // near black
-          "dark-80": "#15110c", // almost black
-          "dark-90": "#0b0906", // very close to black
+          DEFAULT: "#6a573a",
+          "2": "#A69A89",
+          "3": "#403423",
+          "4": "#201A11",
         },
         black: "#000000", // pure black
         white: "#ffffff", // pure white
+        "white-2": "#EDEEEB",
       },
     },
   },

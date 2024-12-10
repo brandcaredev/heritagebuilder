@@ -1,11 +1,13 @@
-import { and, eq, or } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import {
   buildingDataTable,
   citiesDataTable,
+  citiesTable,
   countiesDataTable,
+  countiesTable,
   countriesDataTable,
   countriesTable,
 } from "@/server/db/schemas";
@@ -52,6 +54,73 @@ export const countryRouter = createTRPCRouter({
 
       return countriesMapped;
     }),
+  getCountriesWithCountyCityRegion: publicProcedure
+    .input(z.object({ lang: z.string() }))
+    .query(async ({ ctx, input: { lang } }) => {
+      const countries = await ctx.db.query.countriesTable.findMany({
+        with: {
+          data: {
+            // get the requested language and hungarian which is the fallback
+            where: or(
+              eq(countriesDataTable.language, lang),
+              eq(countriesDataTable.language, "hu"),
+            ),
+          },
+          counties: {
+            with: {
+              data: true,
+            },
+            extras: {
+              x: sql<number>`ST_X(${countiesTable.position})`.as("x"),
+              y: sql<number>`ST_Y(${countiesTable.position})`.as("y"),
+            },
+            columns: {
+              position: false,
+            },
+          },
+          cities: {
+            with: {
+              data: true,
+            },
+            extras: {
+              x: sql<number>`ST_X(${citiesTable.position})`.as("x"),
+              y: sql<number>`ST_Y(${citiesTable.position})`.as("y"),
+            },
+            columns: {
+              position: false,
+            },
+          },
+          regions: {
+            with: {
+              data: true,
+            },
+          },
+        },
+      });
+
+      const countriesMapped = countries.map((country) => ({
+        ...mergeLanguageData(country, lang),
+        cities: country.cities.map((city) => ({
+          ...city,
+          position: city.x && city.y ? [city.x, city.y] : null,
+          en: city.data.find((d) => d.language === "en"),
+          hu: city.data.find((d) => d.language === "hu")!,
+        })),
+        counties: country.counties.map((county) => ({
+          ...county,
+          position: county.x && county.y ? [county.x, county.y] : null,
+          en: county.data.find((d) => d.language === "en"),
+          hu: county.data.find((d) => d.language === "hu")!,
+        })),
+        regions: country.regions.map((region) => ({
+          ...region,
+          en: region.data.find((d) => d.language === "en"),
+          hu: region.data.find((d) => d.language === "hu")!,
+        })),
+      }));
+
+      return countriesMapped;
+    }),
   getCountryBySlug: publicProcedure
     .input(z.object({ slug: z.string(), lang: z.string() }))
     .query(async ({ input: { slug, lang }, ctx }) => {
@@ -84,6 +153,9 @@ export const countryRouter = createTRPCRouter({
                 },
               },
             },
+            columns: {
+              position: false,
+            },
           },
           counties: {
             with: {
@@ -98,6 +170,9 @@ export const countryRouter = createTRPCRouter({
                   slug: true,
                 },
               },
+            },
+            columns: {
+              position: false,
             },
           },
           buildings: {

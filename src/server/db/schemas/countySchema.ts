@@ -7,6 +7,7 @@ import {
   integer,
   unique,
   primaryKey,
+  geometry,
 } from "drizzle-orm/pg-core";
 import { buildingsTable, countriesTable, regionsTable } from ".";
 
@@ -16,6 +17,11 @@ export const countiesTable = pgTable("County", {
     .references(() => countriesTable.id)
     .notNull(),
   regionid: integer("regionid").references(() => regionsTable.id),
+  position: geometry("position", {
+    type: "point",
+    mode: "tuple",
+    srid: 4326,
+  }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -51,7 +57,7 @@ export const countiesDataTable = pgTable(
 );
 
 export const countyDataRelations = relations(countiesDataTable, ({ one }) => ({
-  region: one(countiesTable, {
+  county: one(countiesTable, {
     fields: [countiesDataTable.countyid],
     references: [countiesTable.id],
   }),

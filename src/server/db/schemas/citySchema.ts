@@ -7,6 +7,7 @@ import {
   text,
   unique,
   primaryKey,
+  geometry,
 } from "drizzle-orm/pg-core";
 import { buildingsTable, countriesTable, countiesTable } from ".";
 
@@ -15,6 +16,11 @@ export const citiesTable = pgTable("City", {
   countryid: text("countryid")
     .references(() => countriesTable.id)
     .notNull(),
+  position: geometry("position", {
+    type: "point",
+    mode: "tuple",
+    srid: 4326,
+  }),
   countyid: integer("countyid")
     .references(() => countiesTable.id)
     .notNull(),

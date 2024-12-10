@@ -9,6 +9,8 @@ export const routing = defineRouting({
   // Used when no locale matches
   defaultLocale: "hu",
 
+  localePrefix: "always",
+
   // The `pathnames` object holds pairs of internal and
   // external paths. Based on the locale, the external
   // paths are rewritten to the shared, internal ones.
@@ -20,7 +22,15 @@ export const routing = defineRouting({
     },
     "/county/[slug]": {
       en: "/county/[slug]",
-      hu: "/county/[slug]",
+      hu: "/megye/[slug]",
+    },
+    "/city/[slug]": {
+      en: "/city/[slug]",
+      hu: "/város/[slug]",
+    },
+    "/region/[slug]": {
+      en: "/region/[slug]",
+      hu: "/régió/[slug]",
     },
     "/building/[slug]": {
       en: "/building/[slug]",
@@ -65,6 +75,10 @@ export const routing = defineRouting({
     "/reset-password": {
       en: "/reset-password",
       hu: "/jelszó-visszaállítás",
+    },
+    "/admin": {
+      en: "/admin",
+      hu: "/admin",
     },
   },
 });
