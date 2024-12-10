@@ -1,22 +1,19 @@
 "use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import BuildingList from "@/app/[locale]/_components/building-list";
+import Divider from "@/components/icons/divider";
+import Serbia from "@/components/icons/serbia";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Search } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link } from "@/i18n/routing";
 import {
   type BuildingTypes,
   type CountryExtended,
 } from "@/server/db/zodSchemaTypes";
 import { createClient } from "@/supabase/client";
-import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Link } from "@/i18n/routing";
-import Divider from "@/components/icons/divider";
-import Serbia from "@/components/icons/serbia";
-import BuildingList from "@/app/[locale]/_components/building-list";
+import { Search } from "lucide-react";
+import { useState } from "react";
 
 export default function CountryPage({
   country,

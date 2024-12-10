@@ -1,21 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Icons } from "@/components/icons";
+import { Link } from "@/i18n/routing";
 import { signInWithProvider } from "@/lib/supabase/auth";
+import { getQueryClient } from "@/trpc/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { loginSchema } from "./login-schema";
 import { type z } from "zod";
 import { signInWithEmail } from "./login-action";
-import { Link } from "@/i18n/routing";
-import { getQueryClient } from "@/trpc/react";
-import { createClient } from "@/supabase/client";
+import { loginSchema } from "./login-schema";
 
 type LoginValues = z.infer<typeof loginSchema>;
 
