@@ -11,7 +11,6 @@ import {
   type BuildingTypes,
   type CountryExtended,
 } from "@/server/db/zodSchemaTypes";
-import { createClient } from "@/supabase/client";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
@@ -24,8 +23,6 @@ export default function CountryPage({
 }) {
   const [countiesSearch, setCountiesSearch] = useState("");
   const [citiesSearch, setCitiesSearch] = useState("");
-
-  const supabase = createClient();
 
   return (
     <div>

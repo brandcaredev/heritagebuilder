@@ -2,7 +2,6 @@ import { Link } from "@/i18n/routing";
 import { MapIcon, Search } from "lucide-react";
 import AccountButton from "./account-button";
 import LocaleSwitcher from "./language-switcher";
-import { getLocale } from "next-intl/server";
 
 export async function Header() {
   return (

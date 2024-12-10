@@ -1,7 +1,6 @@
 "use client";
-import { routing, usePathname, useRouter } from "@/i18n/routing";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
-import { cn } from "@/lib/utils";
 import { useLocale } from "next-intl";
 import { useParams } from "next/navigation";
 import { ChangeEvent, useTransition } from "react";
