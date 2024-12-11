@@ -3,11 +3,14 @@ import {
   CastleIcon,
   ChurchIcon,
   CommonBuildingIcon,
+  FortressIcon,
   IndustrialIcon,
+  MapPinIcon,
   ResidentalBuildingIcon,
 } from "@/components/icons/leaflet-icons";
 import { Link } from "@/i18n/routing";
-import { type RouterOutput } from "@/server/db/zodSchemaTypes";
+import { cn } from "@/lib/utils";
+import { IBuilding, type RouterOutput } from "@/server/db/zodSchemaTypes";
 import { createClient } from "@/supabase/client";
 import L, { type MarkerCluster } from "leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
@@ -24,8 +27,14 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 
 const BuildingsMap = ({
   buildings,
+  center,
+  zoom,
+  className,
 }: {
-  buildings: RouterOutput["building"]["getBuildings"];
+  buildings: IBuilding[];
+  center?: [number, number];
+  zoom?: number;
+  className?: string;
 }) => {
   const supabase = createClient();
 
@@ -59,6 +68,8 @@ const BuildingsMap = ({
         return ChurchIcon;
       case 2:
         return CastleIcon;
+      case 3:
+        return FortressIcon;
       case 4:
         return CommonBuildingIcon;
       case 5:
@@ -66,7 +77,7 @@ const BuildingsMap = ({
       case 6:
         return ResidentalBuildingIcon;
       default:
-        return ChurchIcon;
+        return MapPinIcon;
     }
   }, []);
 
@@ -81,12 +92,11 @@ const BuildingsMap = ({
   return (
     <>
       <MapContainer
-        center={[45.9432, 24.9668]}
-        zoom={7}
+        center={center ?? [45.9432, 24.9668]}
+        zoom={zoom ?? 7}
         //footer 248 padding 2*32 header 48
-        style={{ height: "calc(100vh - 248px - 64px - 48px)", width: "100%" }}
         attributionControl={false}
-        className="p-8"
+        className={cn("h-[calc(100vh-248px-64px-48px)] w-full p-8", className)}
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
         <SearchControl />
@@ -104,14 +114,14 @@ const BuildingsMap = ({
             return (
               <Marker
                 key={building.id}
-                position={[building.position![0], building.position![1]]}
-                icon={typeBasedIcon(building.buildingtypeid!)}
+                position={[building.position[0], building.position[1]]}
+                icon={typeBasedIcon(building.buildingtypeid)}
               >
                 <Popup>
                   <Link
                     href={{
                       pathname: "/building/[slug]",
-                      params: { slug: building.slug! },
+                      params: { slug: building.slug },
                     }}
                     className="block w-[300px] no-underline"
                   >
@@ -119,7 +129,7 @@ const BuildingsMap = ({
                       <div className="relative h-[200px] w-full">
                         <Image
                           src={publicUrl}
-                          alt={building.name!}
+                          alt={building.name}
                           fill
                           className="object-cover"
                         />

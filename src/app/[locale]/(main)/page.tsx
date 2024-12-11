@@ -4,8 +4,6 @@ import { createClient } from "@/supabase/server";
 import { Link } from "@/i18n/routing";
 import Divider from "@/components/icons/divider";
 
-export const dynamic = "force-static";
-
 export default async function MainPage({
   params: { locale },
 }: {
@@ -100,7 +98,7 @@ export default async function MainPage({
       <div className="lg:w-2/6">
         <h2 className="mb-6 text-2xl text-stone-800">Latest buildings</h2>
         <div className="space-y-4">
-          {[...buildings, ...buildings.splice(0, 3)].map((building) => {
+          {buildings.map((building) => {
             const {
               data: { publicUrl },
             } = supabase.storage

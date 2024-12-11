@@ -10,4 +10,6 @@ export type BuildingPreviewData = Pick<
   | "famousresidents"
   | "renovation"
   | "presentday"
+  | "position"
+  | "buildingtypeid"
 >;

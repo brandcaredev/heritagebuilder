@@ -10,7 +10,13 @@ import {
 import { Link, useRouter } from "@/i18n/routing";
 import { createClient } from "@/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { LogInIcon, PlusCircleIcon, User } from "lucide-react";
+import {
+  LogInIcon,
+  LogOut,
+  PlusCircleIcon,
+  ShieldEllipsis,
+  User,
+} from "lucide-react";
 
 export default function AccountButton() {
   const supabase = createClient();
@@ -39,7 +45,13 @@ export default function AccountButton() {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-brown-light-40" />
+            <Link href="/admin">
+              <DropdownMenuItem>
+                <ShieldEllipsis />
+                <span>Admin</span>
+              </DropdownMenuItem>
+            </Link>
             <DropdownMenuItem
               onClick={async () => {
                 await supabase.auth.signOut();
@@ -47,7 +59,8 @@ export default function AccountButton() {
                 await refetch();
               }}
             >
-              Sign out
+              <LogOut />
+              <span>Sign out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

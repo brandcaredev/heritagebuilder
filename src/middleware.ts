@@ -8,7 +8,6 @@ const intlMiddleware = createIntlMiddleware(routing);
 export async function middleware(request: NextRequest) {
   // Handle i18n routing first
   const intlResponse = intlMiddleware(request);
-
   return await updateSession(request, intlResponse);
 }
 

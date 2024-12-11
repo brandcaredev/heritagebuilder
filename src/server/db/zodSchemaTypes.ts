@@ -2,14 +2,12 @@ import { z } from "zod";
 import {
   regionsTable,
   countriesTable,
-  citiesTable,
   buildingTypesTable,
   buildingDataTable,
   countriesDataTable,
   regionsDataTable,
   citiesDataTable,
   buildingTypesDataTable,
-  countiesTable,
   countiesDataTable,
 } from "./schemas";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -25,9 +23,14 @@ export type Country = z.infer<typeof CountrySchema> & CountryData;
 export type CountryExtended = Country & {
   counties: County[];
   cities: City[];
+  regions: Region[];
   buildings: IBuilding[];
 };
-
+export type CountryExtendedWithTranslations = Country & {
+  counties: CountyWithTranslations[];
+  cities: CityWithTranslations[];
+  regions: RegionWithTranslations[];
+};
 // ------------------------------------------------
 
 // region
@@ -35,15 +38,23 @@ export const RegionDataSchema = createSelectSchema(regionsDataTable);
 export const RegionSchema = createSelectSchema(regionsTable);
 export type RegionData = z.infer<typeof RegionDataSchema>;
 export type Region = z.infer<typeof RegionSchema> & RegionData;
-
+export type RegionWithTranslations = z.infer<typeof RegionSchema> &
+  Record<keyof typeof locales, RegionData>;
 // ------------------------------------------------
 
 // county
+export const CountySchema = z.object({
+  id: z.number(),
+  countryid: z.string(),
+  regionid: z.number().nullable(),
+  position: z.tuple([z.number(), z.number()]).nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
 export const CountyDataSchema = createSelectSchema(countiesDataTable);
-export const CountySchema = createSelectSchema(countiesTable);
-export const CountyInsertSchema = createInsertSchema(countiesTable);
 export const CountyDataInsertSchema = createInsertSchema(countiesDataTable);
-export const CountyCreateSchema = CountyInsertSchema.omit({
+export const CountyCreateSchema = CountySchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -53,18 +64,26 @@ export const CountyCreateSchema = CountyInsertSchema.omit({
 });
 export type CountyData = z.infer<typeof CountyDataSchema>;
 export type County = z.infer<typeof CountySchema> & CountyData;
-export type CountyInsert = z.infer<typeof CountyInsertSchema>;
 export type CountyDataInsert = z.infer<typeof CountyDataInsertSchema>;
 export type CountyCreate = z.infer<typeof CountyCreateSchema>;
+export type CountyWithTranslations = z.infer<typeof CountySchema> &
+  Record<keyof typeof locales, CountyData>;
 
 // ------------------------------------------------
 
 // city
+export const CitySchema = z.object({
+  id: z.number(),
+  countryid: z.string(),
+  countyid: z.number(),
+  position: z.tuple([z.number(), z.number()]).nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
 export const CityDataSchema = createSelectSchema(citiesDataTable);
-export const CitySchema = createSelectSchema(citiesTable);
-export const CityInsertSchema = createInsertSchema(citiesTable);
 export const CityDataInsertSchema = createInsertSchema(citiesDataTable);
-export const CityCreateSchema = CityInsertSchema.omit({
+export const CityCreateSchema = CitySchema.omit({
   id: true,
   createdAt: true,
   updatedAt: true,
@@ -75,6 +94,8 @@ export const CityCreateSchema = CityInsertSchema.omit({
 export type CityData = z.infer<typeof CityDataSchema>;
 export type City = z.infer<typeof CitySchema> & CityData;
 export type CityCreate = z.infer<typeof CityCreateSchema>;
+export type CityWithTranslations = z.infer<typeof CitySchema> &
+  Record<keyof typeof locales, CityData>;
 
 // ------------------------------------------------
 
@@ -83,14 +104,14 @@ export const BuildingSchema = z.object({
   id: z.number(),
   featuredImage: z.string(),
   images: z.array(z.string()),
-  disabled: z.boolean(),
+  status: z.string(),
   position: z.tuple([z.number(), z.number()]),
   cityid: z.number(),
   buildingtypeid: z.number(),
   countryid: z.string(),
   countyid: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
 });
 
 export const BuildingDataSchema = createSelectSchema(buildingDataTable);

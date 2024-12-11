@@ -38,7 +38,7 @@ export default async function RootLayout({
   return (
     <div className={`${playfairDisplay.variable} ${sourceSans3.variable}`}>
       <TRPCReactProvider>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider messages={messages} locale={locale}>
           <main>{children}</main>
         </NextIntlClientProvider>
       </TRPCReactProvider>

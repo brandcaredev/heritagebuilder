@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/routing";
 import { MapIcon, Search } from "lucide-react";
 import AccountButton from "./account-button";
+import LocaleSwitcher from "./language-switcher";
 
 export async function Header() {
   return (
@@ -26,24 +27,6 @@ export async function Header() {
             >
               Serbia
             </Link>
-            <Link
-              href={{
-                pathname: "/country/[slug]",
-                params: { slug: "slovakia" },
-              }}
-              className="hover:text-stone-300"
-            >
-              Slovakia
-            </Link>
-            <Link
-              href={{
-                pathname: "/country/[slug]",
-                params: { slug: "ukraine" },
-              }}
-              className="hover:text-stone-300"
-            >
-              Ukraine
-            </Link>
           </nav>
           <div className="flex items-center space-x-4">
             <Link href={{ pathname: "/map" }} className="hover:text-stone-300">
@@ -53,6 +36,7 @@ export async function Header() {
               <Search className="h-5 w-5" />
             </button>
             <AccountButton />
+            <LocaleSwitcher />
           </div>
         </div>
       </div>
