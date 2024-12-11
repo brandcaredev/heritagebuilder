@@ -22,15 +22,28 @@ html {
   padding-top: 5px;
 }
 
-.leaflet-popup-content{
+.leaflet-popup-content {
   margin: 0 !important;
   width: fit-content !important;
+  p {
+    margin: 0 !important;
+  }
 }
 
-.leaflet-popup-tip-container{
+.leaflet-popup-tip-container {
   display: none !important;
 }
 
-.leaflet-popup-content-wrapper{
+.leaflet-popup-content-wrapper {
   padding: 0 !important;
+}
+
+.leaflet-container {
+  h3 {
+    font-family: var(--font-playfair-display) !important;
+  }
+
+  p {
+    font-family: var(--font-source-sans-3) !important;
+  }
 }

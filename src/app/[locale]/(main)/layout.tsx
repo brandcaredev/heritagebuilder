@@ -12,11 +12,10 @@ export default async function RootLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  console.log("LOCALE", locale);
   return (
     <>
       <Header />
-      <div className="container mx-auto p-8">{children}</div>
+      <div className="p-2 md:container md:mx-auto md:p-8">{children}</div>
       <Footer />
     </>
   );

@@ -96,7 +96,10 @@ const BuildingsMap = ({
         zoom={zoom ?? 7}
         //footer 248 padding 2*32 header 48
         attributionControl={false}
-        className={cn("h-[calc(100vh-248px-64px-48px)] w-full p-8", className)}
+        className={cn(
+          "max-w-screen h-[calc(100vh-48px-70px)] md:-m-8 md:h-[calc(100vh-248px-48px)]",
+          className,
+        )}
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
         <SearchControl />
@@ -123,9 +126,9 @@ const BuildingsMap = ({
                       pathname: "/building/[slug]",
                       params: { slug: building.slug },
                     }}
-                    className="block w-[300px] no-underline"
+                    className="bg-white-2 block w-[300px] rounded-sm p-5 no-underline"
                   >
-                    <div className="overflow-hidden rounded-lg">
+                    <div className="overflow-hidden">
                       <div className="relative h-[200px] w-full">
                         <Image
                           src={publicUrl}
@@ -134,11 +137,11 @@ const BuildingsMap = ({
                           className="object-cover"
                         />
                       </div>
-                      <div className="bg-card p-2">
+                      <div>
                         <h3 className="mb-1 text-xl font-semibold text-brown">
                           {building.name}
                         </h3>
-                        <p className="text-muted-foreground line-clamp-4 text-sm text-green-dark-40">
+                        <p className="text-muted-foreground text-brown-4 line-clamp-5 text-sm">
                           {building.history}
                         </p>
                       </div>
