@@ -8,7 +8,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,6 +20,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { locales, type LocaleType } from "@/lib/constans";
+import { BuildingPreviewData } from "@/lib/types";
 import { slugify } from "@/lib/utils";
 import {
   type BuildingCreate,
@@ -32,18 +32,41 @@ import {
 import { createClient } from "@/supabase/client";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import imageCompression from "browser-image-compression";
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import Building from "./building";
-import imageCompression from "browser-image-compression";
+import CastleIcon from "@/components/icons/castle";
+import {
+  DialogHeader,
+  DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useRouter } from "@/i18n/routing";
 
 const MapPositionSelector = dynamic(
   () => import("@/components/map-position-selector"),
   { ssr: false },
 );
+
+const compressImage = async (file: File) => {
+  const options = {
+    maxSizeMB: 1,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error("Error compressing image:", error);
+    return file;
+  }
+};
 
 const fileSchema = z.instanceof(File);
 
@@ -58,10 +81,69 @@ const translatedContentSchema = z.object({
   county: z.string(),
 });
 
-const formSchema = z.object({
+const optionalSchema = z.object({
+  name: z.string().optional(),
+  history: z.string().optional(),
+  style: z.string().optional(),
+  presentday: z.string().optional(),
+  famousresidents: z.string().optional(),
+  renovation: z.string().optional(),
+  city: z.string().optional(),
+  county: z.string().optional(),
+});
+
+export const formSchema = z.object({
   country: z.string(),
   type: z.string().optional(),
-  en: translatedContentSchema,
+  en: optionalSchema.optional().superRefine((values, ctx) => {
+    console.log("VALUES", values);
+    // if `en` is not even provided, skip
+    if (!values) {
+      return;
+    }
+
+    const { name, history, style, presentday } = values;
+
+    // Check if ANY of these 4 fields has content
+    const hasAnyEnContent = !!(
+      name?.trim() ||
+      history?.trim() ||
+      style?.trim() ||
+      presentday?.trim()
+    );
+    if (hasAnyEnContent) {
+      // If there's content in at least one field, we want ALL to be filled
+      if (!name?.trim()) {
+        ctx.addIssue({
+          path: ["name"],
+          code: "custom",
+          message: "Name is required if any English field is filled",
+        });
+      }
+      if (!history?.trim()) {
+        ctx.addIssue({
+          path: ["history"],
+          code: "custom",
+          message: "History is required if any English field is filled",
+        });
+      }
+      if (!style?.trim()) {
+        ctx.addIssue({
+          path: ["style"],
+          code: "custom",
+          message: "Style is required if any English field is filled",
+        });
+      }
+      if (!presentday?.trim()) {
+        ctx.addIssue({
+          path: ["presentday"],
+          code: "custom",
+          message: "Present day is required if any English field is filled",
+        });
+      }
+    } else {
+    }
+  }),
   hu: translatedContentSchema,
   featuredImage: z.array(fileSchema),
   images: z.array(fileSchema),
@@ -79,43 +161,12 @@ export default function BuildingForm({
   const { mutateAsync: createCity } = api.city.createCity.useMutation();
   const trpc = api.useUtils();
   const [preview, setPreview] = useState<boolean>(false);
-  const [activeLanguage, setActiveLanguage] = useState<LocaleType>("en");
+  const [activeLanguage, setActiveLanguage] = useState<LocaleType>("hu");
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const supabaseClient = createClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      en: {
-        name: "",
-        history: "",
-        style: "",
-        presentday: "",
-        famousresidents: "",
-        renovation: "",
-      },
-      hu: {
-        name: "",
-        history: "",
-        style: "",
-        presentday: "",
-        famousresidents: "",
-        renovation: "",
-      },
-    },
   });
-
-  const compressImage = async (file: File) => {
-    const options = {
-      maxSizeMB: 1,
-      useWebWorker: true,
-    };
-    try {
-      const compressedFile = await imageCompression(file, options);
-      return compressedFile;
-    } catch (error) {
-      console.error("Error compressing image:", error);
-      return file;
-    }
-  };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     const baseFolder = `building/${slugify(values.hu.name)}`;
@@ -168,20 +219,20 @@ export default function BuildingForm({
       // get countyid if exits, insert a new county if not
       let countyid = await trpc.county.getCountyIdBySlug
         .fetch({
-          slug: slugify(values.en.county),
-          lang: "en",
+          slug: slugify(values.hu.county),
+          lang: "hu",
         })
         .catch(() => undefined);
       if (!countyid) {
         const countyData: CountyCreate = {
           countryid: values.country,
           en: {
-            slug: slugify(values.en.county),
-            name: values.en.county,
+            slug: slugify(values.hu.county),
+            name: values.hu.county,
             language: "en",
           },
           hu: {
-            slug: slugify(values.hu.county) || slugify(values.en.county),
+            slug: slugify(values.hu.county),
             name: values.hu.county,
             language: "hu",
           },
@@ -203,8 +254,8 @@ export default function BuildingForm({
       //get cityid if exits, insert a new city if not
       let cityid = await trpc.city.getCityIdBySlug
         .fetch({
-          slug: slugify(values.en.city),
-          lang: "en",
+          slug: slugify(values.hu.city),
+          lang: "hu",
         })
         .catch(() => undefined);
       if (!cityid) {
@@ -212,12 +263,12 @@ export default function BuildingForm({
           countryid: values.country,
           countyid,
           en: {
-            slug: slugify(values.en.city),
-            name: values.en.city,
+            slug: slugify(values.hu.city),
+            name: values.hu.city,
             language: "en",
           },
           hu: {
-            slug: slugify(values.hu.city) || slugify(values.en.city),
+            slug: slugify(values.hu.city),
             name: values.hu.city,
             language: "hu",
           },
@@ -247,24 +298,38 @@ export default function BuildingForm({
         position: values.position,
       };
 
+      // Check if EN data exists and has any non-empty values
+      const hasEnglishData =
+        values.en &&
+        Object.values(values.en).some((value) => value && value.trim() !== "");
+
       // Prepare translation data
-      const translationData = Object.entries(locales).reduce(
-        (prev, [curr, lang]) => {
-          const data = {
-            slug: slugify(values[lang as LocaleType].name),
-            name: values[lang as LocaleType].name,
-            language: curr,
-            history: values[lang as LocaleType].history,
-            style: values[lang as LocaleType].style,
-            presentday: values[lang as LocaleType].presentday,
-            famousresidents: values[lang as LocaleType].famousresidents ?? null,
-            renovation: values[lang as LocaleType].renovation ?? null,
-          };
-          return Object.assign(prev, { [lang]: data });
+      const translationData = {
+        hu: {
+          slug: slugify(values.hu.name),
+          name: values.hu.name,
+          language: "hu",
+          history: values.hu.history,
+          style: values.hu.style,
+          presentday: values.hu.presentday,
+          famousresidents: values.hu.famousresidents ?? null,
+          renovation: values.hu.renovation ?? null,
         },
-        {},
-      ) as {
-        en: BuildingData;
+        ...(hasEnglishData && {
+          en: {
+            slug: slugify(values.en!.name || values.hu.name),
+            name: values.en!.name || values.hu.name,
+            language: "en",
+            history: values.en!.history || values.hu.history,
+            style: values.en!.style || values.hu.style,
+            presentday: values.en!.presentday || values.hu.presentday,
+            famousresidents:
+              values.en!.famousresidents ?? values.hu.famousresidents ?? null,
+            renovation: values.en!.renovation ?? values.hu.renovation ?? null,
+          },
+        }),
+      } as {
+        en?: BuildingData;
         hu: BuildingData;
       };
 
@@ -272,11 +337,13 @@ export default function BuildingForm({
         ...buildingData,
         ...translationData,
       };
+
       await createBuilding(insertBuilding, {
         onSuccess: () => {
           toast.success("Building created successfully", {
             id: "building-creation-toast",
           });
+          setShowSuccessDialog(true);
         },
       });
     } catch (error) {
@@ -297,6 +364,16 @@ export default function BuildingForm({
 
   const getPreviewComponent = () => {
     const formData = form.getValues();
+    const hasEnglishData =
+      formData.en &&
+      Object.entries(formData.en).some(
+        ([key, value]) =>
+          value && value.trim() !== "" && key !== "city" && key !== "county",
+      );
+    if (activeLanguage === "en" && !hasEnglishData) {
+      return null;
+    }
+
     const { en, hu, type, ...rest } = formData;
     const languageData = activeLanguage === "en" ? en : hu;
     const previewData = {
@@ -310,11 +387,52 @@ export default function BuildingForm({
           preview: string;
         }
       ).preview,
-      famousresidents: languageData.famousresidents ?? null,
-      renovation: languageData.renovation ?? null,
+      famousresidents: languageData!.famousresidents ?? null,
+      renovation: languageData!.renovation ?? null,
       buildingtypeid: parseInt(type ?? "0"),
     };
-    return <Building building={previewData} />;
+    return <Building building={previewData as BuildingPreviewData} />;
+  };
+
+  const SuccessDialog = () => {
+    const router = useRouter();
+
+    return (
+      <Dialog open={showSuccessDialog} onOpenChange={() => router.replace("/")}>
+        <DialogContent className="z-[9999] sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="flex justify-center text-2xl font-semibold text-brown">
+              Thank you for your contribution!
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center space-y-4 p-6 text-center">
+            <div className="text-brown-700">
+              <CastleIcon width={64} height={64} />
+            </div>
+            <p className="text-gray-600">
+              Your dedication to preserving our shared heritage is truly
+              inspiring!
+            </p>
+            <p className="text-gray-600">
+              The details of your building have been successfully uploaded and
+              are now part of the growing tapestry of our community's history.
+              By sharing these stories, you help keep the past alive for future
+              generations to learn from and appreciate.
+            </p>
+            <div className="flex space-x-4"></div>
+          </div>
+          <DialogFooter className="gap-4">
+            <Button variant="outline" onClick={() => router.replace("/")}>
+              Go to home page
+            </Button>
+
+            <Button onClick={() => router.refresh()}>
+              Create another building
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
   };
 
   return (
@@ -353,7 +471,6 @@ export default function BuildingForm({
                       ))}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -371,6 +488,7 @@ export default function BuildingForm({
                   <FormField
                     control={form.control}
                     name={`${lang}.name`}
+                    rules={{ deps: ["en", "hu"] }}
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Name</FormLabel>
@@ -378,7 +496,6 @@ export default function BuildingForm({
                           <Input placeholder="" type="text" {...field} />
                         </FormControl>
                         <FormDescription>Name of the building</FormDescription>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -387,6 +504,7 @@ export default function BuildingForm({
                     <FormField
                       control={form.control}
                       name={`${lang}.history`}
+                      rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>History</FormLabel>
@@ -396,7 +514,6 @@ export default function BuildingForm({
                           <FormDescription>
                             The history of the building
                           </FormDescription>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -404,6 +521,7 @@ export default function BuildingForm({
                     <FormField
                       control={form.control}
                       name={`${lang}.style`}
+                      rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Style</FormLabel>
@@ -413,7 +531,6 @@ export default function BuildingForm({
                           <FormDescription>
                             Architectural style and appearance
                           </FormDescription>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -421,6 +538,7 @@ export default function BuildingForm({
                     <FormField
                       control={form.control}
                       name={`${lang}.presentday`}
+                      rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Present day</FormLabel>
@@ -430,7 +548,6 @@ export default function BuildingForm({
                           <FormDescription>
                             Present day situation, function
                           </FormDescription>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -438,13 +555,13 @@ export default function BuildingForm({
                     <FormField
                       control={form.control}
                       name={`${lang}.famousresidents`}
+                      rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Famous residents</FormLabel>
                           <FormControl>
                             <Textarea placeholder="" {...field} />
                           </FormControl>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -452,6 +569,7 @@ export default function BuildingForm({
                     <FormField
                       control={form.control}
                       name={`${lang}.renovation`}
+                      rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Renovation</FormLabel>
@@ -461,7 +579,6 @@ export default function BuildingForm({
                           <FormDescription>
                             The status or the story of the renovation
                           </FormDescription>
-                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -485,7 +602,6 @@ export default function BuildingForm({
                         maxSize={4 * 1024 * 1024}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 </div>
               )}
@@ -506,7 +622,6 @@ export default function BuildingForm({
                         maxSize={4 * 1024 * 1024}
                       />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 </div>
               )}
@@ -534,7 +649,6 @@ export default function BuildingForm({
                       }
                     />
                   </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -542,6 +656,7 @@ export default function BuildingForm({
           </form>
         </Form>
       )}
+      <SuccessDialog />
     </div>
   );
 }

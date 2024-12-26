@@ -121,7 +121,7 @@ export const BuildingCreateSchema = BuildingSchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  en: BuildingDataInsertSchema.omit({ buildingid: true }),
+  en: BuildingDataInsertSchema.omit({ buildingid: true }).optional(),
   hu: BuildingDataInsertSchema.omit({ buildingid: true }),
 });
 export type BuildingData = z.infer<typeof BuildingDataSchema>;

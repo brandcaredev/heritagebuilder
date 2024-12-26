@@ -135,7 +135,7 @@ export const buildingRouter = createTRPCRouter({
         createdAt: true,
         updatedAt: true,
       }).extend({
-        en: BuildingDataInsertSchema.omit({ buildingid: true }),
+        en: BuildingDataInsertSchema.omit({ buildingid: true }).optional(),
         hu: BuildingDataInsertSchema.omit({ buildingid: true }),
       }),
     )
@@ -148,10 +148,14 @@ export const buildingRouter = createTRPCRouter({
             .values([baseData])
             .returning({ buildingid: buildingsTable.id });
           const buildingid = resp[0]?.buildingid!;
-          await tx.insert(buildingDataTable).values([
-            { ...en, buildingid },
-            { ...hu, buildingid },
-          ]);
+          if (en) {
+            await tx.insert(buildingDataTable).values([
+              { ...en, buildingid },
+              { ...hu, buildingid },
+            ]);
+          } else {
+            await tx.insert(buildingDataTable).values([{ ...hu, buildingid }]);
+          }
         });
         return "Building successfully created";
       } catch (error) {
