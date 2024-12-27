@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { locales, type LocaleType } from "@/lib/constans";
 import { BuildingPreviewData } from "@/lib/types";
 import { slugify } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 import {
   type BuildingCreate,
   type BuildingData,
@@ -155,6 +156,7 @@ export default function BuildingForm({
 }: {
   buildingTypes: BuildingTypes[];
 }) {
+  const t = useTranslations();
   const { mutateAsync: createBuilding } =
     api.building.createBuilding.useMutation();
   const { mutateAsync: createCounty } = api.county.createCounty.useMutation();
@@ -172,18 +174,15 @@ export default function BuildingForm({
     const baseFolder = `building/${slugify(values.hu.name)}`;
     const featuredImage = values.featuredImage[0];
     if (!featuredImage) {
-      toast.error(
-        "Something went wrong while creating the building - Featured image failed",
-        {
-          id: "building-creation-toast",
-        },
-      );
+      toast.error(t("toast.featuredImageError"), {
+        id: "building-creation-toast",
+      });
       return;
     }
     const featuredFileExt = featuredImage.name.split(".").pop();
     const featuredPath = `${baseFolder}/featured.${featuredFileExt}`;
     try {
-      toast.loading("Creating the building...", {
+      toast.loading(t("toast.creatingBuilding"), {
         id: "building-creation-toast",
       });
 
@@ -340,7 +339,7 @@ export default function BuildingForm({
 
       await createBuilding(insertBuilding, {
         onSuccess: () => {
-          toast.success("Building created successfully", {
+          toast.success(t("toast.buildingCreated"), {
             id: "building-creation-toast",
           });
           setShowSuccessDialog(true);
@@ -356,7 +355,7 @@ export default function BuildingForm({
         .from("heritagebuilder-test")
         .remove([...filePaths, featuredPath]);
       console.error("Error submitting form:", error);
-      toast.error("Something went wrong while creating the building", {
+      toast.error(t("toast.buildingError"), {
         id: "building-creation-toast",
       });
     }
@@ -402,32 +401,24 @@ export default function BuildingForm({
         <DialogContent className="z-[9999] sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex justify-center text-2xl font-semibold text-brown">
-              Thank you for your contribution!
+              {t("successDialog.title")}
             </DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4 p-6 text-center">
             <div className="text-brown-700">
               <CastleIcon width={64} height={64} />
             </div>
-            <p className="text-gray-600">
-              Your dedication to preserving our shared heritage is truly
-              inspiring!
-            </p>
-            <p className="text-gray-600">
-              The details of your building have been successfully uploaded and
-              are now part of the growing tapestry of our community's history.
-              By sharing these stories, you help keep the past alive for future
-              generations to learn from and appreciate.
-            </p>
+            <p className="text-gray-600">{t("successDialog.uploadSuccess")}</p>
+            <p className="text-gray-600">{t("successDialog.description")}</p>
             <div className="flex space-x-4"></div>
           </div>
           <DialogFooter className="gap-4">
             <Button variant="outline" onClick={() => router.replace("/")}>
-              Go to home page
+              {t("common.goToHome")}
             </Button>
 
             <Button onClick={() => router.refresh()}>
-              Create another building
+              {t("common.createAnother")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -438,7 +429,7 @@ export default function BuildingForm({
   return (
     <div>
       <Button onClick={() => setPreview((prev) => !prev)}>
-        {preview ? "Edit" : "Preview"}
+        {preview ? t("common.edit") : t("common.preview")}
       </Button>
       {preview ? (
         getPreviewComponent()
@@ -453,14 +444,14 @@ export default function BuildingForm({
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Type</FormLabel>
+                  <FormLabel>{t("form.type")}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="" />
+                        <SelectValue placeholder={t("form.type")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -479,8 +470,11 @@ export default function BuildingForm({
               onValueChange={(v) => setActiveLanguage(v as LocaleType)}
             >
               <TabsList>
-                <TabsTrigger value="en">English</TabsTrigger>
-                <TabsTrigger value="hu">Hungarian</TabsTrigger>
+                {Object.values(locales).map((locale) => (
+                  <TabsTrigger key={locale} value={locale}>
+                    {t(`common.${locale}`)}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
               {Object.values(locales).map((lang) => (
@@ -491,11 +485,13 @@ export default function BuildingForm({
                     rules={{ deps: ["en", "hu"] }}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>{t("form.name")}</FormLabel>
                         <FormControl>
                           <Input placeholder="" type="text" {...field} />
                         </FormControl>
-                        <FormDescription>Name of the building</FormDescription>
+                        <FormDescription>
+                          {t("form.descriptions.name")}
+                        </FormDescription>
                       </FormItem>
                     )}
                   />
@@ -507,12 +503,12 @@ export default function BuildingForm({
                       rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>History</FormLabel>
+                          <FormLabel>{t("building.history")}</FormLabel>
                           <FormControl>
                             <Textarea placeholder="" {...field} />
                           </FormControl>
                           <FormDescription>
-                            The history of the building
+                            {t("form.descriptions.history")}
                           </FormDescription>
                         </FormItem>
                       )}
@@ -524,12 +520,12 @@ export default function BuildingForm({
                       rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Style</FormLabel>
+                          <FormLabel>{t("building.style")}</FormLabel>
                           <FormControl>
                             <Textarea placeholder="" {...field} />
                           </FormControl>
                           <FormDescription>
-                            Architectural style and appearance
+                            {t("form.descriptions.style")}
                           </FormDescription>
                         </FormItem>
                       )}
@@ -541,12 +537,12 @@ export default function BuildingForm({
                       rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Present day</FormLabel>
+                          <FormLabel>{t("building.presentDay")}</FormLabel>
                           <FormControl>
                             <Textarea placeholder="" {...field} />
                           </FormControl>
                           <FormDescription>
-                            Present day situation, function
+                            {t("form.descriptions.presentDay")}
                           </FormDescription>
                         </FormItem>
                       )}
@@ -558,7 +554,7 @@ export default function BuildingForm({
                       rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Famous residents</FormLabel>
+                          <FormLabel>{t("building.famousResidents")}</FormLabel>
                           <FormControl>
                             <Textarea placeholder="" {...field} />
                           </FormControl>
@@ -572,12 +568,12 @@ export default function BuildingForm({
                       rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Renovation</FormLabel>
+                          <FormLabel>{t("building.renovation")}</FormLabel>
                           <FormControl>
                             <Textarea placeholder="" {...field} />
                           </FormControl>
                           <FormDescription>
-                            The status or the story of the renovation
+                            {t("form.descriptions.renovation")}
                           </FormDescription>
                         </FormItem>
                       )}
@@ -593,7 +589,7 @@ export default function BuildingForm({
               render={({ field }) => (
                 <div className="space-y-6">
                   <FormItem className="w-full">
-                    <FormLabel>Featured image</FormLabel>
+                    <FormLabel>{t("form.featuredImage")}</FormLabel>
                     <FormControl>
                       <FileUploader
                         value={field.value}
@@ -613,7 +609,7 @@ export default function BuildingForm({
               render={({ field }) => (
                 <div className="space-y-6">
                   <FormItem className="w-full">
-                    <FormLabel>Images</FormLabel>
+                    <FormLabel>{t("form.images")}</FormLabel>
                     <FormControl>
                       <FileUploader
                         value={field.value}
@@ -632,7 +628,7 @@ export default function BuildingForm({
               name="position"
               render={({ field: { value, onChange } }) => (
                 <FormItem>
-                  <FormLabel>Position</FormLabel>
+                  <FormLabel>{t("form.position")}</FormLabel>
                   <FormControl>
                     <MapPositionSelector
                       type={parseInt(form.getValues().type ?? "1")}
@@ -652,7 +648,7 @@ export default function BuildingForm({
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit">{t("common.submit")}</Button>
           </form>
         </Form>
       )}

@@ -1,3 +1,69 @@
 {
-  "test": "testmagyar"
+  "building": {
+    "history": "Történet",
+    "style": "Stílus",
+    "famousResidents": "Híres lakók",
+    "renovation": "Felújítás",
+    "presentDay": "Jelenlegi állapot",
+    "imageAlt": "Épület kép",
+    "preview": "Épület előnézet"
+  },
+  "form": {
+    "country": "Ország",
+    "type": "Típus",
+    "name": "Név",
+    "city": "Város",
+    "county": "Megye",
+    "featuredImage": "Kiemelt kép",
+    "images": "Képek",
+    "position": "Elhelyezkedés",
+    "descriptions": {
+      "name": "Az épület neve",
+      "history": "Az épület története",
+      "style": "Építészeti stílus és megjelenés",
+      "presentDay": "Jelenlegi helyzet, funkció",
+      "renovation": "A felújítás állapota vagy története"
+    }
+  },
+  "common": {
+    "submit": "Küldés",
+    "cancel": "Mégse",
+    "save": "Mentés",
+    "edit": "Szerkesztés",
+    "delete": "Törlés",
+    "preview": "Előnézet",
+    "loading": "Betöltés...",
+    "error": "Valami hiba történt",
+    "success": "Sikeres",
+    "goToHome": "Vissza a főoldalra",
+    "createAnother": "Új épület létrehozása",
+    "hu": "Magyar",
+    "en": "Angol",
+    "back": "Vissza a listához",
+    "selectLocation": "Helyszín kiválasztása"
+  },
+  "successDialog": {
+    "title": "Köszönjük a hozzájárulását!",
+    "uploadSuccess": "Az örökségünk megőrzése iránti elkötelezettséged igazán inspiráló!",
+    "description": "Az épület részletei sikeresen feltöltésre kerültek, és most már részei közösségünk történelmének. Ezeknek a történeteknek a megosztásával segítesz életben tartani a múltat a jövő generációi számára."
+  },
+  "toast": {
+    "creatingBuilding": "Épület létrehozása...",
+    "buildingCreated": "Az épület sikeresen létrehozva",
+    "buildingError": "Hiba történt az épület létrehozása közben",
+    "featuredImageError": "Hiba történt az épület létrehozása közben - A kiemelt kép feltöltése sikertelen"
+  },
+  "account": {
+    "myAccount": "Fiókom",
+    "admin": "Admin",
+    "signOut": "Kijelentkezés",
+    "login": "Bejelentkezés",
+    "newBuilding": "Új épület",
+    "userAccount": "Felhasználói fiók"
+  },
+  "select": {
+    "country": "Válassz országot",
+    "county": "Válassz megyét",
+    "city": "Válassz várost"
+  }
 }
