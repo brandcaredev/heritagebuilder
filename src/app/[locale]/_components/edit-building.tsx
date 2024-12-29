@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import Building from "./building";
 import { useRouter } from "@/i18n/routing";
+import { BuildingPreviewData } from "@/lib/types";
 
 const fileSchema = z.instanceof(File);
 
@@ -50,14 +51,73 @@ const translatedContentSchema = z.object({
   renovation: z.string().optional(),
 });
 
-const formSchema = z.object({
+const optionalSchema = z.object({
+  name: z.string().optional(),
+  history: z.string().optional(),
+  style: z.string().optional(),
+  presentday: z.string().optional(),
+  famousresidents: z.string().optional(),
+  renovation: z.string().optional(),
+  city: z.string(),
+  county: z.string(),
+});
+
+export const formSchema = z.object({
   country: z.string(),
   type: z.string().optional(),
-  en: translatedContentSchema,
+  en: optionalSchema.partial().superRefine((values, ctx) => {
+    // if `en` is not even provided, skip
+    if (!values) {
+      return;
+    }
+
+    const { name, history, style, presentday } = values;
+
+    // Check if ANY of these 4 fields has content
+    const hasAnyEnContent = !!(
+      name?.trim() ||
+      history?.trim() ||
+      style?.trim() ||
+      presentday?.trim()
+    );
+    if (hasAnyEnContent) {
+      // If there's content in at least one field, we want ALL to be filled
+      if (!name?.trim()) {
+        ctx.addIssue({
+          path: ["name"],
+          code: "custom",
+          message: "Name is required if any English field is filled",
+        });
+      }
+      if (!history?.trim()) {
+        ctx.addIssue({
+          path: ["history"],
+          code: "custom",
+          message: "History is required if any English field is filled",
+        });
+      }
+      if (!style?.trim()) {
+        ctx.addIssue({
+          path: ["style"],
+          code: "custom",
+          message: "Style is required if any English field is filled",
+        });
+      }
+      if (!presentday?.trim()) {
+        ctx.addIssue({
+          path: ["presentday"],
+          code: "custom",
+          message: "Present day is required if any English field is filled",
+        });
+      }
+    }
+  }),
   hu: translatedContentSchema,
-  featuredImage: z.array(fileSchema).optional(),
-  images: z.array(fileSchema).optional(),
+  featuredImage: z.array(fileSchema),
+  images: z.array(fileSchema),
   position: z.tuple([z.number(), z.number()]),
+  creatorname: z.string().optional(),
+  creatoremail: z.string().optional(),
 });
 
 interface ExistingBuilding {
@@ -69,6 +129,8 @@ interface ExistingBuilding {
   cityid: number;
   buildingtypeid: number;
   position: [number, number];
+  creatorname: string | null;
+  creatoremail: string | null;
   en?: BuildingData;
   hu: BuildingData;
 }
@@ -93,6 +155,8 @@ export default function EditBuildingForm({
       country: building.countryid,
       type: building.buildingtypeid.toString(),
       position: building.position,
+      creatorname: building.creatorname ?? undefined,
+      creatoremail: building.creatoremail ?? undefined,
       en: {
         name: building.en?.name ?? "",
         history: building.en?.history ?? "",
@@ -202,26 +266,44 @@ export default function EditBuildingForm({
         buildingtypeid: parseInt(values.type ?? "1"),
         position: values.position,
         status: "pending",
+        creatorname: values.creatorname || null,
+        creatoremail: values.creatoremail || null,
       };
 
+      // Check if EN data exists and has any non-empty values
+      const hasEnglishData =
+        values.en &&
+        Object.entries(values.en).some(
+          ([key, value]) =>
+            value && value.trim() !== "" && key !== "city" && key !== "county",
+        );
+
       // Prepare translation data
-      const translationData = Object.entries(locales).reduce(
-        (prev, [curr, lang]) => {
-          const data = {
-            slug: slugify(values[lang as LocaleType].name),
-            name: values[lang as LocaleType].name,
-            language: curr,
-            history: values[lang as LocaleType].history,
-            style: values[lang as LocaleType].style,
-            presentday: values[lang as LocaleType].presentday,
-            famousresidents: values[lang as LocaleType].famousresidents ?? null,
-            renovation: values[lang as LocaleType].renovation ?? null,
-          };
-          return Object.assign(prev, { [lang]: data });
+      const translationData = {
+        hu: {
+          slug: slugify(values.hu.name),
+          name: values.hu.name,
+          language: "hu",
+          history: values.hu.history,
+          style: values.hu.style,
+          presentday: values.hu.presentday,
+          famousresidents: values.hu.famousresidents || null,
+          renovation: values.hu.renovation || null,
         },
-        {},
-      ) as {
-        en: BuildingData;
+        ...(hasEnglishData && {
+          en: {
+            slug: slugify(values.en.name!),
+            name: values.en.name,
+            language: "en",
+            history: values.en.history,
+            style: values.en.style,
+            presentday: values.en.presentday,
+            famousresidents: values.en.famousresidents || null,
+            renovation: values.en.renovation || null,
+          },
+        }),
+      } as {
+        en?: BuildingData;
         hu: BuildingData;
       };
 
@@ -249,6 +331,15 @@ export default function EditBuildingForm({
   const getPreviewComponent = () => {
     const formData = form.getValues();
     const { en, hu, ...rest } = formData;
+    const hasEnglishData =
+      formData.en &&
+      Object.entries(formData.en).some(
+        ([key, value]) =>
+          value && value.trim() !== "" && key !== "city" && key !== "county",
+      );
+    if (activeLanguage === "en" && !hasEnglishData) {
+      return null;
+    }
     const languageData = activeLanguage === "en" ? en : hu;
 
     // For preview, use either the new uploaded images or existing ones
@@ -276,7 +367,7 @@ export default function EditBuildingForm({
       renovation: languageData.renovation ?? null,
       buildingtypeid: parseInt(rest.type ?? "0"),
     };
-    return <Building building={previewData} />;
+    return <Building building={previewData as BuildingPreviewData} />;
   };
 
   return (

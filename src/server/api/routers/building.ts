@@ -366,7 +366,7 @@ export const buildingRouter = createTRPCRouter({
         createdAt: true,
         updatedAt: true,
       }).extend({
-        en: BuildingDataInsertSchema.omit({ buildingid: true }),
+        en: BuildingDataInsertSchema.omit({ buildingid: true }).optional(),
         hu: BuildingDataInsertSchema.omit({ buildingid: true }),
       }),
     )
@@ -378,16 +378,17 @@ export const buildingRouter = createTRPCRouter({
             .update(buildingsTable)
             .set(baseData)
             .where(sql`${buildingsTable.id} = ${id}`);
-
-          await tx
-            .update(buildingDataTable)
-            .set(en)
-            .where(
-              and(
-                eq(buildingDataTable.buildingid, id),
-                eq(buildingDataTable.language, "en"),
-              ),
-            );
+          if (en) {
+            await tx
+              .update(buildingDataTable)
+              .set(en)
+              .where(
+                and(
+                  eq(buildingDataTable.buildingid, id),
+                  eq(buildingDataTable.language, "en"),
+                ),
+              );
+          }
           await tx
             .update(buildingDataTable)
             .set(hu)

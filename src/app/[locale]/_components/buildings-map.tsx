@@ -10,7 +10,7 @@ import {
 } from "@/components/icons/leaflet-icons";
 import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { IBuilding, type RouterOutput } from "@/server/db/zodSchemaTypes";
+import { IBuilding } from "@/server/db/zodSchemaTypes";
 import { createClient } from "@/supabase/client";
 import L, { type MarkerCluster } from "leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
@@ -126,7 +126,7 @@ const BuildingsMap = ({
                       pathname: "/building/[slug]",
                       params: { slug: building.slug },
                     }}
-                    className="bg-white-2 block w-[300px] rounded-sm p-5 no-underline"
+                    className="block w-[300px] rounded-sm bg-white-2 p-5 no-underline"
                   >
                     <div className="overflow-hidden">
                       <div className="relative h-[200px] w-full">
@@ -141,7 +141,7 @@ const BuildingsMap = ({
                         <h3 className="mb-1 text-xl font-semibold text-brown">
                           {building.name}
                         </h3>
-                        <p className="text-muted-foreground text-brown-4 line-clamp-5 text-sm">
+                        <p className="text-muted-foreground line-clamp-5 text-sm text-brown-4">
                           {building.history}
                         </p>
                       </div>

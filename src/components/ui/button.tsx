@@ -13,6 +13,9 @@ const buttonVariants = cva(
           "bg-green text-white-2 hover:bg-green-2 rounded-full font-semibold",
         outline:
           "border-2 border-green bg-transparent hover:bg-neutral-100 hover:border-green-2 hover:text-green-2 text-green rounded-full font-semibold",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
       },
       size: {
         default: "h-10 px-4 py-2",

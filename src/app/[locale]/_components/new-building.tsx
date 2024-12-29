@@ -249,9 +249,7 @@ export default function BuildingForm({
           },
         );
       }
-      console.log(countyid);
       if (!countyid) throw new Error();
-      console.log(slugify(values.en.city!));
       //get cityid if exits, insert a new city if not
       let cityid = await trpc.city.getCityIdBySlug
         .fetch({

@@ -68,6 +68,8 @@ export default function PendingBuildings({
             cityid: selectedBuilding.cityid,
             buildingtypeid: selectedBuilding.buildingtypeid,
             position: selectedBuilding.position,
+            creatorname: selectedBuilding.creatorname,
+            creatoremail: selectedBuilding.creatoremail,
             en: selectedBuilding.en,
             hu: selectedBuilding.hu,
           }}
