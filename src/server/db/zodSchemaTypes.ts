@@ -112,6 +112,8 @@ export const BuildingSchema = z.object({
   countyid: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  creatorname: z.string().nullable(),
+  creatoremail: z.string().nullable(),
 });
 
 export const BuildingDataSchema = createSelectSchema(buildingDataTable);
@@ -121,7 +123,7 @@ export const BuildingCreateSchema = BuildingSchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  en: BuildingDataInsertSchema.omit({ buildingid: true }),
+  en: BuildingDataInsertSchema.omit({ buildingid: true }).optional(),
   hu: BuildingDataInsertSchema.omit({ buildingid: true }),
 });
 export type BuildingData = z.infer<typeof BuildingDataSchema>;

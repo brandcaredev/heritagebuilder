@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/carousel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { type BuildingPreviewData } from "@/lib/types";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
@@ -19,7 +20,9 @@ export default function BuildingComponent({
 }: {
   building: BuildingPreviewData;
 }) {
+  const t = useTranslations();
   const buildingImages = [building.featuredImage, ...building.images];
+
   return (
     <div className="flex flex-col gap-10 lg:flex-row">
       <div className="flex flex-col gap-4 lg:w-1/2">
@@ -32,7 +35,7 @@ export default function BuildingComponent({
               >
                 <Image
                   src={img}
-                  alt={"Building image" + index}
+                  alt={`${t("building.imageAlt")} ${index + 1}`}
                   loading="lazy"
                   fill
                   className="object-contain"
@@ -49,7 +52,7 @@ export default function BuildingComponent({
               >
                 <Image
                   src={img}
-                  alt={"Building image" + index}
+                  alt={`${t("building.imageAlt")} ${index + 1}`}
                   loading="lazy"
                   fill
                   className="aspect-square object-cover"
@@ -68,16 +71,20 @@ export default function BuildingComponent({
         <div className="flex flex-col gap-4">
           <h1 className="text-4xl font-bold text-brown">{building.name}</h1>
 
-          <h3 className="text-2xl font-bold text-brown">History</h3>
+          <h3 className="text-2xl font-bold text-brown">
+            {t("building.history")}
+          </h3>
           <span className="font-source-sans-3">{building.history}</span>
 
-          <h3 className="text- text-2xl font-bold text-brown">Style</h3>
+          <h3 className="text- text-2xl font-bold text-brown">
+            {t("building.style")}
+          </h3>
           <span className="font-source-sans-3">{building.style}</span>
 
           {building.famousresidents && (
             <>
               <h3 className="text-2xl font-bold text-brown">
-                Famous residents
+                {t("building.famousResidents")}
               </h3>
               <span className="font-source-sans-3">
                 {building.famousresidents}
@@ -87,12 +94,16 @@ export default function BuildingComponent({
 
           {building.renovation && (
             <>
-              <h3 className="text-2xl font-bold text-brown">Renovation</h3>
+              <h3 className="text-2xl font-bold text-brown">
+                {t("building.renovation")}
+              </h3>
               <span className="font-source-sans-3">{building.renovation}</span>
             </>
           )}
 
-          <h3 className="text-2xl font-bold text-brown">Present day</h3>
+          <h3 className="text-2xl font-bold text-brown">
+            {t("building.presentDay")}
+          </h3>
           <span className="font-source-sans-3">{building.presentday}</span>
         </div>
       </ScrollArea>

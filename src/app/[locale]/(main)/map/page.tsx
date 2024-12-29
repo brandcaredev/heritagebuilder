@@ -10,7 +10,7 @@ export default async function MapPage({
 }: {
   params: { locale: string };
 }) {
-  const buildings = await api.building.getBuildings({ lang: locale });
+  const buildings = await api.building.getAcceptedBuildings({ lang: locale });
 
   return <BuildingsMap buildings={buildings as IBuilding[]} />;
 }

@@ -1,3 +1,74 @@
 {
-  "test": "test"
+  "test": "test",
+  "building": {
+    "history": "History",
+    "style": "Style",
+    "famousResidents": "Famous residents",
+    "renovation": "Renovation",
+    "presentDay": "Present day",
+    "imageAlt": "Building image",
+    "preview": "Building Preview"
+  },
+  "form": {
+    "country": "Country",
+    "type": "Type",
+    "name": "Name",
+    "city": "City",
+    "county": "County",
+    "featuredImage": "Featured image",
+    "images": "Images",
+    "position": "Position",
+    "creatorname": "Creator name",
+    "creatoremail": "Creator email",
+    "descriptions": {
+      "name": "Name of the building",
+      "history": "The history of the building",
+      "style": "Architectural style and appearance",
+      "presentDay": "Present day situation, function",
+      "renovation": "The status or the story of the renovation",
+      "creatorname": "Enter your name if you want to be credited for the building",
+      "creatoremail": "Enter your email if you want to get notified when the building is approved"
+    }
+  },
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "preview": "Preview",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Success",
+    "goToHome": "Go to home page",
+    "createAnother": "Create another building",
+    "hu": "Hungarian",
+    "en": "English",
+    "back": "Back to List",
+    "selectLocation": "Select Location"
+  },
+  "successDialog": {
+    "title": "Thank you for your contribution!",
+    "uploadSuccess": "Your dedication to preserving our shared heritage is truly inspiring!",
+    "description": "The details of your building have been successfully uploaded and are now part of the growing tapestry of our community&apos;s history. By sharing these stories, you help keep the past alive for future generations to learn from and appreciate."
+  },
+  "toast": {
+    "creatingBuilding": "Creating the building...",
+    "buildingCreated": "Building created successfully",
+    "buildingError": "Something went wrong while creating the building",
+    "featuredImageError": "Something went wrong while creating the building - Featured image failed"
+  },
+  "account": {
+    "myAccount": "My Account",
+    "admin": "Admin",
+    "signOut": "Sign out",
+    "login": "Login",
+    "newBuilding": "New building",
+    "userAccount": "User account"
+  },
+  "select": {
+    "country": "Select country",
+    "county": "Select county",
+    "city": "Select city"
+  }
 }

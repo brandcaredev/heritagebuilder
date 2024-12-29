@@ -10,7 +10,6 @@ import {
   MapPinIcon,
   ResidentalBuildingIcon,
 } from "./icons/leaflet-icons";
-import Link from "next/link";
 
 const MapPosition = ({
   position,

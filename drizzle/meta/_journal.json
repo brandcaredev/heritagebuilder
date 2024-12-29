@@ -57,6 +57,13 @@
       "when": 1733513784674,
       "tag": "0007_futuristic_moon_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1735468228681,
+      "tag": "0008_polite_rogue",
+      "breakpoints": true
     }
   ]
 }

@@ -16,14 +16,90 @@ import {
   countiesTable,
 } from "@/server/db/schemas";
 import { TRPCError } from "@trpc/server";
-import { mergeLanguageData } from "@/lib/utils";
+import { getURL, mergeLanguageData } from "@/lib/utils";
 import { db } from "@/server/db";
 
+import { Resend } from "resend";
+import { env } from "@/env";
+const getApprovalTemplate = (name: string, url: string) => `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building Approved</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            color: #343e27;
+            margin-bottom: 20px;
+        }
+        .content {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333333;
+        }
+        .link-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #343e27;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .link-btn:hover {
+            background-color: #6a573a;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="header">Good News! 🎉</h1>
+        <div class="content">
+            <p>We are pleased to inform you that your building <strong>${name}</strong> has been successfully approved!</p>
+            <p>You can now view and manage your building by clicking the button below:</p>
+            <p style="text-align: center;">
+                <a href="${url}" class="link-btn">View Building</a>
+            </p>
+            <p>If you have any questions, feel free to reach out to our support team.</p>
+            <p>Thank you for being part of Heritage Builder!</p>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024 Heritage Builder. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+`;
+
+const resend = new Resend(env.RESEND_API_KEY);
+
 export const buildingRouter = createTRPCRouter({
-  getBuildings: publicProcedure
+  getAcceptedBuildings: publicProcedure
     .input(z.object({ lang: z.string() }))
     .query(async ({ input: { lang } }) => {
       const buildings = await db.query.buildingsTable.findMany({
+        where: eq(buildingsTable.status, "approved"),
         with: {
           county: {
             with: {
@@ -81,6 +157,7 @@ export const buildingRouter = createTRPCRouter({
             ),
           },
         },
+        limit: 6,
       });
 
       const buildingsMapped = buildings.map((building) => ({
@@ -135,7 +212,7 @@ export const buildingRouter = createTRPCRouter({
         createdAt: true,
         updatedAt: true,
       }).extend({
-        en: BuildingDataInsertSchema.omit({ buildingid: true }),
+        en: BuildingDataInsertSchema.omit({ buildingid: true }).optional(),
         hu: BuildingDataInsertSchema.omit({ buildingid: true }),
       }),
     )
@@ -148,10 +225,14 @@ export const buildingRouter = createTRPCRouter({
             .values([baseData])
             .returning({ buildingid: buildingsTable.id });
           const buildingid = resp[0]?.buildingid!;
-          await tx.insert(buildingDataTable).values([
-            { ...en, buildingid },
-            { ...hu, buildingid },
-          ]);
+          if (en) {
+            await tx.insert(buildingDataTable).values([
+              { ...en, buildingid },
+              { ...hu, buildingid },
+            ]);
+          } else {
+            await tx.insert(buildingDataTable).values([{ ...hu, buildingid }]);
+          }
         });
         return "Building successfully created";
       } catch (error) {
@@ -252,6 +333,27 @@ export const buildingRouter = createTRPCRouter({
           .update(buildingsTable)
           .set({ status: "approved" })
           .where(eq(buildingsTable.id, input.id));
+        const data = await ctx.db.query.buildingsTable.findFirst({
+          where: eq(buildingsTable.id, input.id),
+          columns: { creatoremail: true },
+          with: {
+            data: {
+              columns: { slug: true, name: true },
+              where: eq(buildingDataTable.language, "hu"),
+            },
+          },
+        });
+        if (data?.creatoremail) {
+          await resend.emails.send({
+            from: "Heritage Builder <noreply@heritagebuilder.eu>",
+            to: [data.creatoremail],
+            subject: `Your building ${data.data[0]!.name} has been approved`,
+            html: getApprovalTemplate(
+              data.data[0]!.name,
+              `${getURL()}building/${data.data[0]!.slug}`,
+            ),
+          });
+        }
         return "Building approved successfully";
       } catch (error) {
         console.error("Error approving building:", error);
@@ -264,7 +366,7 @@ export const buildingRouter = createTRPCRouter({
         createdAt: true,
         updatedAt: true,
       }).extend({
-        en: BuildingDataInsertSchema.omit({ buildingid: true }),
+        en: BuildingDataInsertSchema.omit({ buildingid: true }).optional(),
         hu: BuildingDataInsertSchema.omit({ buildingid: true }),
       }),
     )
@@ -276,16 +378,17 @@ export const buildingRouter = createTRPCRouter({
             .update(buildingsTable)
             .set(baseData)
             .where(sql`${buildingsTable.id} = ${id}`);
-
-          await tx
-            .update(buildingDataTable)
-            .set(en)
-            .where(
-              and(
-                eq(buildingDataTable.buildingid, id),
-                eq(buildingDataTable.language, "en"),
-              ),
-            );
+          if (en) {
+            await tx
+              .update(buildingDataTable)
+              .set(en)
+              .where(
+                and(
+                  eq(buildingDataTable.buildingid, id),
+                  eq(buildingDataTable.language, "en"),
+                ),
+              );
+          }
           await tx
             .update(buildingDataTable)
             .set(hu)

@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link, useRouter } from "@/i18n/routing";
 import { createClient } from "@/supabase/client";
+import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
 import {
   LogInIcon,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 
 export default function AccountButton() {
+  const t = useTranslations();
   const supabase = createClient();
   const router = useRouter();
   const { data, isLoading, refetch } = useQuery({
@@ -38,18 +40,18 @@ export default function AccountButton() {
       <>
         <DropdownMenu>
           <DropdownMenuTrigger
-            aria-label="User account"
+            aria-label={t("account.userAccount")}
             className="hover:text-stone-300"
           >
             <User className="h-5 w-5" />
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("account.myAccount")}</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-brown-light-40" />
             <Link href="/admin">
               <DropdownMenuItem>
                 <ShieldEllipsis />
-                <span>Admin</span>
+                <span>{t("account.admin")}</span>
               </DropdownMenuItem>
             </Link>
             <DropdownMenuItem
@@ -60,13 +62,13 @@ export default function AccountButton() {
               }}
             >
               <LogOut />
-              <span>Sign out</span>
+              <span>{t("account.signOut")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <Link
           href={{ pathname: "/new" }}
-          aria-label="New building"
+          aria-label={t("account.newBuilding")}
           className="hover:text-stone-300"
         >
           <PlusCircleIcon className="h-5 w-5" />
@@ -77,7 +79,7 @@ export default function AccountButton() {
   return (
     <Link
       href={{ pathname: "/login" }}
-      aria-label="Login"
+      aria-label={t("account.login")}
       className="hover:text-stone-300"
     >
       <LogInIcon className="h-5 w-5" />

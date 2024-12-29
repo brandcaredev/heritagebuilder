@@ -14,6 +14,7 @@ import {
   type CountryExtendedWithTranslations,
   type CountyWithTranslations,
 } from "@/server/db/zodSchemaTypes";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import EditLocation from "./edit-location";
 
@@ -22,6 +23,7 @@ export default function LocationManager({
 }: {
   countries: CountryExtendedWithTranslations[];
 }) {
+  const t = useTranslations();
   const [selectedCountry, setSelectedCountry] =
     useState<CountryExtendedWithTranslations | null>(null);
   const [selectedCounty, setSelectedCounty] =
@@ -45,7 +47,7 @@ export default function LocationManager({
           onClick={() => setEditMode(null)}
           className="mb-4"
         >
-          Back to List
+          {t("common.back")}
         </Button>
         <EditLocation
           type={editMode}
@@ -58,11 +60,13 @@ export default function LocationManager({
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Select Location</h2>
+        <h2 className="text-xl font-semibold">{t("common.selectLocation")}</h2>
 
         <div className="grid gap-4 md:grid-cols-3">
           <div>
-            <label className="mb-2 block text-sm font-medium">Country</label>
+            <label className="mb-2 block text-sm font-medium">
+              {t("form.country")}
+            </label>
             <Select
               value={selectedCountry?.id ?? undefined}
               onValueChange={(value) => {
@@ -72,7 +76,7 @@ export default function LocationManager({
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select country" />
+                <SelectValue placeholder={t("select.country")} />
               </SelectTrigger>
               <SelectContent>
                 {countries.map((country: CountryExtendedWithTranslations) => (
@@ -86,7 +90,9 @@ export default function LocationManager({
 
           {selectedCountry && (
             <div>
-              <label className="mb-2 block text-sm font-medium">County</label>
+              <label className="mb-2 block text-sm font-medium">
+                {t("form.county")}
+              </label>
               <Select
                 value={selectedCounty?.id.toString() ?? ""}
                 onValueChange={(value) => {
@@ -99,7 +105,7 @@ export default function LocationManager({
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select county" />
+                  <SelectValue placeholder={t("select.county")} />
                 </SelectTrigger>
                 <SelectContent>
                   {selectedCountry.counties.map(
@@ -116,7 +122,9 @@ export default function LocationManager({
 
           {selectedCountry && (
             <div>
-              <label className="mb-2 block text-sm font-medium">City</label>
+              <label className="mb-2 block text-sm font-medium">
+                {t("form.city")}
+              </label>
               <Select
                 value={selectedCity?.id.toString() ?? ""}
                 onValueChange={(value) => {
@@ -129,7 +137,7 @@ export default function LocationManager({
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select city" />
+                  <SelectValue placeholder={t("select.city")} />
                 </SelectTrigger>
                 <SelectContent>
                   {selectedCountry.cities.map((city: CityWithTranslations) => (

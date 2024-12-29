@@ -34,6 +34,8 @@ export const buildingsTable = pgTable("Building", {
   countyid: integer("countyid")
     .references(() => countiesTable.id)
     .notNull(),
+  creatorname: text("creatorname"),
+  creatoremail: text("creatoremail"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
