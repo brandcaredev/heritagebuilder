@@ -17,12 +17,16 @@
     "featuredImage": "Kiemelt kép",
     "images": "Képek",
     "position": "Elhelyezkedés",
+    "creatorname": "Létrehozó neve",
+    "creatoremail": "Létrehozó email",
     "descriptions": {
       "name": "Az épület neve",
       "history": "Az épület története",
       "style": "Építészeti stílus és megjelenés",
       "presentDay": "Jelenlegi helyzet, funkció",
-      "renovation": "A felújítás állapota vagy története"
+      "renovation": "A felújítás állapota vagy története",
+      "creatorname": "Adja meg a nevét, ha szeretné, hogy a neve megjelenjen az épületnél",
+      "creatoremail": "Adja meg az email címét, ha szeretné, hogy értesítést kapjon, amikor az épület jóváhagyásra kerül"
     }
   },
   "common": {

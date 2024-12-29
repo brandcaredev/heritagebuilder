@@ -112,6 +112,8 @@ export const BuildingSchema = z.object({
   countyid: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  creatorname: z.string().nullable(),
+  creatoremail: z.string().nullable(),
 });
 
 export const BuildingDataSchema = createSelectSchema(buildingDataTable);

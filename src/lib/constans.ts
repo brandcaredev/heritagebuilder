@@ -1,6 +1,6 @@
 export enum locales {
-  "en" = "en",
   "hu" = "hu",
+  "en" = "en",
 }
 
 export type LocaleType = keyof typeof locales;

@@ -12,6 +12,14 @@ html {
   background: #edeeeb;
 }
 
+:is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-playfair-display) !important;
+}
+
+:is(p, span) {
+  font-family: var(--font-source-sans-3) !important;
+}
+
 .custom-marker-cluster {
   background: #4a5838;
   border-radius: 50%;
@@ -36,14 +44,4 @@ html {
 
 .leaflet-popup-content-wrapper {
   padding: 0 !important;
-}
-
-.leaflet-container {
-  h3 {
-    font-family: var(--font-playfair-display) !important;
-  }
-
-  p {
-    font-family: var(--font-source-sans-3) !important;
-  }
 }

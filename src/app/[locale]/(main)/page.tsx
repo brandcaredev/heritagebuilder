@@ -13,7 +13,7 @@ export default async function MainPage({
   const buildingTypes = await api.buildingType.getBuildingTypes({
     lang: locale,
   });
-  const buildings = await api.building.getBuildings({ lang: locale });
+  const buildings = await api.building.getAcceptedBuildings({ lang: locale });
   const supabase = await createClient();
   return (
     <div className="flex flex-col gap-4 lg:flex-row">
@@ -127,7 +127,7 @@ export default async function MainPage({
                   <h3 className="font-bold text-brown group-hover:text-opacity-80">
                     {building.name}
                   </h3>
-                  <p className="font-source-sans-3 text-xs uppercase text-brown-dark-20">
+                  <p className="text-brown-dark-20 font-source-sans-3 text-xs uppercase">
                     {`${building.city?.name}, ${building.country?.name}`}
                   </p>
                 </div>

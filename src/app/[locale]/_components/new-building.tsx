@@ -89,15 +89,14 @@ const optionalSchema = z.object({
   presentday: z.string().optional(),
   famousresidents: z.string().optional(),
   renovation: z.string().optional(),
-  city: z.string().optional(),
-  county: z.string().optional(),
+  city: z.string(),
+  county: z.string(),
 });
 
 export const formSchema = z.object({
   country: z.string(),
   type: z.string().optional(),
-  en: optionalSchema.optional().superRefine((values, ctx) => {
-    console.log("VALUES", values);
+  en: optionalSchema.partial().superRefine((values, ctx) => {
     // if `en` is not even provided, skip
     if (!values) {
       return;
@@ -142,13 +141,14 @@ export const formSchema = z.object({
           message: "Present day is required if any English field is filled",
         });
       }
-    } else {
     }
   }),
   hu: translatedContentSchema,
   featuredImage: z.array(fileSchema),
   images: z.array(fileSchema),
   position: z.tuple([z.number(), z.number()]),
+  creatorname: z.string().optional(),
+  creatoremail: z.string().optional(),
 });
 
 export default function BuildingForm({
@@ -218,20 +218,20 @@ export default function BuildingForm({
       // get countyid if exits, insert a new county if not
       let countyid = await trpc.county.getCountyIdBySlug
         .fetch({
-          slug: slugify(values.hu.county),
-          lang: "hu",
+          slug: slugify(values.en.county!),
+          lang: "en",
         })
         .catch(() => undefined);
       if (!countyid) {
         const countyData: CountyCreate = {
           countryid: values.country,
           en: {
-            slug: slugify(values.hu.county),
-            name: values.hu.county,
+            slug: slugify(values.en.county!),
+            name: values.en.county!,
             language: "en",
           },
           hu: {
-            slug: slugify(values.hu.county),
+            slug: slugify(values.hu.county) || slugify(values.en.county!),
             name: values.hu.county,
             language: "hu",
           },
@@ -249,12 +249,14 @@ export default function BuildingForm({
           },
         );
       }
+      console.log(countyid);
       if (!countyid) throw new Error();
+      console.log(slugify(values.en.city!));
       //get cityid if exits, insert a new city if not
       let cityid = await trpc.city.getCityIdBySlug
         .fetch({
-          slug: slugify(values.hu.city),
-          lang: "hu",
+          slug: slugify(values.en.city!),
+          lang: "en",
         })
         .catch(() => undefined);
       if (!cityid) {
@@ -262,12 +264,12 @@ export default function BuildingForm({
           countryid: values.country,
           countyid,
           en: {
-            slug: slugify(values.hu.city),
-            name: values.hu.city,
+            slug: slugify(values.en.city!),
+            name: values.en.city!,
             language: "en",
           },
           hu: {
-            slug: slugify(values.hu.city),
+            slug: slugify(values.hu.city) || slugify(values.en.city!),
             name: values.hu.city,
             language: "hu",
           },
@@ -295,12 +297,17 @@ export default function BuildingForm({
         buildingtypeid: parseInt(values.type ?? "1"),
         status: "pending",
         position: values.position,
+        creatorname: values.creatorname || null,
+        creatoremail: values.creatoremail || null,
       };
 
       // Check if EN data exists and has any non-empty values
       const hasEnglishData =
         values.en &&
-        Object.values(values.en).some((value) => value && value.trim() !== "");
+        Object.entries(values.en).some(
+          ([key, value]) =>
+            value && value.trim() !== "" && key !== "city" && key !== "county",
+        );
 
       // Prepare translation data
       const translationData = {
@@ -311,20 +318,19 @@ export default function BuildingForm({
           history: values.hu.history,
           style: values.hu.style,
           presentday: values.hu.presentday,
-          famousresidents: values.hu.famousresidents ?? null,
-          renovation: values.hu.renovation ?? null,
+          famousresidents: values.hu.famousresidents || null,
+          renovation: values.hu.renovation || null,
         },
         ...(hasEnglishData && {
           en: {
-            slug: slugify(values.en!.name || values.hu.name),
-            name: values.en!.name || values.hu.name,
+            slug: slugify(values.en.name!),
+            name: values.en.name,
             language: "en",
-            history: values.en!.history || values.hu.history,
-            style: values.en!.style || values.hu.style,
-            presentday: values.en!.presentday || values.hu.presentday,
-            famousresidents:
-              values.en!.famousresidents ?? values.hu.famousresidents ?? null,
-            renovation: values.en!.renovation ?? values.hu.renovation ?? null,
+            history: values.en.history,
+            style: values.en.style,
+            presentday: values.en.presentday,
+            famousresidents: values.en.famousresidents || null,
+            renovation: values.en.renovation || null,
           },
         }),
       } as {
@@ -386,8 +392,8 @@ export default function BuildingForm({
           preview: string;
         }
       ).preview,
-      famousresidents: languageData!.famousresidents ?? null,
-      renovation: languageData!.renovation ?? null,
+      famousresidents: languageData.famousresidents ?? null,
+      renovation: languageData.renovation ?? null,
       buildingtypeid: parseInt(type ?? "0"),
     };
     return <Building building={previewData as BuildingPreviewData} />;
@@ -648,6 +654,38 @@ export default function BuildingForm({
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name={"creatorname"}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.creatorname")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    {t("form.descriptions.creatorname")}
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={"creatoremail"}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.creatoremail")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    {t("form.descriptions.creatoremail")}
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+
             <Button type="submit">{t("common.submit")}</Button>
           </form>
         </Form>

@@ -18,12 +18,16 @@
     "featuredImage": "Featured image",
     "images": "Images",
     "position": "Position",
+    "creatorname": "Creator name",
+    "creatoremail": "Creator email",
     "descriptions": {
       "name": "Name of the building",
       "history": "The history of the building",
       "style": "Architectural style and appearance",
       "presentDay": "Present day situation, function",
-      "renovation": "The status or the story of the renovation"
+      "renovation": "The status or the story of the renovation",
+      "creatorname": "Enter your name if you want to be credited for the building",
+      "creatoremail": "Enter your email if you want to get notified when the building is approved"
     }
   },
   "common": {
