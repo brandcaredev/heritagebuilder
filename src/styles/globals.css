@@ -45,3 +45,27 @@ html {
 .leaflet-popup-content-wrapper {
   padding: 0 !important;
 }
+
+.embla {
+  --slide-spacing: 1rem;
+  --slide-size: 70%;
+  --slide-height: 19rem;
+}
+.embla__container {
+  backface-visibility: hidden;
+  display: flex;
+  touch-action: pan-y;
+  margin-left: calc(var(--slide-spacing) * -1);
+}
+.embla__slide {
+  flex: 0 0 var(--slide-size);
+  min-width: 0;
+  padding-left: var(--slide-spacing);
+  position: relative;
+}
+.embla__slide__inner {
+  display: block;
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}

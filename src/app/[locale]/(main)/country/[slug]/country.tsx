@@ -47,7 +47,7 @@ export default function CountryPage({
             <div className="relative mx-1 mb-4">
               <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
-                placeholder="search"
+                placeholder="Search"
                 value={countiesSearch}
                 onChange={(e) => setCountiesSearch(e.target.value)}
                 className="rounded-xl pl-8"
@@ -83,9 +83,9 @@ export default function CountryPage({
           <div className="relative w-1/2 overflow-hidden">
             <h2 className="mb-4 text-2xl font-bold text-brown">Cities</h2>
             <div className="relative mx-1 mb-4">
-              <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4 bg-transparent" />
+              <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent text-white-2" />
               <Input
-                placeholder="search"
+                placeholder="Search"
                 value={citiesSearch}
                 onChange={(e) => setCitiesSearch(e.target.value)}
                 className="rounded-xl pl-8"

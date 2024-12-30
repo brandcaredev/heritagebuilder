@@ -1,5 +1,6 @@
 import { type ReactNode } from "react";
 import "@/styles/globals.css";
+import "@/styles/embla.css";
 import "leaflet/dist/leaflet.css";
 import "leaflet-geosearch/dist/geosearch.css";
 import { Toaster } from "sonner";
