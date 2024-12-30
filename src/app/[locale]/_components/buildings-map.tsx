@@ -94,12 +94,8 @@ const BuildingsMap = ({
       <MapContainer
         center={center ?? [45.9432, 24.9668]}
         zoom={zoom ?? 7}
-        //footer 248 padding 2*32 header 48
         attributionControl={false}
-        className={cn(
-          "max-w-screen h-[calc(100vh-48px-70px)] md:-m-8 md:h-[calc(100vh-248px-48px)]",
-          className,
-        )}
+        className={className}
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
         <SearchControl />
@@ -126,7 +122,7 @@ const BuildingsMap = ({
                       pathname: "/building/[slug]",
                       params: { slug: building.slug },
                     }}
-                    className="block w-[300px] rounded-sm bg-white-2 p-5 no-underline"
+                    className="block w-[300px] rounded-lg bg-white-2 p-5 no-underline"
                   >
                     <div className="overflow-hidden">
                       <div className="relative h-[200px] w-full">

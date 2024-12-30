@@ -17,6 +17,7 @@ import { useRouter } from "@/i18n/routing";
 import EditBuildingForm from "@/app/[locale]/_components/edit-building";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 export default function PendingBuildings({
   pendingBuildings,
@@ -25,26 +26,27 @@ export default function PendingBuildings({
   pendingBuildings: RouterOutput["building"]["getPendingBuildings"];
   buildingTypes: BuildingTypes[];
 }) {
+  const t = useTranslations();
   const router = useRouter();
   const [selectedBuilding, setSelectedBuilding] = useState<
     RouterOutput["building"]["getPendingBuildings"][0] | null
   >(null);
   const { mutate: approveBuilding } = api.building.approveBuilding.useMutation({
     onSuccess: () => {
-      toast.success("Building approved successfully", {
+      toast.success(t("admin.pending.acceptSuccess"), {
         id: "building-approve-toast",
       });
       router.refresh();
     },
     onError: () => {
-      toast.error("Something went wrong while approving the building", {
+      toast.error(t("admin.youtube.error"), {
         id: "building-approve-toast",
       });
     },
   });
 
   if (!pendingBuildings || pendingBuildings.length === 0) {
-    return <div>No pending buildings found</div>;
+    return <div>{t("admin.pending.noBuildings")}</div>;
   }
 
   if (selectedBuilding) {
@@ -55,7 +57,7 @@ export default function PendingBuildings({
           className="mb-4"
           onClick={() => setSelectedBuilding(null)}
         >
-          Back to List
+          {t("common.back")}
         </Button>
         <EditBuildingForm
           buildingTypes={buildingTypes}
@@ -80,16 +82,18 @@ export default function PendingBuildings({
 
   return (
     <div>
-      <h2 className="mb-4 text-2xl font-semibold">Pending Buildings</h2>
+      <h2 className="mb-4 text-2xl font-semibold">
+        {t("admin.pending.title")}
+      </h2>
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Country</TableHead>
-            <TableHead>County</TableHead>
-            <TableHead>City</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>{t("form.name")}</TableHead>
+            <TableHead>{t("form.country")}</TableHead>
+            <TableHead>{t("form.county")}</TableHead>
+            <TableHead>{t("form.city")}</TableHead>
+            <TableHead>{t("form.type")}</TableHead>
+            <TableHead>{t("admin.youtube.actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -105,19 +109,31 @@ export default function PendingBuildings({
               <TableCell>{building.city.hu.name}</TableCell>
               <TableCell>{building.buildingType.hu.name}</TableCell>
               <TableCell>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toast.loading("Building approveing...", {
-                      id: "building-approve-toast",
-                    });
-                    approveBuilding({ id: building.id });
-                  }}
-                >
-                  Approve
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast.loading("Building approveing...", {
+                        id: "building-approve-toast",
+                      });
+                      approveBuilding({ id: building.id });
+                    }}
+                  >
+                    {t("admin.pending.accept")}
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // TODO: Implement reject functionality
+                    }}
+                  >
+                    {t("admin.pending.reject")}
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

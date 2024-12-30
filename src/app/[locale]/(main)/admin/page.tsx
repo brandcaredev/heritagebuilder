@@ -5,12 +5,14 @@ import YoutubeLinks from "./_components/youtube-links";
 import { api } from "@/trpc/server";
 import LocationManager from "./_components/location-manager";
 import { CountryExtendedWithTranslations } from "@/server/db/zodSchemaTypes";
+import { getTranslations } from "next-intl/server";
 
 export default async function AdminPage({
   params: { locale },
 }: {
   params: { locale: string };
 }) {
+  const t = await getTranslations();
   const pendingBuildings = await api.building.getPendingBuildings();
   const youtubeLinks = await api.youtube.getLinks();
   const buildingTypes = await api.buildingType.getBuildingTypes({
@@ -22,13 +24,15 @@ export default async function AdminPage({
 
   return (
     <div className="container py-10">
-      <h1 className="mb-8 text-3xl font-bold">Admin Dashboard</h1>
+      <h1 className="mb-8 text-3xl font-bold">{t("admin.dashboard")}</h1>
 
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="pending">Pending Buildings</TabsTrigger>
-          <TabsTrigger value="youtube">YouTube Links</TabsTrigger>
-          <TabsTrigger value="locations">Locations</TabsTrigger>
+          <TabsTrigger value="pending">{t("admin.tabs.pending")}</TabsTrigger>
+          <TabsTrigger value="youtube">{t("admin.tabs.youtube")}</TabsTrigger>
+          <TabsTrigger value="locations">
+            {t("admin.tabs.locations")}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="pending">

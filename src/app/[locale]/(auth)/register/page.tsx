@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signInWithProvider } from "@/lib/supabase/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,6 +19,7 @@ import { signUpSchema } from "./signup-schema";
 type SignUpValues = z.infer<typeof signUpSchema>;
 
 export default function RegisterPage() {
+  const t = useTranslations();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -43,10 +45,10 @@ export default function RegisterPage() {
         return;
       }
 
-      toast.success("Check your email to confirm your account");
+      toast.success(t("auth.checkEmail"));
       router.push("/login");
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("toast.registerError"));
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +63,7 @@ export default function RegisterPage() {
         toast.error(error.message);
       }
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("toast.registerError"));
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +74,7 @@ export default function RegisterPage() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
         <div className="flex flex-col space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-brown">
-            Create an account
+            {t("auth.createAccount")}
           </h1>
         </div>
 
@@ -81,11 +83,11 @@ export default function RegisterPage() {
             <div className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email" className="text-green-dark-60">
-                  Email
+                  {t("auth.email")}
                 </Label>
                 <Input
                   id="email"
-                  placeholder="name@example.com"
+                  placeholder={t("auth.emailPlaceholder")}
                   type="email"
                   autoCapitalize="none"
                   autoComplete="email"
@@ -99,7 +101,7 @@ export default function RegisterPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password" className="text-green-dark-60">
-                  Password
+                  {t("auth.password")}
                 </Label>
                 <Input
                   id="password"
@@ -115,7 +117,7 @@ export default function RegisterPage() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword" className="text-green-dark-60">
-                  Confirm Password
+                  {t("auth.confirmPassword")}
                 </Label>
                 <Input
                   id="confirmPassword"
@@ -129,14 +131,11 @@ export default function RegisterPage() {
                   </p>
                 )}
               </div>
-              <Button
-                disabled={isLoading}
-                className="bg-brown hover:bg-brown-dark-40"
-              >
+              <Button disabled={isLoading}>
                 {isLoading && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Sign Up
+                {t("auth.register")}
               </Button>
             </div>
           </form>
@@ -145,8 +144,8 @@ export default function RegisterPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background text-muted-foreground px-2 text-green-dark-60">
-                Or continue with
+              <span className="bg-background text-muted-foreground px-2">
+                {t("auth.or")}
               </span>
             </div>
           </div>
@@ -155,23 +154,22 @@ export default function RegisterPage() {
             type="button"
             disabled={isLoading}
             onClick={handleGoogleSignUp}
-            className="bg-green text-white hover:bg-green-dark-40 hover:text-white"
           >
             {isLoading ? (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             ) : (
               <Icons.google className="mr-2 h-4 w-4" />
             )}{" "}
-            Google
+            {t("auth.continueWithGoogle")}
           </Button>
         </div>
-        <p className="text-muted-foreground px-8 text-center text-sm text-green-dark-60">
-          Already have an account?{" "}
+        <p className="text-muted-foreground px-8 text-center text-sm">
+          {t("auth.alreadyHaveAccount")}{" "}
           <Link
             href="/login"
             className="hover:text-brand underline underline-offset-4"
           >
-            Sign in
+            {t("auth.signIn")}
           </Link>
         </p>
       </div>
