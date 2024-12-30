@@ -1,7 +1,14 @@
 import { Instagram, Facebook, Youtube, Twitter } from "lucide-react";
 import { Link } from "@/i18n/routing";
+import { getLocale } from "next-intl/server";
+import { api } from "@/trpc/server";
 
-export function Footer() {
+export async function Footer() {
+  const locale = await getLocale();
+  const countries = await api.country.getCountries({ lang: locale });
+  const buildingTypes = await api.buildingType.getBuildingTypes({
+    lang: locale,
+  });
   return (
     <footer className="bg-green py-12 text-stone-100">
       <div className="container mx-auto px-4">
@@ -18,77 +25,37 @@ export function Footer() {
           <div>
             <h3 className="mb-2 font-bold">Countries</h3>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href={{
-                    pathname: "/country/[slug]",
-                    params: { slug: "romania" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Romania
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{
-                    pathname: "/country/[slug]",
-                    params: { slug: "serbia" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Serbia
-                </Link>
-              </li>
+              {countries.map((country) => (
+                <li key={country.id}>
+                  <Link
+                    href={{
+                      pathname: "/country/[slug]",
+                      params: { slug: country.slug },
+                    }}
+                    className="hover:text-stone-300"
+                  >
+                    {country.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
             <h3 className="mb-2 font-bold">Building Types</h3>
             <ul className="space-y-2">
-              <li>
-                <Link
-                  href={{
-                    pathname: "/building-type/[slug]",
-                    params: { slug: "temples" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Temples
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{
-                    pathname: "/building-type/[slug]",
-                    params: { slug: "castles" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Castles
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{
-                    pathname: "/building-type/[slug]",
-                    params: { slug: "fortresses" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Fortresses
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{
-                    pathname: "/building-type/[slug]",
-                    params: { slug: "common-buildings" },
-                  }}
-                  className="hover:text-stone-300"
-                >
-                  Common Buildings
-                </Link>
-              </li>
+              {buildingTypes.map((type) => (
+                <li key={type.id}>
+                  <Link
+                    href={{
+                      pathname: "/building-type/[slug]",
+                      params: { slug: type.slug },
+                    }}
+                    className="hover:text-stone-300"
+                  >
+                    {type.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>

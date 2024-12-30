@@ -69,3 +69,11 @@ html {
   border-radius: 0.5rem;
   overflow: hidden;
 }
+
+svg.map path {
+  fill: #6A573A
+}
+
+svg.map path:hover {
+  fill: #403423;
+}

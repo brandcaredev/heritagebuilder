@@ -25,7 +25,9 @@ export default async function MainPage({
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* Main Content */}
         <div className="lg:w-4/6">
-          <h1 className="mb-8 text-4xl font-extrabold text-brown">Discover</h1>
+          <h1 className="mb-8 text-4xl font-extrabold text-brown">
+            {t("page.discover")}
+          </h1>
 
           {/* Country Grid */}
           <div className="mb-8 grid gap-4 md:grid-cols-2">
@@ -47,7 +49,7 @@ export default async function MainPage({
                 >
                   <Image
                     src={publicUrl ?? "/placeholder.svg"}
-                    alt={country.name ?? "Country"}
+                    alt={country.name ?? t("page.countryImageAlt")}
                     width={600}
                     height={400}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -64,7 +66,7 @@ export default async function MainPage({
           {/*Description*/}
           <div>
             <h2 className="text-2xl font-bold text-brown">
-              Welcome to Heritage Builder
+              {t("page.welcomeTitle")}
             </h2>
             <p className="px-8 pt-2">{t("description")}</p>
           </div>
@@ -78,7 +80,7 @@ export default async function MainPage({
         {/* Latest Buildings Sidebar */}
         <div className="lg:w-2/6">
           <h2 className="mb-6 text-4xl font-bold text-brown">
-            Latest buildings
+            {t("page.latestBuildings")}
           </h2>
           <div className="space-y-4 text-brown-4">
             {buildings.map((building) => {
@@ -100,7 +102,7 @@ export default async function MainPage({
                   <div className="aspect-square">
                     <Image
                       src={publicUrl}
-                      alt={building.name ?? "Building"}
+                      alt={building.name ?? t("building.imageAlt")}
                       width={50}
                       height={50}
                       className="h-full w-full rounded object-cover"
@@ -141,7 +143,7 @@ export default async function MainPage({
             >
               <Image
                 src={publicUrl ?? "/placeholder.svg"}
-                alt={type.name ?? "Building Type"}
+                alt={type.name ?? t("page.buildingTypeImageAlt")}
                 width={200}
                 height={200}
                 className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -159,7 +161,7 @@ export default async function MainPage({
         <div className="hidden md:block md:w-1/3">
           <Image
             src="/newsletter-image.jpg"
-            alt="Newsletter background"
+            alt={t("page.newsletterImageAlt")}
             width={300}
             height={200}
             className="h-full w-full rounded-lg object-cover"

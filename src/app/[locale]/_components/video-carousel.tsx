@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui";
 import { EmblaCarouselType, EmblaEventType } from "embla-carousel";
 import useEmblaCarousel from "embla-carousel-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface Video {
@@ -18,6 +19,7 @@ const numberWithinRange = (number: number, min: number, max: number): number =>
   Math.min(Math.max(number, min), max);
 
 const VideoCarousel = ({ videos }: { videos: Video[] }) => {
+  const t = useTranslations();
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
@@ -104,11 +106,17 @@ const VideoCarousel = ({ videos }: { videos: Video[] }) => {
       .on("reInit", onSelect);
   }, [emblaApi, onSelect, setTweenFactor, setTweenNodes, tweenScale]);
 
+  if (!videos || videos.length === 0) {
+    return null;
+  }
+
   return (
     <div className="embla w-full overflow-hidden rounded-lg bg-brown-4">
       <div className="p-6">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-4xl font-bold text-white">Videos</h1>
+          <h1 className="text-4xl font-bold text-white">
+            {t("videoCarousel.title")}
+          </h1>
         </div>
         <div className="embla__viewport" ref={emblaRef}>
           <div className="embla__container">

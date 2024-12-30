@@ -56,7 +56,9 @@
     "creatingBuilding": "Creating the building...",
     "buildingCreated": "Building created successfully",
     "buildingError": "Something went wrong while creating the building",
-    "featuredImageError": "Something went wrong while creating the building - Featured image failed"
+    "featuredImageError": "Something went wrong while creating the building - Featured image failed",
+    "loginError": "Something went wrong. Please try again.",
+    "registerError": "Something went wrong. Please try again."
   },
   "account": {
     "myAccount": "My Account",
@@ -71,5 +73,72 @@
     "county": "Select county",
     "city": "Select city"
   },
-  "description": "Welcome to Heritage Builder, a platform dedicated to preserving the architectural heritage of Central Europe. Whether you're an amateur historian, a passionate local, or a seasoned architect, you can create articles about the old buildings that shape our cities, towns, and landscapes—each one a testament to the history and traditions of our ancestors. \n Share your knowledge, discover stories from fellow enthusiasts, rate the articles you find inspiring, and engage in meaningful discussions that celebrate our cultural legacy. \n Join us on Heritage Builder, where we honor the timeless beauty of our old buildings and foster a deep sense of pride and patriotism for the traditions that continue to define us."
+  "description": "Welcome to Heritage Builder, a platform dedicated to preserving the architectural heritage of Central Europe. Whether you're an amateur historian, a passionate local, or a seasoned architect, you can create articles about the old buildings that shape our cities, towns, and landscapes—each one a testament to the history and traditions of our ancestors. \n Share your knowledge, discover stories from fellow enthusiasts, rate the articles you find inspiring, and engage in meaningful discussions that celebrate our cultural legacy. \n Join us on Heritage Builder, where we honor the timeless beauty of our old buildings and foster a deep sense of pride and patriotism for the traditions that continue to define us.",
+  "page": {
+    "discover": "Discover",
+    "welcomeTitle": "Welcome to Heritage Builder",
+    "latestBuildings": "Latest buildings",
+    "countryImageAlt": "Country",
+    "buildingTypeImageAlt": "Building Type",
+    "newsletterImageAlt": "Newsletter background"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "emailPlaceholder": "name@example.com",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "createAccount": "Create an account",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "register": "Register",
+    "checkEmail": "Check your email to confirm your account"
+  },
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "tabs": {
+      "pending": "Pending Buildings",
+      "youtube": "YouTube Links",
+      "locations": "Locations"
+    },
+    "youtube": {
+      "title": "YouTube Links",
+      "addNew": "Add New Link",
+      "url": "URL",
+      "videoTitle": "Title",
+      "actions": "Actions",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "addSuccess": "YouTube link added successfully",
+      "deleteSuccess": "YouTube link deleted successfully",
+      "error": "Something went wrong"
+    },
+    "pending": {
+      "title": "Pending Buildings",
+      "noBuildings": "No pending buildings",
+      "accept": "Accept",
+      "reject": "Reject",
+      "acceptSuccess": "Building accepted successfully",
+      "rejectSuccess": "Building rejected successfully"
+    },
+    "locations": {
+      "title": "Location Management",
+      "editCounty": "Edit County Details",
+      "editCity": "Edit City Details",
+      "selectedCounty": "Selected County",
+      "selectedCity": "Selected City"
+    }
+  },
+  "newsletter": {
+    "title": "Subscribe to our newsletter",
+    "description": "Stay updated with the latest heritage buildings and stories from our community.",
+    "emailPlaceholder": "Enter your email",
+    "subscribe": "Subscribe",
+    "success": "Thank you for subscribing to our newsletter!"
+  },
+  "videoCarousel": {
+    "title": "Videos"
+  }
 }

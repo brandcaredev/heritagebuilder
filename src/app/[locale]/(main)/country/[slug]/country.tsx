@@ -2,15 +2,17 @@
 
 import BuildingList from "@/app/[locale]/_components/building-list";
 import Divider from "@/components/icons/divider";
+import Romania from "@/components/icons/romania";
 import Serbia from "@/components/icons/serbia";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Link } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 import {
   type BuildingTypes,
   type CountryExtended,
 } from "@/server/db/zodSchemaTypes";
+import clsx from "clsx";
 import { Search } from "lucide-react";
 import { useState } from "react";
 
@@ -21,8 +23,19 @@ export default function CountryPage({
   country: CountryExtended;
   buildingTypes: BuildingTypes[];
 }) {
+  const router = useRouter();
   const [countiesSearch, setCountiesSearch] = useState("");
   const [citiesSearch, setCitiesSearch] = useState("");
+
+  const onMapCountyClick = (id: number) => {
+    const selectedCounty = country.counties.find((c) => c.id === id);
+    if (selectedCounty) {
+      router.push({
+        pathname: "/county/[slug]",
+        params: { slug: selectedCounty.slug },
+      });
+    }
+  };
 
   return (
     <div>
@@ -30,8 +43,17 @@ export default function CountryPage({
 
       <div className="flex flex-col gap-10 lg:flex-row">
         {/* Map Section */}
-        <div className="relative h-[800px]">
-          <Serbia />
+        <div
+          className={clsx(
+            "relative",
+            country.id === "ro" ? "h-[440px]" : "h-[720px]",
+          )}
+        >
+          {country.id === "ro" ? (
+            <Romania onClick={(id) => onMapCountyClick(id)} />
+          ) : (
+            <Serbia onClick={(id) => onMapCountyClick(id)} />
+          )}
         </div>
 
         {/* Decorative Divider */}

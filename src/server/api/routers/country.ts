@@ -29,7 +29,6 @@ export const countryRouter = createTRPCRouter({
           },
         },
       });
-
       const countriesMapped = countries.map((country) => {
         const countrySelectLang = country.data.find(
           (data) => data.language === lang,
@@ -124,12 +123,14 @@ export const countryRouter = createTRPCRouter({
   getCountryBySlug: publicProcedure
     .input(z.object({ slug: z.string(), lang: z.string() }))
     .query(async ({ input: { slug, lang }, ctx }) => {
+      console.log(slug, lang);
       const countryData = await ctx.db.query.countriesDataTable.findFirst({
         where: and(
           eq(countriesDataTable.slug, slug),
           eq(countriesDataTable.language, lang),
         ),
       });
+
       if (!countryData) {
         throw new TRPCError({
           code: "NOT_FOUND",

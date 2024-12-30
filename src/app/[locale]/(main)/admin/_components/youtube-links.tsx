@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 interface YoutubeLink {
   id: number;
@@ -27,22 +28,29 @@ export default function YoutubeLinks({
 }: {
   youtubeLinks: YoutubeLink[];
 }) {
+  const t = useTranslations();
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const { mutate: addLink } = api.youtube.addLink.useMutation({
     onSuccess: () => {
-      toast.success("Link added!");
+      toast.success(t("admin.youtube.addSuccess"));
       setTitle("");
       setUrl("");
       router.refresh();
     },
     onError: () => {
-      toast.error("Something went wrong while adding the link");
+      toast.error(t("admin.youtube.error"));
     },
   });
   const { mutate: deleteLink } = api.youtube.deleteLink.useMutation({
-    onSuccess: () => router.refresh(),
+    onSuccess: () => {
+      toast.success(t("admin.youtube.deleteSuccess"));
+      router.refresh();
+    },
+    onError: () => {
+      toast.error(t("admin.youtube.error"));
+    },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -58,40 +66,42 @@ export default function YoutubeLinks({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label htmlFor="title">{t("admin.youtube.videoTitle")}</Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter video title"
+                placeholder={t("admin.youtube.videoTitle")}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="url">YouTube URL</Label>
+              <Label htmlFor="url">{t("admin.youtube.url")}</Label>
               <Input
                 id="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="Enter YouTube URL"
+                placeholder={t("admin.youtube.url")}
                 required
                 type="url"
                 pattern="https?://.*"
               />
             </div>
           </div>
-          <Button type="submit">Add Link</Button>
+          <Button type="submit">{t("admin.youtube.addNew")}</Button>
         </form>
       </Card>
 
       <div>
-        <h2 className="mb-4 text-2xl font-semibold">YouTube Links</h2>
+        <h2 className="mb-4 text-2xl font-semibold">
+          {t("admin.youtube.title")}
+        </h2>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>URL</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead>{t("admin.youtube.videoTitle")}</TableHead>
+              <TableHead>{t("admin.youtube.url")}</TableHead>
+              <TableHead>{t("admin.youtube.actions")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -114,7 +124,7 @@ export default function YoutubeLinks({
                     size="sm"
                     onClick={() => deleteLink({ id: link.id })}
                   >
-                    Delete
+                    {t("admin.youtube.delete")}
                   </Button>
                 </TableCell>
               </TableRow>
