@@ -3,6 +3,77 @@
 @tailwind utilities;
 @layer base {
   :root {
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
+}
+
+html {
+  font-family: var(--font-playfair-display);
+  background: #edeeeb;
+}
+
+:is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-playfair-display) !important;
+}
+
+:is(p, span) {
+  font-family: var(--font-source-sans-3) !important;
+}
+
+.custom-marker-cluster {
+  background: #4a5838;
+  border-radius: 50%;
+  color: #ffffff;
+  line-height: 37px;
+  text-align: center;
+  font-size: x-large;
+  padding-top: 5px;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  width: fit-content !important;
+  p {
+    margin: 0 !important;
+  }
+}
+
+.leaflet-popup-tip-container {
+  display: none !important;
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+}
+
+.embla {
+  --slide-spacing: 1rem;
+  --slide-size: 70%;
+  --slide-height: 19rem;
+}
+.embla__container {
+  backface-visibility: hidden;
+  display: flex;
+  touch-action: pan-y;
+  margin-left: calc(var(--slide-spacing) * -1);
+}
+.embla__slide {
+  flex: 0 0 var(--slide-size);
+  min-width: 0;
+  padding-left: var(--slide-spacing);
+  position: relative;
+}
+.embla__slide__inner {
+  display: block;
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+svg.map path {
+  fill: #6A573A
+}
+
+svg.map path:hover {
+  fill: #403423;
 }

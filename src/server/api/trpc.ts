@@ -10,7 +10,7 @@ import { initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { db } from "~/server/db";
+import { db } from "@/server/db";
 
 /**
  * 1. CONTEXT
@@ -79,6 +79,7 @@ export const createTRPCRouter = t.router;
  * You can remove this if you don't like it, but it can help catch unwanted waterfalls by simulating
  * network latency that would occur in production but not in local development.
  */
+
 const timingMiddleware = t.middleware(async ({ next, path }) => {
   const start = Date.now();
 

@@ -1,0 +1,143 @@
+{
+  "building": {
+    "history": "Történet",
+    "style": "Stílus",
+    "famousResidents": "Híres lakók",
+    "renovation": "Felújítás",
+    "presentDay": "Jelenlegi állapot",
+    "imageAlt": "Épület kép",
+    "preview": "Épület előnézet"
+  },
+  "form": {
+    "country": "Ország",
+    "type": "Típus",
+    "name": "Név",
+    "city": "Város",
+    "county": "Megye",
+    "featuredImage": "Kiemelt kép",
+    "images": "Képek",
+    "position": "Elhelyezkedés",
+    "creatorname": "Létrehozó neve",
+    "creatoremail": "Létrehozó email",
+    "descriptions": {
+      "name": "Az épület neve",
+      "history": "Az épület története",
+      "style": "Építészeti stílus és megjelenés",
+      "presentDay": "Jelenlegi helyzet, funkció",
+      "renovation": "A felújítás állapota vagy története",
+      "creatorname": "Adja meg a nevét, ha szeretné, hogy a neve megjelenjen az épületnél",
+      "creatoremail": "Adja meg az email címét, ha szeretné, hogy értesítést kapjon, amikor az épület jóváhagyásra kerül"
+    }
+  },
+  "common": {
+    "submit": "Küldés",
+    "cancel": "Mégse",
+    "save": "Mentés",
+    "edit": "Szerkesztés",
+    "delete": "Törlés",
+    "preview": "Előnézet",
+    "loading": "Betöltés...",
+    "error": "Valami hiba történt",
+    "success": "Sikeres",
+    "goToHome": "Vissza a főoldalra",
+    "createAnother": "Új épület létrehozása",
+    "hu": "Magyar",
+    "en": "Angol",
+    "back": "Vissza a listához",
+    "selectLocation": "Helyszín kiválasztása"
+  },
+  "successDialog": {
+    "title": "Köszönjük a hozzájárulását!",
+    "uploadSuccess": "Az örökségünk megőrzése iránti elkötelezettséged igazán inspiráló!",
+    "description": "Az épület részletei sikeresen feltöltésre kerültek, és most már részei közösségünk történelmének. Ezeknek a történeteknek a megosztásával segítesz életben tartani a múltat a jövő generációi számára."
+  },
+  "toast": {
+    "creatingBuilding": "Épület létrehozása...",
+    "buildingCreated": "Az épület sikeresen létrehozva",
+    "buildingError": "Hiba történt az épület létrehozása közben",
+    "featuredImageError": "Hiba történt az épület létrehozása közben - A kiemelt kép feltöltése sikertelen",
+    "loginError": "Valami hiba történt. Kérjük, próbálja újra.",
+    "registerError": "Valami hiba történt. Kérjük, próbálja újra."
+  },
+  "account": {
+    "myAccount": "Fiókom",
+    "admin": "Admin",
+    "signOut": "Kijelentkezés",
+    "login": "Bejelentkezés",
+    "newBuilding": "Új épület",
+    "userAccount": "Felhasználói fiók"
+  },
+  "select": {
+    "country": "Válassz országot",
+    "county": "Válassz megyét",
+    "city": "Válassz várost"
+  },
+  "description": "Üdvözöljük a Heritage Builder-en, egy olyan platformon, amely Közép-Európa építészeti örökségének megőrzésére szenteli magát. Legyen Ön amatőr történész, lelkes helyi lakos vagy tapasztalt építész, létrehozhat cikkeket azokról a régi épületekről, amelyek formálják városainkat, településeinket és tájainkat - mindegyik őseink történelmének és hagyományainak tanúja. \n Ossza meg tudását, fedezzen fel történeteket más lelkes emberektől, értékelje az inspiráló cikkeket, és vegyen részt olyan értelmes beszélgetésekben, amelyek kulturális örökségünket ünneplik. \n Csatlakozzon hozzánk a Heritage Builder-en, ahol tiszteletben tartjuk régi épületeink időtlen szépségét, és elmélyítjük a büszkeséget és hazaszeretetet azok iránt a hagyományok iránt, amelyek továbbra is meghatároznak minket.",
+  "page": {
+    "discover": "Felfedezés",
+    "welcomeTitle": "Üdvözöljük a Heritage Builder-en",
+    "latestBuildings": "Legújabb épületek",
+    "countryImageAlt": "Ország",
+    "buildingTypeImageAlt": "Épület típus",
+    "newsletterImageAlt": "Hírlevél háttér"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Jelszó",
+    "confirmPassword": "Jelszó megerősítése",
+    "emailPlaceholder": "nev@pelda.hu",
+    "continueWithGoogle": "Folytatás Google-lel",
+    "or": "vagy",
+    "createAccount": "Fiók létrehozása",
+    "alreadyHaveAccount": "Már van fiókja?",
+    "signIn": "Bejelentkezés",
+    "register": "Regisztráció",
+    "checkEmail": "Ellenőrizze email fiókját a regisztráció megerősítéséhez"
+  },
+  "admin": {
+    "dashboard": "Admin Vezérlőpult",
+    "tabs": {
+      "pending": "Függőben lévő épületek",
+      "youtube": "YouTube linkek",
+      "locations": "Helyszínek"
+    },
+    "youtube": {
+      "title": "YouTube linkek",
+      "addNew": "Új link hozzáadása",
+      "url": "URL",
+      "videoTitle": "Cím",
+      "actions": "Műveletek",
+      "delete": "Törlés",
+      "save": "Mentés",
+      "cancel": "Mégse",
+      "addSuccess": "YouTube link sikeresen hozzáadva",
+      "deleteSuccess": "YouTube link sikeresen törölve",
+      "error": "Valami hiba történt"
+    },
+    "pending": {
+      "title": "Függőben lévő épületek",
+      "noBuildings": "Nincsenek függőben lévő épületek",
+      "accept": "Elfogadás",
+      "reject": "Elutasítás",
+      "acceptSuccess": "Épület sikeresen elfogadva",
+      "rejectSuccess": "Épület sikeresen elutasítva"
+    },
+    "locations": {
+      "title": "Helyszínek kezelése",
+      "editCounty": "Megye szerkesztése",
+      "editCity": "Város szerkesztése",
+      "selectedCounty": "Kiválasztott megye",
+      "selectedCity": "Kiválasztott város"
+    }
+  },
+  "newsletter": {
+    "title": "Iratkozzon fel hírlevelünkre",
+    "description": "Értesüljön a legújabb műemlék épületekről és közösségünk történeteiről.",
+    "emailPlaceholder": "Adja meg az email címét",
+    "subscribe": "Feliratkozás",
+    "success": "Köszönjük, hogy feliratkozott hírlevelünkre!"
+  },
+  "videoCarousel": {
+    "title": "Videók"
+  }
+}
