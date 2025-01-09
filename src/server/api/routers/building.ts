@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import { and, eq, or, sql } from "drizzle-orm";
+import { and, desc, eq, or, sql } from "drizzle-orm";
 import {
   BuildingDataInsertSchema,
   BuildingSchema,
@@ -158,6 +158,7 @@ export const buildingRouter = createTRPCRouter({
           },
         },
         limit: 6,
+        orderBy: [desc(buildingsTable.createdAt)],
       });
 
       const buildingsMapped = buildings.map((building) => ({

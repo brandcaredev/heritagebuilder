@@ -213,4 +213,39 @@ export const cityRouter = createTRPCRouter({
         });
       }
     }),
+  getLanguageCitySlug: publicProcedure
+    .input(
+      z.object({ slug: z.string(), lang: z.string(), nextLang: z.string() }),
+    )
+    .query(async ({ input: { slug, lang, nextLang }, ctx }) => {
+      const cityData = await ctx.db.query.citiesDataTable.findFirst({
+        where: and(
+          eq(citiesDataTable.slug, slug),
+          eq(citiesDataTable.language, lang),
+        ),
+        columns: {
+          cityid: true,
+        },
+      });
+      if (!cityData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "City data was not found",
+        });
+      const nextLangCityData = await ctx.db.query.citiesDataTable.findFirst({
+        where: and(
+          eq(citiesDataTable.cityid, cityData.cityid),
+          eq(citiesDataTable.language, nextLang),
+        ),
+        columns: {
+          slug: true,
+        },
+      });
+      if (!nextLangCityData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Next city data was not found",
+        });
+      return nextLangCityData.slug;
+    }),
 });

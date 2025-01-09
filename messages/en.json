@@ -113,7 +113,10 @@
       "cancel": "Cancel",
       "addSuccess": "YouTube link added successfully",
       "deleteSuccess": "YouTube link deleted successfully",
-      "error": "Something went wrong"
+      "error": "Something went wrong",
+      "orderSuccess": "Order saved successfully",
+      "saveOrder": "Save the order",
+      "updateSuccess": "Link updated successfully"
     },
     "pending": {
       "title": "Pending Buildings",
@@ -140,5 +143,20 @@
   },
   "videoCarousel": {
     "title": "Videos"
+  },
+  "fileUploader": {
+    "dragAndDrop": "Drag 'n' drop files here, or click to select files",
+    "dropHere": "Drop the files here",
+    "multipleFiles": "You can upload {count} files (up to {size} each)",
+    "singleFile": "You can upload a file with {size}",
+    "uploadingFiles": "Uploading {count} files...",
+    "uploadingFile": "Uploading file...",
+    "filesUploaded": "{count} files uploaded",
+    "fileUploaded": "File uploaded",
+    "uploadError": "Failed to upload {count}",
+    "maxFilesError": "Cannot upload more than {count} files",
+    "maxFileError": "Cannot upload more than 1 file at a time",
+    "fileRejected": "File {name} was rejected",
+    "removeFile": "Remove file"
   }
 }

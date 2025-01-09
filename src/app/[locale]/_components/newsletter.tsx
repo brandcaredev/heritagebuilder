@@ -16,7 +16,7 @@ export default function Newsletter() {
       },
     });
   return (
-    <div className="flex flex-1 flex-col gap-4 md:items-center md:justify-between">
+    <div className="flex w-full flex-1 flex-col gap-4 md:items-center md:justify-between">
       <div className="space-y-2">
         <h2 className="text-2xl font-bold text-white-2">
           {t("newsletter.title")}

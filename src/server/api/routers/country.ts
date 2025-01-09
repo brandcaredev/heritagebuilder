@@ -123,7 +123,6 @@ export const countryRouter = createTRPCRouter({
   getCountryBySlug: publicProcedure
     .input(z.object({ slug: z.string(), lang: z.string() }))
     .query(async ({ input: { slug, lang }, ctx }) => {
-      console.log(slug, lang);
       const countryData = await ctx.db.query.countriesDataTable.findFirst({
         where: and(
           eq(countriesDataTable.slug, slug),
@@ -232,5 +231,41 @@ export const countryRouter = createTRPCRouter({
         }),
       };
       return countryMapped;
+    }),
+  getLanguageCountrySlug: publicProcedure
+    .input(
+      z.object({ slug: z.string(), lang: z.string(), nextLang: z.string() }),
+    )
+    .query(async ({ input: { slug, lang, nextLang }, ctx }) => {
+      const countryData = await ctx.db.query.countriesDataTable.findFirst({
+        where: and(
+          eq(countriesDataTable.slug, slug),
+          eq(countriesDataTable.language, lang),
+        ),
+        columns: {
+          countryid: true,
+        },
+      });
+      if (!countryData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Country data was not found",
+        });
+      const nextLangCountryData =
+        await ctx.db.query.countriesDataTable.findFirst({
+          where: and(
+            eq(countriesDataTable.countryid, countryData.countryid),
+            eq(countriesDataTable.language, nextLang),
+          ),
+          columns: {
+            slug: true,
+          },
+        });
+      if (!nextLangCountryData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Next country data was not found",
+        });
+      return nextLangCountryData.slug;
     }),
 });
