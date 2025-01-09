@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
 import { buildingTypesDataTable } from "@/server/db/schemas";
-import { eq, or } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 export const buildingTypeRouter = createTRPCRouter({
@@ -43,5 +43,45 @@ export const buildingTypeRouter = createTRPCRouter({
       });
 
       return buildingTypesMapped;
+    }),
+  getLanguageBuildingTypeSlug: publicProcedure
+    .input(
+      z.object({ slug: z.string(), lang: z.string(), nextLang: z.string() }),
+    )
+    .query(async ({ input: { slug, lang, nextLang }, ctx }) => {
+      const buildingTypesData =
+        await ctx.db.query.buildingTypesDataTable.findFirst({
+          where: and(
+            eq(buildingTypesDataTable.slug, slug),
+            eq(buildingTypesDataTable.language, lang),
+          ),
+          columns: {
+            buildingtypeid: true,
+          },
+        });
+      if (!buildingTypesData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Building type data was not found",
+        });
+      const nextLangBuildingTypeData =
+        await ctx.db.query.buildingTypesDataTable.findFirst({
+          where: and(
+            eq(
+              buildingTypesDataTable.buildingtypeid,
+              buildingTypesData.buildingtypeid,
+            ),
+            eq(buildingTypesDataTable.language, nextLang),
+          ),
+          columns: {
+            slug: true,
+          },
+        });
+      if (!nextLangBuildingTypeData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Next building type data was not found",
+        });
+      return nextLangBuildingTypeData.slug;
     }),
 });

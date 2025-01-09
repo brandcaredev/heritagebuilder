@@ -64,6 +64,13 @@
       "when": 1735468228681,
       "tag": "0008_polite_rogue",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1736242071510,
+      "tag": "0009_plain_the_hood",
+      "breakpoints": true
     }
   ]
 }
