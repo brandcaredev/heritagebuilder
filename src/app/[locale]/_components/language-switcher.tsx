@@ -1,8 +1,9 @@
 "use client";
-import { usePathname, useRouter } from "@/i18n/routing";
+import { usePathname } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
+import { api } from "@/trpc/react";
 import { useLocale } from "next-intl";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useTransition } from "react";
 
 const languages = [
@@ -10,23 +11,74 @@ const languages = [
   { label: "Magyar", value: "hu", flag: "🇭🇺" },
 ];
 
+type SlugPages = "country" | "city" | "region" | "county" | "building-type";
+type Params = { slug: string; locale: LocaleType };
+
 export default function LocaleSwitcher() {
+  const trpc = api.useUtils();
   const locale = useLocale();
   const router = useRouter();
   const [_isPending, startTransition] = useTransition();
   const pathname = usePathname();
   const params = useParams();
 
-  function onSelectChange(event: ChangeEvent<HTMLSelectElement>) {
+  const getLocaleEntitySlug = async (
+    type: SlugPages,
+    params: { slug: string; locale: LocaleType },
+    nextLocale: LocaleType,
+  ) => {
+    switch (type) {
+      case "country":
+        return await trpc.country.getLanguageCountrySlug.fetch({
+          slug: params.slug,
+          lang: locale,
+          nextLang: nextLocale,
+        });
+      case "city":
+        return await trpc.city.getLanguageCitySlug.fetch({
+          slug: params.slug,
+          lang: locale,
+          nextLang: nextLocale,
+        });
+      // case "region":
+      //   return await trpc.region.getLanguageRegionSlug.fetch({
+      //     slug: params.slug,
+      //     lang: locale,
+      //     nextLang: nextLocale,
+      //   });
+      case "county":
+        return await trpc.county.getLanguageCountySlug.fetch({
+          slug: params.slug,
+          lang: locale,
+          nextLang: nextLocale,
+        });
+      case "building-type":
+        return await trpc.buildingType.getLanguageBuildingTypeSlug.fetch({
+          slug: params.slug,
+          lang: locale,
+          nextLang: nextLocale,
+        });
+      default:
+        return undefined;
+    }
+  };
+
+  const onSelectChange = async (event: ChangeEvent<HTMLSelectElement>) => {
     const nextLocale = event.target.value as LocaleType;
+    const slugPage = pathname.split("/")[1];
+    const nextSlug = slugPage
+      ? await getLocaleEntitySlug(
+          slugPage as SlugPages,
+          params as Params,
+          nextLocale,
+        )
+      : undefined;
     startTransition(() =>
-      router.replace(
-        //@ts-expect-error
-        { pathname, params },
-        { locale: nextLocale },
-      ),
+      nextSlug
+        ? router.replace(`/${nextLocale}/${slugPage}/${nextSlug}`)
+        : router.replace(`/${nextLocale}/${pathname}`),
     );
-  }
+  };
   return (
     <div className="relative inline-block">
       <select

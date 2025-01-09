@@ -204,4 +204,41 @@ export const countyRouter = createTRPCRouter({
         });
       }
     }),
+  getLanguageCountySlug: publicProcedure
+    .input(
+      z.object({ slug: z.string(), lang: z.string(), nextLang: z.string() }),
+    )
+    .query(async ({ input: { slug, lang, nextLang }, ctx }) => {
+      const countyData = await ctx.db.query.countiesDataTable.findFirst({
+        where: and(
+          eq(countiesDataTable.slug, slug),
+          eq(countiesDataTable.language, lang),
+        ),
+        columns: {
+          countyid: true,
+        },
+      });
+      if (!countyData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "County data was not found",
+        });
+      const nextLangCountyData = await ctx.db.query.countiesDataTable.findFirst(
+        {
+          where: and(
+            eq(countiesDataTable.countyid, countyData.countyid),
+            eq(countiesDataTable.language, nextLang),
+          ),
+          columns: {
+            slug: true,
+          },
+        },
+      );
+      if (!nextLangCountyData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Next county data was not found",
+        });
+      return nextLangCountyData.slug;
+    }),
 });

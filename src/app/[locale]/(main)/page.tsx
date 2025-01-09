@@ -21,7 +21,7 @@ export default async function MainPage({
   const buildings = await api.building.getAcceptedBuildings({ lang: locale });
   const supabase = await createClient();
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* Main Content */}
         <div className="lg:w-4/6">
@@ -157,7 +157,7 @@ export default async function MainPage({
         })}
       </div>
       {/* Newsletter Section */}
-      <div className="mx-auto flex max-w-3xl items-center gap-8 rounded-lg bg-brown-3 p-8">
+      <div className="flex items-center gap-8 rounded-lg bg-brown-3 p-8">
         <div className="hidden md:block md:w-1/3">
           <Image
             src="/newsletter-image.jpg"

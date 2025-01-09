@@ -130,14 +130,19 @@
       "selectedCity": "Kiválasztott város"
     }
   },
-  "newsletter": {
-    "title": "Iratkozzon fel hírlevelünkre",
-    "description": "Értesüljön a legújabb műemlék épületekről és közösségünk történeteiről.",
-    "emailPlaceholder": "Adja meg az email címét",
-    "subscribe": "Feliratkozás",
-    "success": "Köszönjük, hogy feliratkozott hírlevelünkre!"
-  },
-  "videoCarousel": {
-    "title": "Videók"
+  "fileUploader": {
+    "dragAndDrop": "Húzza ide a fájlokat, vagy kattintson a kiválasztáshoz",
+    "dropHere": "Dobja ide a fájlokat",
+    "multipleFiles": "{count} fájlt tölthet fel (egyenként maximum {size})",
+    "singleFile": "Feltölthet egy fájlt maximum {size} méretben",
+    "uploadingFiles": "{count} fájl feltöltése...",
+    "uploadingFile": "Fájl feltöltése...",
+    "filesUploaded": "{count} fájl feltöltve",
+    "fileUploaded": "Fájl feltöltve",
+    "uploadError": "Nem sikerült feltölteni: {count}",
+    "maxFilesError": "Nem tölthet fel {count} fájlnál többet",
+    "maxFileError": "Egyszerre csak 1 fájlt tölthet fel",
+    "fileRejected": "A(z) {name} fájl elutasítva",
+    "removeFile": "Fájl eltávolítása"
   }
 }

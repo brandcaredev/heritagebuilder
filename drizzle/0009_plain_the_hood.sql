@@ -1,0 +1,1 @@
+ALTER TABLE "YoutubeLink" ADD COLUMN "sort" integer;
