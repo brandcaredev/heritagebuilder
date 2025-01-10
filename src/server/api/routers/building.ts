@@ -406,4 +406,40 @@ export const buildingRouter = createTRPCRouter({
         throw new Error("Error creating building");
       }
     }),
+  getLanguageBuildingSlug: publicProcedure
+    .input(
+      z.object({ slug: z.string(), lang: z.string(), nextLang: z.string() }),
+    )
+    .query(async ({ input: { slug, lang, nextLang }, ctx }) => {
+      const buildingData = await ctx.db.query.buildingDataTable.findFirst({
+        where: and(
+          eq(buildingDataTable.slug, slug),
+          eq(buildingDataTable.language, lang),
+        ),
+        columns: {
+          buildingid: true,
+        },
+      });
+      if (!buildingData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Building data was not found",
+        });
+      const nextLangBuildingData =
+        await ctx.db.query.buildingDataTable.findFirst({
+          where: and(
+            eq(buildingDataTable.buildingid, buildingData.buildingid),
+            eq(buildingDataTable.language, nextLang),
+          ),
+          columns: {
+            slug: true,
+          },
+        });
+      if (!nextLangBuildingData)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Next building data was not found",
+        });
+      return nextLangBuildingData.slug;
+    }),
 });
