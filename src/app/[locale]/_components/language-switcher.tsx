@@ -11,7 +11,13 @@ const languages = [
   { label: "Magyar", value: "hu", flag: "🇭🇺" },
 ];
 
-type SlugPages = "country" | "city" | "region" | "county" | "building-type";
+type SlugPages =
+  | "country"
+  | "city"
+  | "region"
+  | "county"
+  | "building-type"
+  | "building";
 type Params = { slug: string; locale: LocaleType };
 
 export default function LocaleSwitcher() {
@@ -54,6 +60,12 @@ export default function LocaleSwitcher() {
         });
       case "building-type":
         return await trpc.buildingType.getLanguageBuildingTypeSlug.fetch({
+          slug: params.slug,
+          lang: locale,
+          nextLang: nextLocale,
+        });
+      case "building":
+        return await trpc.building.getLanguageBuildingSlug.fetch({
           slug: params.slug,
           lang: locale,
           nextLang: nextLocale,
