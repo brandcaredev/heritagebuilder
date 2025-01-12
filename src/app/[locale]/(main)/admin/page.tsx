@@ -7,11 +7,17 @@ import LocationManager from "./_components/location-manager";
 import { CountryExtendedWithTranslations } from "@/server/db/zodSchemaTypes";
 import { getTranslations } from "next-intl/server";
 
-export default async function AdminPage({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function AdminPage(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const t = await getTranslations();
   const pendingBuildings = await api.building.getPendingBuildings();
   const youtubeLinks = await api.youtube.getLinks();

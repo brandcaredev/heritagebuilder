@@ -6,13 +6,20 @@ import { notFound } from "next/navigation";
 import SimplePage from "../../../_components/simple-page";
 
 interface Props {
-  params: {
+  params: Promise<{
     locale: string;
     slug: string;
-  };
+  }>;
 }
 
-export default async function CountyPage({ params: { locale, slug } }: Props) {
+export default async function CountyPage(props: Props) {
+  const params = await props.params;
+
+  const {
+    locale,
+    slug
+  } = params;
+
   const county = await api.county.getCountyBySlug({ slug, lang: locale });
   const buildingTypes = await api.buildingType.getBuildingTypes({
     lang: locale,

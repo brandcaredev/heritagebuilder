@@ -3,11 +3,18 @@ import { api } from "@/trpc/server";
 import BuildingComponent from "@/_components/building";
 import { createClient } from "@/supabase/server";
 
-export default async function BuildingPage({
-  params: { slug, locale },
-}: {
-  params: { slug: string; locale: string };
-}) {
+export default async function BuildingPage(
+  props: {
+    params: Promise<{ slug: string; locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    slug,
+    locale
+  } = params;
+
   if (!slug) return notFound();
   const building = await api.building
     .getBuildingBySlug({

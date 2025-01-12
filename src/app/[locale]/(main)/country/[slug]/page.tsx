@@ -3,11 +3,18 @@ import { api } from "@/trpc/server";
 import CountryPage from "./country";
 import { type CountryExtended } from "@/server/db/zodSchemaTypes";
 
-export default async function CountryMainPage({
-  params: { slug, locale },
-}: {
-  params: { slug: string; locale: string };
-}) {
+export default async function CountryMainPage(
+  props: {
+    params: Promise<{ slug: string; locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    slug,
+    locale
+  } = params;
+
   if (!slug) return notFound();
   const country = await api.country.getCountryBySlug({ slug, lang: locale });
   const buildingTypes = await api.buildingType.getBuildingTypes({

@@ -7,11 +7,17 @@ import { getTranslations } from "next-intl/server";
 import VideoCarousel from "../_components/video-carousel";
 import Newsletter from "../_components/newsletter";
 
-export default async function MainPage({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function MainPage(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const countries = await api.country.getCountries({ lang: locale });
   const youtubeLinks = await api.youtube.getLinks();
   const buildingTypes = await api.buildingType.getBuildingTypes({

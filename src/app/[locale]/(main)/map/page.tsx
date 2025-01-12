@@ -5,11 +5,17 @@ const BuildingsMap = dynamic(() => import("@/_components/buildings-map"), {
   ssr: false,
 });
 
-export default async function MapPage({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) {
+export default async function MapPage(
+  props: {
+    params: Promise<{ locale: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    locale
+  } = params;
+
   const buildings = await api.building.getAcceptedBuildings({ lang: locale });
 
   return (
