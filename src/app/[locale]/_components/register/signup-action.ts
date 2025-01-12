@@ -35,3 +35,31 @@ export async function signUpWithEmail(data: FormData) {
     isSuccess: true,
   };
 }
+
+export async function resend(email: string) {
+  if (!email)
+    return {
+      message: "Resend failed!",
+      isSuccess: false,
+    };
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: {
+      emailRedirectTo: getURL(),
+    },
+  });
+
+  if (error) {
+    console.error(error);
+    return {
+      message: "Resend failed!",
+      isSuccess: false,
+    };
+  }
+  return {
+    message: "Resent successfully!",
+    isSuccess: true,
+  };
+}

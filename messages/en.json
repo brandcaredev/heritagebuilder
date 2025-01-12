@@ -89,11 +89,16 @@
     "emailPlaceholder": "name@example.com",
     "continueWithGoogle": "Continue with Google",
     "or": "or",
-    "createAccount": "Create an account",
+    "createAccount": "Sign up using email address",
+    "notAMemberYet": "Not a member yet?",
     "alreadyHaveAccount": "Already have an account?",
-    "signIn": "Sign in",
-    "register": "Register",
-    "checkEmail": "Check your email to confirm your account"
+    "signIn": "Log in",
+    "logInUsingEmailAddress": "Log in using email address",
+    "register": "Sign up",
+    "signUpSuccess": "Sign up successful",
+    "checkEmail": "Sign-up successful! Please check your email for the activation code we sent. If you don’t see it right away, it might take a few minutes to arrive. Be sure to check your spam or junk folder as well. If it still doesn’t arrive, you can request a new code below in ",
+    "backToLogin": "Back to login",
+    "resendCode": "Resend code"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
