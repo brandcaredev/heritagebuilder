@@ -18,6 +18,8 @@ import {
   ShieldEllipsis,
   User,
 } from "lucide-react";
+import { useState } from "react";
+import LoginSignupDialog from "./login-signup-dialog";
 
 export default function AccountButton() {
   const t = useTranslations();
@@ -28,6 +30,7 @@ export default function AccountButton() {
     queryKey: ["user"],
     staleTime: 0,
   });
+  const [openLogin, setOpenLogin] = useState(false);
 
   if (isLoading) {
     return null;
@@ -77,12 +80,17 @@ export default function AccountButton() {
     );
   }
   return (
-    <Link
-      href={{ pathname: "/login" }}
-      aria-label={t("account.login")}
-      className="hover:text-stone-300"
-    >
-      <LogInIcon className="h-5 w-5" />
-    </Link>
+    <>
+      <div
+        onClick={() => setOpenLogin(true)}
+        aria-label={t("account.login")}
+        className="hover:cursor-pointer hover:text-stone-300"
+      >
+        <LogInIcon className="h-5 w-5" />
+      </div>
+      {openLogin && (
+        <LoginSignupDialog open={openLogin} setOpen={setOpenLogin} />
+      )}
+    </>
   );
 }
