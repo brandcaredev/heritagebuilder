@@ -9,7 +9,6 @@ import {
   ResidentalBuildingIcon,
 } from "@/components/icons/leaflet-icons";
 import { Link } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
 import { IBuilding } from "@/server/db/zodSchemaTypes";
 import { createClient } from "@/supabase/client";
 import L, { type MarkerCluster } from "leaflet";

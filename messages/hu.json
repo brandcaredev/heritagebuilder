@@ -81,6 +81,13 @@
     "buildingTypeImageAlt": "Épület típus",
     "newsletterImageAlt": "Hírlevél háttér"
   },
+  "newsletter": {
+    "title": "Hírlevélre feliratkozás",
+    "description": "Legyen naprakész a legújabb örökségvédelmi épületekkel és közösségünk történeteivel.",
+    "emailPlaceholder": "Email cím",
+    "subscribe": "Feliratkozás",
+    "success": "Köszönjük a hírlevélre feliratkozását!"
+  },
   "auth": {
     "email": "Email",
     "password": "Jelszó",
@@ -88,11 +95,16 @@
     "emailPlaceholder": "nev@pelda.hu",
     "continueWithGoogle": "Folytatás Google-lel",
     "or": "vagy",
-    "createAccount": "Fiók létrehozása",
+    "createAccount": "Regisztráció email címmel",
+    "notAMemberYet": "Még nem tag?",
     "alreadyHaveAccount": "Már van fiókja?",
     "signIn": "Bejelentkezés",
+    "logInUsingEmailAddress": "Bejelentkezés email címmel",
     "register": "Regisztráció",
-    "checkEmail": "Ellenőrizze email fiókját a regisztráció megerősítéséhez"
+    "signUpSuccess": "Regisztráció sikeres",
+    "checkEmail": "Sikeres regisztráció! Kérjük, ellenőrizze e-mailjében az általunk küldött aktiváló kódot. Ha nem látja azonnal, néhány percbe telhet, amíg megérkezik. Ügyeljen arra, hogy ellenőrizze a spam vagy levélszemét mappáját is. Ha még mindig nem érkezik meg, kérhetsz új kódot lent",
+    "backToLogin": "Vissza a bejelentkezésre",
+    "resendCode": "Kód ujraküldése"
   },
   "admin": {
     "dashboard": "Admin Vezérlőpult",
@@ -129,6 +141,9 @@
       "selectedCounty": "Kiválasztott megye",
       "selectedCity": "Kiválasztott város"
     }
+  },
+  "videoCarousel": {
+    "title": "Videók"
   },
   "fileUploader": {
     "dragAndDrop": "Húzza ide a fájlokat, vagy kattintson a kiválasztáshoz",

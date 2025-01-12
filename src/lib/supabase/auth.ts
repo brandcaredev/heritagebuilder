@@ -1,5 +1,6 @@
 import { createClient } from "@/supabase/client";
 import { type Provider } from "@supabase/supabase-js";
+import { getURL } from "../utils";
 
 export const supabase = createClient();
 
@@ -7,7 +8,7 @@ export async function signInWithProvider(provider: Provider) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${window.location.origin}/api/auth/callback`,
+      redirectTo: `${`${getURL()}api/auth/callback`}`,
     },
   });
   return { data, error };
