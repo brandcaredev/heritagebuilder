@@ -1,22 +1,19 @@
-import { and, eq, or, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
+import { LocaleType } from "@/lib/constans";
+import { getCityBySlug } from "@/lib/queries";
 import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
-import {
-  buildingDataTable,
-  buildingsTable,
-  citiesDataTable,
-  citiesTable,
-  countiesDataTable,
-  countriesDataTable,
-} from "@/server/db/schemas";
-import { TRPCError } from "@trpc/server";
+import { citiesDataTable, citiesTable } from "@/server/db/schemas";
 import {
   CityCreateSchema,
   CityDataInsertSchema,
   CitySchema,
 } from "@/server/db/zodSchemaTypes";
-import { mergeLanguageData } from "@/lib/utils";
+import config from "@payload-config";
+import { TRPCError } from "@trpc/server";
+import { getPayload } from "payload";
+const payload = await getPayload({ config });
 
 export const cityRouter = createTRPCRouter({
   getCityIdBySlug: publicProcedure
@@ -38,125 +35,35 @@ export const cityRouter = createTRPCRouter({
     }),
   getCityBySlug: publicProcedure
     .input(z.object({ slug: z.string(), lang: z.string() }))
-    .query(async ({ input: { slug, lang }, ctx }) => {
-      const cityData = await ctx.db.query.citiesDataTable.findFirst({
-        where: and(
-          eq(citiesDataTable.slug, slug),
-          eq(citiesDataTable.language, lang),
-        ),
-      });
-      if (!cityData)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "City data was not found",
-        });
-      const city = await ctx.db.query.citiesTable.findFirst({
-        where: eq(citiesTable.id, cityData.cityid),
-        with: {
-          buildings: {
-            columns: {
-              position: false,
-            },
-            with: {
-              data: {
-                where: or(
-                  eq(buildingDataTable.language, lang),
-                  eq(buildingDataTable.language, "hu"),
-                ),
-              },
-            },
-            extras: {
-              x: sql<number>`ST_X(${buildingsTable.position})`.as("x"),
-              y: sql<number>`ST_Y(${buildingsTable.position})`.as("y"),
-            },
-          },
-          country: {
-            with: {
-              data: {
-                where: or(
-                  eq(countriesDataTable.language, lang),
-                  eq(countriesDataTable.language, "hu"),
-                ),
-                columns: {
-                  name: true,
-                  language: true,
-                  slug: true,
-                },
-              },
-            },
-          },
-          county: {
-            with: {
-              data: {
-                where: or(
-                  eq(countiesDataTable.language, lang),
-                  eq(countiesDataTable.language, "hu"),
-                ),
-                columns: {
-                  name: true,
-                  language: true,
-                  slug: true,
-                },
-              },
-            },
-            columns: {
-              position: false,
-            },
-          },
-          data: {
-            where: or(
-              eq(citiesDataTable.language, lang),
-              eq(citiesDataTable.language, "hu"),
-            ),
-          },
-        },
-      });
-
-      if (!city)
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "City was not found",
-        });
-
-      const cityMapped = {
-        ...mergeLanguageData(city, lang),
-        buildings: city.buildings.map((building) => {
-          const buildingMapped = mergeLanguageData(building, lang);
-          return {
-            ...buildingMapped,
-            position:
-              building.x && building.y ? [building.x, building.y] : null,
-          };
-        }),
-        county: mergeLanguageData(city.county, lang),
-        country: mergeLanguageData(city.country, lang),
-      };
-      return cityMapped;
-    }),
+    .query(
+      async ({ input: { slug, lang } }) =>
+        await getCityBySlug(lang as LocaleType, slug),
+    ),
   createCity: publicProcedure
     .input(CityCreateSchema)
     .mutation(async ({ input, ctx }) => {
       const { en, hu, ...baseData } = input;
       try {
-        let cityid: number | undefined;
-        await ctx.db.transaction(async (tx) => {
-          const resp = await tx
-            .insert(citiesTable)
-            .values([baseData])
-            .returning({ cityid: citiesTable.id });
-          cityid = resp[0]?.cityid;
-          if (!cityid) {
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Failed to insert city",
-            });
-          }
-          await tx.insert(citiesDataTable).values([
-            { ...en, cityid },
-            { ...hu, cityid },
-          ]);
+        const newCity = await payload.create({
+          collection: "cities",
+          data: {
+            country: baseData.countryid,
+            county: baseData.countyid,
+            slug: hu.slug,
+            name: hu.name,
+          },
+          locale: "hu",
         });
-        return cityid!;
+        await payload.update({
+          collection: "cities",
+          id: newCity.id,
+          data: {
+            slug: en.slug,
+            name: en.name,
+          },
+          locale: "en",
+        });
+        return newCity.id;
       } catch (error) {
         console.error("Error creating city - createCity:", error);
         throw new TRPCError({

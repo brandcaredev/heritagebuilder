@@ -1,4 +1,5 @@
 import createNextIntlPlugin from "next-intl/plugin";
+import { withPayload } from "@payloadcms/next/withPayload";
 await import("./src/env.js");
 
 const withNextIntl = createNextIntlPlugin();
@@ -13,6 +14,12 @@ const config = {
       },
     ],
   },
+  experimental: {
+    dynamicIO: true,
+    serverActions: {
+      bodySizeLimit: "15mb",
+    },
+  },
 };
 
-export default withNextIntl(config);
+export default withPayload(withNextIntl(config));
