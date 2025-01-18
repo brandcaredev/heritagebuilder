@@ -1,6 +1,6 @@
 "use client";
 
-import BuildingList from "@/app/(frontend)/locale/_components/building-list";
+import BuildingList from "@/_components/building-list";
 import Divider from "@/components/icons/divider";
 import Romania from "@/components/icons/romania";
 import Serbia from "@/components/icons/serbia";
@@ -8,27 +8,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useRouter } from "@/i18n/routing";
-import {
-  type BuildingTypes,
-  type CountryExtended,
-} from "@/server/db/zodSchemaTypes";
 import clsx from "clsx";
 import { Search } from "lucide-react";
+import { Building, BuildingType, City, Country, County } from "payload-types";
 import { useState } from "react";
 
 export default function CountryPage({
   country,
   buildingTypes,
+  countryBuildings,
 }: {
-  country: CountryExtended;
-  buildingTypes: BuildingTypes[];
+  country: Country;
+  buildingTypes: BuildingType[];
+  countryBuildings: Building[];
 }) {
   const router = useRouter();
   const [countiesSearch, setCountiesSearch] = useState("");
   const [citiesSearch, setCitiesSearch] = useState("");
 
+  const countryCounties = (country.relatedCounties?.docs as County[]) || [];
+  const countryCities = (country.relatedCities?.docs as City[]) || [];
+
   const onMapCountyClick = (id: number) => {
-    const selectedCounty = country.counties.find((c) => c.id === id);
+    const selectedCounty = countryCounties.find((c) => c.id === id);
     if (selectedCounty) {
       router.push({
         pathname: "/county/[slug]",
@@ -76,7 +78,7 @@ export default function CountryPage({
               />
             </div>
             <ScrollArea className="grid h-4/5 gap-1 overflow-x-hidden">
-              {country.counties
+              {countryCounties
                 .filter((county) =>
                   county.name
                     .toLowerCase()
@@ -114,7 +116,7 @@ export default function CountryPage({
               />
             </div>
             <ScrollArea className="grid h-4/5 gap-1 overflow-x-hidden">
-              {country.cities
+              {countryCities
                 .filter((city) =>
                   city.name.toLowerCase().includes(citiesSearch.toLowerCase()),
                 )
@@ -139,10 +141,9 @@ export default function CountryPage({
           </div>
         </div>
       </div>
-
       <BuildingList
         buildingTypes={buildingTypes}
-        buildings={country.buildings}
+        buildings={countryBuildings}
       />
     </div>
   );

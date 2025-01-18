@@ -10,7 +10,6 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 import { Toaster } from "sonner";
-import { Suspense } from "react";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -50,9 +49,7 @@ export default async function FrontendLayout(
         <div className={`${playfairDisplay.variable} ${sourceSans3.variable}`}>
           <TRPCReactProvider>
             <NextIntlClientProvider messages={messages} locale={locale}>
-              <main>
-                <Suspense>{children}</Suspense>
-              </main>
+              <main>{children}</main>
             </NextIntlClientProvider>
           </TRPCReactProvider>
           <Toaster richColors />

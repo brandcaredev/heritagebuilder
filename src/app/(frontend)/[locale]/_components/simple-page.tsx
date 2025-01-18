@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { BuildingTypes, IBuilding } from "@/server/db/zodSchemaTypes";
+import { Building, BuildingType } from "payload-types";
 import BuildingList from "./building-list";
 import BuildingsMap from "./buildings-map";
 
@@ -13,9 +13,9 @@ const SimplePage = ({
 }: {
   name: string;
   description?: string | null;
-  buildings: IBuilding[];
+  buildings: Building[];
   position?: [number, number] | null;
-  buildingTypes: BuildingTypes[];
+  buildingTypes: BuildingType[];
 }) => {
   return (
     <div className="flex flex-col">

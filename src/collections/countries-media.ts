@@ -1,9 +1,8 @@
 import type { CollectionConfig } from "payload";
 
-export const Media: CollectionConfig = {
-  slug: "media",
+export const CountriesMedia: CollectionConfig = {
+  slug: "countries-media",
   upload: {
-    staticDir: "media",
     imageSizes: [
       {
         name: "thumbnail",
@@ -12,9 +11,9 @@ export const Media: CollectionConfig = {
         position: "centre",
       },
       {
-        name: "card",
-        width: 768,
-        height: 1024,
+        name: "main",
+        width: 600,
+        height: 400,
         position: "centre",
       },
     ],

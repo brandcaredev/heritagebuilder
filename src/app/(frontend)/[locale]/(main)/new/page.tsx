@@ -1,6 +1,6 @@
 import NewBuildingForm from "@/_components/new-building";
 import { LocaleType } from "@/lib/constans";
-import { getBuildingTypes } from "@/lib/queries";
+import { getBuildingTypes } from "@/lib/queries/building-type";
 
 export default async function NewBuilding(props: {
   params: Promise<{ locale: LocaleType }>;

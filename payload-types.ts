@@ -11,42 +11,53 @@ export interface Config {
     users: UserAuthOperations;
   };
   collections: {
-    countries: Country;
     buildings: Building;
-    media: Media;
+    'buildings-media': BuildingsMedia;
+    'building-types': BuildingType;
+    'building-types-media': BuildingTypesMedia;
+    countries: Country;
+    'countries-media': CountriesMedia;
     regions: Region;
     counties: County;
     cities: City;
-    'building-types': BuildingType;
     'youtube-links': YoutubeLink;
+    media: Media;
+    search: Search;
     users: User;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
+    'building-types': {
+      relatedBuildings: 'buildings';
+    };
     countries: {
       relatedBuildings: 'buildings';
+      relatedCounties: 'counties';
+      relatedCities: 'cities';
     };
     counties: {
       relatedBuildings: 'buildings';
+      relatedCities: 'cities';
     };
     cities: {
       relatedBuildings: 'buildings';
     };
-    'building-types': {
-      relatedBuildings: 'buildings';
-    };
   };
   collectionsSelect: {
-    countries: CountriesSelect<false> | CountriesSelect<true>;
     buildings: BuildingsSelect<false> | BuildingsSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
+    'buildings-media': BuildingsMediaSelect<false> | BuildingsMediaSelect<true>;
+    'building-types': BuildingTypesSelect<false> | BuildingTypesSelect<true>;
+    'building-types-media': BuildingTypesMediaSelect<false> | BuildingTypesMediaSelect<true>;
+    countries: CountriesSelect<false> | CountriesSelect<true>;
+    'countries-media': CountriesMediaSelect<false> | CountriesMediaSelect<true>;
     regions: RegionsSelect<false> | RegionsSelect<true>;
     counties: CountiesSelect<false> | CountiesSelect<true>;
     cities: CitiesSelect<false> | CitiesSelect<true>;
-    'building-types': BuildingTypesSelect<false> | BuildingTypesSelect<true>;
     'youtube-links': YoutubeLinksSelect<false> | YoutubeLinksSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    search: SearchSelect<false> | SearchSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -86,13 +97,44 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "countries".
+ * via the `definition` "buildings".
  */
-export interface Country {
-  id: string;
+export interface Building {
+  id: number;
   name: string;
   slug: string;
-  image: number | Media;
+  summary: string;
+  buildingType: number | BuildingType;
+  history: string;
+  style: string;
+  presentDay: string;
+  famousResidents?: string | null;
+  renovation?: string | null;
+  featuredImage: number | BuildingsMedia;
+  images: (number | BuildingsMedia)[];
+  /**
+   * @minItems 2
+   * @maxItems 2
+   */
+  position: [number, number];
+  country: string | Country;
+  county?: (number | null) | County;
+  city?: (number | null) | City;
+  creatorName?: string | null;
+  creatorEmail?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "building-types".
+ */
+export interface BuildingType {
+  id: number;
+  name: string;
+  slug: string;
+  image: number | BuildingTypesMedia;
   relatedBuildings?: {
     docs?: (number | Building)[] | null;
     hasNextPage?: boolean | null;
@@ -103,9 +145,39 @@ export interface Country {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "building-types-media".
  */
-export interface Media {
+export interface BuildingTypesMedia {
+  id: number;
+  alt?: string | null;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "buildings-media".
+ */
+export interface BuildingsMedia {
   id: number;
   alt?: string | null;
   prefix?: string | null;
@@ -137,7 +209,62 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
-    tablet?: {
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries".
+ */
+export interface Country {
+  id: string;
+  name: string;
+  slug: string;
+  image: number | CountriesMedia;
+  relatedBuildings?: {
+    docs?: (number | Building)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
+  relatedCounties?: {
+    docs?: (number | County)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
+  relatedCities?: {
+    docs?: (number | City)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries-media".
+ */
+export interface CountriesMedia {
+  id: number;
+  alt?: string | null;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    main?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -146,54 +273,6 @@ export interface Media {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "buildings".
- */
-export interface Building {
-  id: number;
-  name: string;
-  slug: string;
-  buildingType: number | BuildingType;
-  history: string;
-  style: string;
-  presentDay: string;
-  famousResidents?: string | null;
-  renovation?: string | null;
-  featuredImage: number | Media;
-  images: (number | Media)[];
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  position: [number, number];
-  country: string | Country;
-  county?: (number | null) | County;
-  city?: (number | null) | City;
-  creatorName?: string | null;
-  creatorEmail?: string | null;
-  status: string;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "building-types".
- */
-export interface BuildingType {
-  id: number;
-  name: string;
-  slug: string;
-  image: number | Media;
-  relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -213,6 +292,10 @@ export interface County {
   region?: (number | null) | Region;
   relatedBuildings?: {
     docs?: (number | Building)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
+  relatedCities?: {
+    docs?: (number | City)[] | null;
     hasNextPage?: boolean | null;
   } | null;
   updatedAt: string;
@@ -272,6 +355,67 @@ export interface YoutubeLink {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt?: string | null;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "search".
+ */
+export interface Search {
+  id: number;
+  title?: string | null;
+  priority?: number | null;
+  doc: {
+    relationTo: 'buildings';
+    value: number | Building;
+  };
+  name: string;
+  slug: string;
+  buildingType: number | BuildingType;
+  featuredImage: number | BuildingsMedia;
+  city?: string | null;
+  country?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -295,16 +439,28 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'countries';
-        value: string | Country;
-      } | null)
-    | ({
         relationTo: 'buildings';
         value: number | Building;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
+        relationTo: 'buildings-media';
+        value: number | BuildingsMedia;
+      } | null)
+    | ({
+        relationTo: 'building-types';
+        value: number | BuildingType;
+      } | null)
+    | ({
+        relationTo: 'building-types-media';
+        value: number | BuildingTypesMedia;
+      } | null)
+    | ({
+        relationTo: 'countries';
+        value: string | Country;
+      } | null)
+    | ({
+        relationTo: 'countries-media';
+        value: number | CountriesMedia;
       } | null)
     | ({
         relationTo: 'regions';
@@ -319,12 +475,16 @@ export interface PayloadLockedDocument {
         value: number | City;
       } | null)
     | ({
-        relationTo: 'building-types';
-        value: number | BuildingType;
-      } | null)
-    | ({
         relationTo: 'youtube-links';
         value: number | YoutubeLink;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'search';
+        value: number | Search;
       } | null)
     | ({
         relationTo: 'users';
@@ -374,25 +534,12 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "countries_select".
- */
-export interface CountriesSelect<T extends boolean = true> {
-  id?: T;
-  name?: T;
-  slug?: T;
-  image?: T;
-  relatedBuildings?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "buildings_select".
  */
 export interface BuildingsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  summary?: T;
   buildingType?: T;
   history?: T;
   style?: T;
@@ -407,7 +554,212 @@ export interface BuildingsSelect<T extends boolean = true> {
   city?: T;
   creatorName?: T;
   creatorEmail?: T;
-  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "buildings-media_select".
+ */
+export interface BuildingsMediaSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "building-types_select".
+ */
+export interface BuildingTypesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  image?: T;
+  relatedBuildings?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "building-types-media_select".
+ */
+export interface BuildingTypesMediaSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries_select".
+ */
+export interface CountriesSelect<T extends boolean = true> {
+  id?: T;
+  name?: T;
+  slug?: T;
+  image?: T;
+  relatedBuildings?: T;
+  relatedCounties?: T;
+  relatedCities?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "countries-media_select".
+ */
+export interface CountriesMediaSelect<T extends boolean = true> {
+  alt?: T;
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        main?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "regions_select".
+ */
+export interface RegionsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  country?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "counties_select".
+ */
+export interface CountiesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  position?: T;
+  country?: T;
+  region?: T;
+  relatedBuildings?: T;
+  relatedCities?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cities_select".
+ */
+export interface CitiesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  position?: T;
+  country?: T;
+  county?: T;
+  relatedBuildings?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "youtube-links_select".
+ */
+export interface YoutubeLinksSelect<T extends boolean = true> {
+  title?: T;
+  url?: T;
+  sort?: T;
+  language?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -453,87 +805,24 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
-        tablet?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
       };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "regions_select".
+ * via the `definition` "search_select".
  */
-export interface RegionsSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  country?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "counties_select".
- */
-export interface CountiesSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  description?: T;
-  position?: T;
-  country?: T;
-  region?: T;
-  relatedBuildings?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "cities_select".
- */
-export interface CitiesSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  description?: T;
-  position?: T;
-  country?: T;
-  county?: T;
-  relatedBuildings?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "building-types_select".
- */
-export interface BuildingTypesSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  image?: T;
-  relatedBuildings?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "youtube-links_select".
- */
-export interface YoutubeLinksSelect<T extends boolean = true> {
+export interface SearchSelect<T extends boolean = true> {
   title?: T;
-  url?: T;
-  sort?: T;
-  language?: T;
+  priority?: T;
+  doc?: T;
+  name?: T;
+  slug?: T;
+  buildingType?: T;
+  featuredImage?: T;
+  city?: T;
+  country?: T;
   updatedAt?: T;
   createdAt?: T;
-  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

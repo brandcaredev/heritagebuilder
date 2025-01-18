@@ -26,8 +26,10 @@
       "presentDay": "Jelenlegi helyzet, funkció",
       "renovation": "A felújítás állapota vagy története",
       "creatorname": "Adja meg a nevét, ha szeretné, hogy a neve megjelenjen az épületnél",
-      "creatoremail": "Adja meg az email címét, ha szeretné, hogy értesítést kapjon, amikor az épület jóváhagyásra kerül"
-    }
+      "creatoremail": "Adja meg az email címét, ha szeretné, hogy értesítést kapjon, amikor az épület jóváhagyásra kerül",
+      "summary": "Rövid összefoglaló az épületről"
+    },
+    "summary": "Összefoglaló"
   },
   "common": {
     "submit": "Küldés",

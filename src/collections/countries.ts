@@ -25,12 +25,24 @@ export const Countries: CollectionConfig = {
       name: "image",
       type: "upload",
       required: true,
-      relationTo: "media",
+      relationTo: "countries-media",
     },
     {
       name: "relatedBuildings",
       type: "join",
       collection: "buildings",
+      on: "country",
+    },
+    {
+      name: "relatedCounties",
+      type: "join",
+      collection: "counties",
+      on: "country",
+    },
+    {
+      name: "relatedCities",
+      type: "join",
+      collection: "cities",
       on: "country",
     },
   ],
@@ -40,6 +52,9 @@ export const Countries: CollectionConfig = {
         revalidateTag("countries");
       },
     ],
+  },
+  admin: {
+    useAsTitle: "name",
   },
   versions: {
     drafts: true,

@@ -41,7 +41,16 @@ export const Counties: CollectionConfig = {
       collection: "buildings",
       on: "county",
     },
+    {
+      name: "relatedCities",
+      type: "join",
+      collection: "cities",
+      on: "county",
+    },
   ],
+  admin: {
+    useAsTitle: "name",
+  },
   versions: {
     drafts: true,
   },

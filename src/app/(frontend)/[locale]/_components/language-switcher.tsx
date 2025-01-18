@@ -7,8 +7,8 @@ import { useParams, useRouter } from "next/navigation";
 import { ChangeEvent, useTransition } from "react";
 
 const languages = [
-  { label: "English", value: "en", flag: "🇬🇧" },
-  { label: "Magyar", value: "hu", flag: "🇭🇺" },
+  { label: "EN", value: "en", flag: "🇬🇧" },
+  { label: "HU", value: "hu", flag: "🇭🇺" },
 ];
 
 type SlugPages =
@@ -37,13 +37,11 @@ export default function LocaleSwitcher() {
       case "country":
         return await trpc.country.getLanguageCountrySlug.fetch({
           slug: params.slug,
-          lang: locale,
           nextLang: nextLocale,
         });
       case "city":
         return await trpc.city.getLanguageCitySlug.fetch({
           slug: params.slug,
-          lang: locale,
           nextLang: nextLocale,
         });
       // case "region":
@@ -55,19 +53,16 @@ export default function LocaleSwitcher() {
       case "county":
         return await trpc.county.getLanguageCountySlug.fetch({
           slug: params.slug,
-          lang: locale,
           nextLang: nextLocale,
         });
       case "building-type":
         return await trpc.buildingType.getLanguageBuildingTypeSlug.fetch({
           slug: params.slug,
-          lang: locale,
           nextLang: nextLocale,
         });
       case "building":
         return await trpc.building.getLanguageBuildingSlug.fetch({
           slug: params.slug,
-          lang: locale,
           nextLang: nextLocale,
         });
       default:

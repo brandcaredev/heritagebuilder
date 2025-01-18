@@ -22,6 +22,9 @@ export const Regions: CollectionConfig = {
       required: true,
     },
   ],
+  admin: {
+    useAsTitle: "name",
+  },
   versions: {
     drafts: true,
   },

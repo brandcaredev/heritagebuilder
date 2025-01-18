@@ -1,15 +1,14 @@
 import { Link } from "@/i18n/routing";
-import { getBuildingTypes, getCountries } from "@/lib/queries";
-import config from "@payload-config";
+import { LocaleType } from "@/lib/constans";
+import { getBuildingTypes } from "@/lib/queries/building-type";
+import { getCountries } from "@/lib/queries/country";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import { getLocale } from "next-intl/server";
-import { getPayload } from "payload";
 
 export async function Footer() {
   const locale = await getLocale();
-  const payload = await getPayload({ config });
-  const countries = await getCountries();
-  const buildingTypes = await getBuildingTypes();
+  const countries = await getCountries(locale as LocaleType);
+  const buildingTypes = await getBuildingTypes(locale as LocaleType);
 
   return (
     <footer className="bg-green py-12 text-stone-100">

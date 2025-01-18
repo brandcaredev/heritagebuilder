@@ -1,6 +1,14 @@
 "use client";
 import { FileUploader } from "@/components/file-uploader";
+import CastleIcon from "@/components/icons/castle";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -19,36 +27,20 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { useRouter } from "@/i18n/routing";
 import { locales, type LocaleType } from "@/lib/constans";
-import { BuildingPreviewData } from "@/lib/types";
-import { getURL, slugify } from "@/lib/utils";
-import { useTranslations } from "next-intl";
-import {
-  type BuildingCreate,
-  type BuildingData,
-  type CityCreate,
-  type CountyCreate,
-} from "@/server/db/zodSchemaTypes";
-import { createClient } from "@/supabase/client";
+import { slugify } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import imageCompression from "browser-image-compression";
+import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
+import { BuildingType, Building as IBuilding } from "payload-types";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import Building from "./building";
-import CastleIcon from "@/components/icons/castle";
-import {
-  DialogHeader,
-  DialogFooter,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useRouter } from "@/i18n/routing";
-import { BuildingType } from "payload-types";
 
 const MapPositionSelector = dynamic(
   () => import("@/components/map-position-selector"),
@@ -72,22 +64,24 @@ const compressImage = async (file: File) => {
 const fileSchema = z.instanceof(File);
 
 const translatedContentSchema = z.object({
+  summary: z.string(),
   name: z.string(),
   history: z.string(),
   style: z.string(),
-  presentday: z.string(),
-  famousresidents: z.string().optional(),
+  presentDay: z.string(),
+  famousResidents: z.string().optional(),
   renovation: z.string().optional(),
   city: z.string(),
   county: z.string(),
 });
 
 const optionalSchema = z.object({
+  summary: z.string().optional(),
   name: z.string().optional(),
   history: z.string().optional(),
   style: z.string().optional(),
-  presentday: z.string().optional(),
-  famousresidents: z.string().optional(),
+  presentDay: z.string().optional(),
+  famousResidents: z.string().optional(),
   renovation: z.string().optional(),
   city: z.string(),
   county: z.string(),
@@ -102,14 +96,15 @@ export const formSchema = z.object({
       return;
     }
 
-    const { name, history, style, presentday } = values;
+    const { name, history, style, presentDay, summary } = values;
 
     // Check if ANY of these 4 fields has content
     const hasAnyEnContent = !!(
+      summary?.trim() ||
       name?.trim() ||
       history?.trim() ||
       style?.trim() ||
-      presentday?.trim()
+      presentDay?.trim()
     );
     if (hasAnyEnContent) {
       // If there's content in at least one field, we want ALL to be filled
@@ -134,11 +129,18 @@ export const formSchema = z.object({
           message: "Style is required if any English field is filled",
         });
       }
-      if (!presentday?.trim()) {
+      if (!presentDay?.trim()) {
         ctx.addIssue({
-          path: ["presentday"],
+          path: ["presentDay"],
           code: "custom",
           message: "Present day is required if any English field is filled",
+        });
+      }
+      if (!summary?.trim()) {
+        ctx.addIssue({
+          path: ["summary"],
+          code: "custom",
+          message: "Summary is required if any English field is filled",
         });
       }
     }
@@ -157,21 +159,17 @@ export default function BuildingForm({
   buildingTypes: BuildingType[];
 }) {
   const t = useTranslations();
-  const { mutateAsync: createBuilding } =
-    api.building.createBuilding.useMutation();
   const { mutateAsync: createCounty } = api.county.createCounty.useMutation();
   const { mutateAsync: createCity } = api.city.createCity.useMutation();
   const trpc = api.useUtils();
   const [preview, setPreview] = useState<boolean>(false);
   const [activeLanguage, setActiveLanguage] = useState<LocaleType>("hu");
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const supabaseClient = createClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
   // TODO ERROR HANDLING
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log();
     const featuredImage = values.featuredImage[0];
     if (!featuredImage) {
       toast.error(t("toast.featuredImageError"), {
@@ -179,265 +177,185 @@ export default function BuildingForm({
       });
       return;
     }
-    toast.loading(t("toast.creatingBuilding"), {
-      id: "building-creation-toast",
-    });
-
-    if (!featuredImage) {
-      toast.error(t("toast.featuredImageError"), {
+    try {
+      toast.loading(t("toast.creatingBuilding"), {
         id: "building-creation-toast",
       });
-    }
-    // TODO: USE THE BUILT IN PAYLOAD COMPRESSOR
-    // Compress featured image if larger than 1MB
-    const featuredImageToUpload =
-      featuredImage.size > 1024 * 1024
-        ? await compressImage(featuredImage)
-        : featuredImage;
 
-    const imageFormData = new FormData();
-    imageFormData.append("file", featuredImageToUpload);
-    const reqFeaturedImage = await fetch(`/api/media`, {
-      credentials: "include",
-      method: "POST",
-      body: imageFormData,
-    }).then((res) => res.json());
-    const featuredImageID = reqFeaturedImage.doc.id;
-    // Upload and compress additional images if needed
+      // TODO: USE THE BUILT IN PAYLOAD COMPRESSOR
+      // Compress featured image if larger than 1MB
+      const featuredImageToUpload =
+        featuredImage.size > 1024 * 1024
+          ? await compressImage(featuredImage)
+          : featuredImage;
 
-    const imageIDs = await Promise.all(
-      values.images.map(async (image) => {
-        const imageFormData = new FormData();
-        const imageToUpload =
-          image.size > 1024 * 1024 ? await compressImage(image) : image;
-        imageFormData.append(`file`, imageToUpload);
+      const imageFormData = new FormData();
+      imageFormData.append("file", featuredImageToUpload);
+      const reqFeaturedImage = await fetch(`/api/buildings-media`, {
+        credentials: "include",
+        method: "POST",
+        body: imageFormData,
+      }).then((res) => res.json());
+      const featuredImageID = reqFeaturedImage.doc.id;
+      // Upload and compress additional images if needed
 
-        const req = await fetch(`/api/media`, {
-          credentials: "include",
-          method: "POST",
-          body: imageFormData,
-        }).then((res) => res.json());
+      const imageIDs = await Promise.all(
+        values.images.map(async (image) => {
+          const imageFormData = new FormData();
+          const imageToUpload =
+            image.size > 1024 * 1024 ? await compressImage(image) : image;
+          imageFormData.append(`file`, imageToUpload);
 
-        return req.doc.id;
-      }),
-    );
+          const req = await fetch(`/api/buildings-media`, {
+            credentials: "include",
+            method: "POST",
+            body: imageFormData,
+          }).then((res) => res.json());
 
-    // get countyid if exits, insert a new county if not
-    let countyid = await trpc.county.getCountyBySlug
-      .fetch({
-        slug: slugify(values.en.county!),
-        lang: "en",
-      })
-      .then((data) => data?.id)
-      .catch(() => undefined);
-    console.log("old cityid", countyid);
-    if (!countyid) {
-      const countyData = {
-        countryid: values.country,
-        en: {
+          return req.doc.id;
+        }),
+      );
+
+      // get countyid if exits, insert a new county if not
+      let countyid = await trpc.county.getCountyBySlug
+        .fetch({
           slug: slugify(values.en.county!),
-          name: values.en.county!,
-          language: "en",
-        },
-        hu: {
-          slug: slugify(values.hu.county) || slugify(values.en.county!),
-          name: values.hu.county,
-          language: "hu",
-        },
-        regionid: null,
-        position: null,
-      };
-      await createCounty(
-        { ...countyData },
-        {
-          onSuccess: (data) => (countyid = data),
-          onError: () => {
-            throw new Error();
+          lang: "en",
+        })
+        .then((data) => data?.id)
+        .catch(() => undefined);
+      if (!countyid) {
+        const countyData = {
+          countryid: values.country,
+          en: {
+            slug: slugify(values.en.county!),
+            name: values.en.county!,
+            language: "en",
           },
-        },
-      );
-      console.log("new county id", countyid);
-    }
-    if (!countyid) throw new Error();
-    //get cityid if exits, insert a new city if not
-    let cityid = await trpc.city.getCityBySlug
-      .fetch({
-        slug: slugify(values.en.city!),
-        lang: "en",
-      })
-      .then((data) => data?.id)
-      .catch(() => undefined);
-    console.log("old cityid", cityid);
-    if (!cityid) {
-      const cityData = {
-        countryid: values.country,
-        countyid,
-        en: {
+          hu: {
+            slug: slugify(values.hu.county) || slugify(values.en.county!),
+            name: values.hu.county,
+            language: "hu",
+          },
+          regionid: null,
+          position: null,
+        };
+        await createCounty(
+          { ...countyData },
+          {
+            onSuccess: (data) => (countyid = data),
+            onError: () => {
+              throw new Error();
+            },
+          },
+        );
+      }
+      if (!countyid) throw new Error();
+      //get cityid if exits, insert a new city if not
+      let cityid = await trpc.city.getCityBySlug
+        .fetch({
           slug: slugify(values.en.city!),
-          name: values.en.city!,
-          language: "en",
-        },
-        hu: {
-          slug: slugify(values.hu.city) || slugify(values.en.city!),
-          name: values.hu.city,
-          language: "hu",
-        },
-        position: null,
-      };
+          lang: "en",
+        })
+        .then((data) => data?.id)
+        .catch(() => undefined);
 
-      await createCity(
-        { ...cityData },
-        {
-          onSuccess: (data) => (cityid = data),
-          onError: () => {
-            throw new Error();
+      if (!cityid) {
+        const cityData = {
+          countryid: values.country,
+          countyid,
+          en: {
+            slug: slugify(values.en.city!),
+            name: values.en.city!,
+            language: "en",
           },
-        },
-      );
-      console.log("new city id", cityid);
-    }
-    if (!cityid) throw new Error();
+          hu: {
+            slug: slugify(values.hu.city) || slugify(values.en.city!),
+            name: values.hu.city,
+            language: "hu",
+          },
+          position: null,
+        };
 
-    const hunPayload = {
-      name: values.hu.name,
-      slug: slugify(values.hu.name),
-      history: values.hu.history,
-      style: values.hu.style,
-      presentDay: values.hu.presentday,
-      famousResidents: values.hu.famousresidents || "",
-      renovation: values.hu.renovation || "",
-      buildingType: parseInt(values.type),
-      country: values.country,
-      county: countyid,
-      city: cityid,
-      position: [values.position[0], values.position[1]],
-      creatorName: values.creatorname || "",
-      creatorEmail: values.creatoremail || "",
-      images: imageIDs,
-      featuredImage: featuredImageID,
-    };
+        await createCity(
+          { ...cityData },
+          {
+            onSuccess: (data) => (cityid = data),
+            onError: () => {
+              throw new Error();
+            },
+          },
+        );
+      }
+      if (!cityid) throw new Error();
 
-    const hunResponse = await fetch(`/api/buildings?locale=hu`, {
-      credentials: "include",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(hunPayload),
-    }).then((res) => res.json());
-
-    console.log(hunResponse);
-
-    const hasEnglishData =
-      values.en &&
-      Object.entries(values.en).some(
-        ([key, value]) =>
-          value && value.trim() !== "" && key !== "city" && key !== "county",
-      );
-
-    if (hasEnglishData) {
-      const enPayload = {
-        name: values.en.name,
-        slug: slugify(values.en.name!),
-        history: values.en.history,
-        style: values.en.style,
-        presentDay: values.en.presentday,
-        famousResidents: values.en.famousresidents || "",
-        renovation: values.en.renovation || "",
+      const hunPayload = {
+        name: values.hu.name,
+        summary: values.hu.summary,
+        slug: slugify(values.hu.name),
+        history: values.hu.history,
+        style: values.hu.style,
+        presentDay: values.hu.presentDay,
+        famousResidents: values.hu.famousResidents || "",
+        renovation: values.hu.renovation || "",
+        buildingType: parseInt(values.type),
         country: values.country,
+        county: countyid,
+        city: cityid,
+        position: [values.position[0], values.position[1]],
+        creatorName: values.creatorname || "",
+        creatorEmail: values.creatoremail || "",
+        images: imageIDs,
+        featuredImage: featuredImageID,
       };
-      const enResponse = await fetch(
-        `/api/buildings/${hunResponse.doc.id}?locale=en`,
-        {
+
+      const hunResponse = await fetch(`/api/buildings?locale=hu`, {
+        credentials: "include",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(hunPayload),
+      }).then((res) => res.json());
+
+      const hasEnglishData =
+        values.en &&
+        Object.entries(values.en).some(
+          ([key, value]) =>
+            value && value.trim() !== "" && key !== "city" && key !== "county",
+        );
+
+      if (hasEnglishData) {
+        const enPayload = {
+          name: values.en.name,
+          summary: values.en.summary,
+          slug: slugify(values.en.name!),
+          history: values.en.history,
+          style: values.en.style,
+          presentDay: values.en.presentDay,
+          famousResidents: values.en.famousResidents || "",
+          renovation: values.en.renovation || "",
+          country: values.country,
+        };
+        await fetch(`/api/buildings/${hunResponse.doc.id}?locale=en`, {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
           method: "PATCH",
           body: JSON.stringify(enPayload),
-        },
-      );
-      const enData = await enResponse.json();
-      console.log(enData);
+        }).then((res) => res.json());
+      }
+      toast.success(t("toast.buildingCreated"), {
+        id: "building-creation-toast",
+      });
+      setShowSuccessDialog(true);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error(t("toast.buildingError"), {
+        id: "building-creation-toast",
+      });
     }
-    // Prepare building data
-    //   const buildingData = {
-    //     featuredImage: featuredPath,
-    //     images: uploadedImagePaths,
-    //     countryid: values.country,
-    //     countyid,
-    //     cityid,
-    //     buildingtypeid: parseInt(values.type ?? "1"),
-    //     status: "pending",
-    //     position: values.position,
-    //     creatorname: values.creatorname || null,
-    //     creatoremail: values.creatoremail || null,
-    //   };
-
-    //   // Check if EN data exists and has any non-empty values
-    //   const hasEnglishData =
-    //     values.en &&
-    //     Object.entries(values.en).some(
-    //       ([key, value]) =>
-    //         value && value.trim() !== "" && key !== "city" && key !== "county",
-    //     );
-
-    //   // Prepare translation data
-    //   const translationData = {
-    //     hu: {
-    //       slug: slugify(values.hu.name),
-    //       name: values.hu.name,
-    //       language: "hu",
-    //       history: values.hu.history,
-    //       style: values.hu.style,
-    //       presentday: values.hu.presentday,
-    //       famousresidents: values.hu.famousresidents || null,
-    //       renovation: values.hu.renovation || null,
-    //     },
-    //     ...(hasEnglishData && {
-    //       en: {
-    //         slug: slugify(values.en.name!),
-    //         name: values.en.name,
-    //         language: "en",
-    //         history: values.en.history,
-    //         style: values.en.style,
-    //         presentday: values.en.presentday,
-    //         famousresidents: values.en.famousresidents || null,
-    //         renovation: values.en.renovation || null,
-    //       },
-    //     }),
-    //   } as {
-    //     en?: BuildingData;
-    //     hu: BuildingData;
-    //   };
-
-    //   const insertBuilding: BuildingCreate = {
-    //     ...buildingData,
-    //     ...translationData,
-    //   };
-
-    //   await createBuilding(insertBuilding, {
-    //     onSuccess: () => {
-    //       toast.success(t("toast.buildingCreated"), {
-    //         id: "building-creation-toast",
-    //       });
-    //       setShowSuccessDialog(true);
-    //     },
-    //   });
-    // } catch (error) {
-    //   const filePaths = values.images.map((image, i) => {
-    //     const fileExtension = image.name.split(".").pop();
-    //     const filePath = `${baseFolder}/${i + 1}.${fileExtension}`;
-    //     return filePath;
-    //   });
-    //   await supabaseClient.storage
-    //     .from("heritagebuilder-test")
-    //     .remove([...filePaths, featuredPath]);
-    //   console.error("Error submitting form:", error);
-    //   toast.error(t("toast.buildingError"), {
-    //     id: "building-creation-toast",
-    //   });
-    // }
   };
 
   const getPreviewComponent = () => {
@@ -465,11 +383,23 @@ export default function BuildingForm({
           preview: string;
         }
       ).preview,
-      famousresidents: languageData.famousresidents ?? null,
+      famousResidents: languageData.famousResidents ?? null,
       renovation: languageData.renovation ?? null,
-      buildingtypeid: parseInt(type ?? "0"),
+      buildingType: {
+        id: parseInt(type),
+      } as BuildingType,
+      updatedAt: null,
+      createdAt: null,
+      id: -1,
+      slug: "",
     };
-    return <Building building={previewData as BuildingPreviewData} />;
+    const buildingImages = [previewData.featuredImage, ...previewData.images];
+    return (
+      <Building
+        building={previewData as unknown as IBuilding}
+        buildingImages={buildingImages}
+      />
+    );
   };
 
   const SuccessDialog = () => {
@@ -560,6 +490,27 @@ export default function BuildingForm({
                 <TabsContent key={lang} value={lang}>
                   <FormField
                     control={form.control}
+                    name={`${lang}.summary`}
+                    rules={{ deps: ["en", "hu"] }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.summary")}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder=""
+                            type="text"
+                            {...field}
+                            maxLength={200}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("form.descriptions.summary")}
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name={`${lang}.name`}
                     rules={{ deps: ["en", "hu"] }}
                     render={({ field }) => (
@@ -612,7 +563,7 @@ export default function BuildingForm({
 
                     <FormField
                       control={form.control}
-                      name={`${lang}.presentday`}
+                      name={`${lang}.presentDay`}
                       rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>
@@ -629,7 +580,7 @@ export default function BuildingForm({
 
                     <FormField
                       control={form.control}
-                      name={`${lang}.famousresidents`}
+                      name={`${lang}.famousResidents`}
                       rules={{ deps: ["en", "hu"] }}
                       render={({ field }) => (
                         <FormItem>

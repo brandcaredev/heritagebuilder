@@ -15,7 +15,6 @@ const config = {
     ],
   },
   experimental: {
-    dynamicIO: true,
     serverActions: {
       bodySizeLimit: "15mb",
     },

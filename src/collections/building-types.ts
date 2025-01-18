@@ -19,7 +19,7 @@ export const BuildingTypes: CollectionConfig = {
       name: "image",
       type: "upload",
       required: true,
-      relationTo: "media",
+      relationTo: "building-types-media",
     },
     {
       name: "relatedBuildings",
@@ -28,6 +28,9 @@ export const BuildingTypes: CollectionConfig = {
       on: "buildingType",
     },
   ],
+  admin: {
+    useAsTitle: "name",
+  },
   versions: {
     drafts: true,
   },

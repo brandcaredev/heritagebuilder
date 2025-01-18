@@ -43,6 +43,9 @@ export const Cities: CollectionConfig = {
       on: "city",
     },
   ],
+  admin: {
+    useAsTitle: "name",
+  },
   versions: {
     drafts: true,
   },

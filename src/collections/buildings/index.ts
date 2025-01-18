@@ -16,6 +16,12 @@ export const Buildings: CollectionConfig = {
       localized: true,
     },
     {
+      name: "summary",
+      type: "textarea",
+      localized: true,
+      required: true,
+    },
+    {
       name: "buildingType",
       type: "relationship",
       relationTo: "building-types",
@@ -53,13 +59,13 @@ export const Buildings: CollectionConfig = {
       name: "featuredImage",
       type: "upload",
       required: true,
-      relationTo: "media",
+      relationTo: "buildings-media",
     },
     {
       name: "images",
       type: "upload",
       hasMany: true,
-      relationTo: "media",
+      relationTo: "buildings-media",
       required: true,
     },
     {
@@ -91,13 +97,10 @@ export const Buildings: CollectionConfig = {
       name: "creatorEmail",
       type: "text",
     },
-    {
-      name: "status",
-      type: "text",
-      required: true,
-      defaultValue: "pending",
-    },
   ],
+  admin: {
+    useAsTitle: "name",
+  },
   versions: {
     drafts: true,
   },

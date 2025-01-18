@@ -3,20 +3,18 @@
 import { Input } from "@/components/ui";
 import { Toggle } from "@/components/ui/toggle";
 import { Link } from "@/i18n/routing";
-import { BuildingTypes, IBuilding } from "@/server/db/zodSchemaTypes";
-import { createClient } from "@/supabase/client";
 import { Search } from "lucide-react";
 import Image from "next/image";
+import { Building, BuildingType, Media } from "payload-types";
 import { useState } from "react";
 
 const BuildingList = ({
   buildingTypes,
   buildings,
 }: {
-  buildingTypes: BuildingTypes[];
-  buildings: IBuilding[];
+  buildingTypes: BuildingType[];
+  buildings: Building[];
 }) => {
-  const supabase = createClient();
   const [articleSearch, setArticleSearch] = useState("");
   const [buildingTypeFilter, setBuildingTypeFilter] = useState<null | number>(
     null,
@@ -36,8 +34,8 @@ const BuildingList = ({
         </div>
       </div>
 
-      <div className="bg-brown-2 mb-8 flex items-center gap-4 overflow-x-auto rounded-sm p-2">
-        <span className="text-lg font-semibold text-brown-dark-20">Filter</span>
+      <div className="mb-8 flex items-center gap-4 overflow-x-auto rounded-sm bg-brown-2 p-2">
+        <span className="text-brown-dark-20 text-lg font-semibold">Filter</span>
         {buildingTypes.map((buildingType, index) => (
           <Toggle
             key={"type" + index}
@@ -61,15 +59,10 @@ const BuildingList = ({
                 .toLowerCase()
                 .includes(articleSearch.toLowerCase()) &&
               (!buildingTypeFilter ||
-                building.buildingtypeid === buildingTypeFilter),
+                (building.buildingType as BuildingType).id ===
+                  buildingTypeFilter),
           )
           .map((building, index) => {
-            const {
-              data: { publicUrl },
-            } = supabase.storage
-              .from("heritagebuilder-test")
-              .getPublicUrl(building.featuredImage ?? "");
-
             return (
               <Link
                 key={"building" + index}
@@ -80,7 +73,7 @@ const BuildingList = ({
               >
                 <div className="flex h-full w-full items-center">
                   <Image
-                    src={publicUrl}
+                    src={(building.featuredImage as Media).url ?? ""}
                     alt={building.name ?? "Building"}
                     width={100}
                     height={100}

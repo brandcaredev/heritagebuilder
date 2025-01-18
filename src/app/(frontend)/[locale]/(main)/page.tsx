@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { api } from "@/trpc/server";
-import { createClient } from "@/supabase/server";
+
 import { Link } from "@/i18n/routing";
 import Divider from "@/components/icons/divider";
 import { getTranslations } from "next-intl/server";
@@ -9,12 +8,15 @@ import Newsletter from "../_components/newsletter";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { City, Country, Media } from "payload-types";
-import { getBuildingTypes, getCountries } from "@/lib/queries";
+import { LocaleType } from "@/lib/constans";
+import { getCountries } from "@/lib/queries/country";
+import { getBuildingTypes } from "@/lib/queries/building-type";
+import { getMainPageBuildings } from "@/lib/queries/building";
 
 const payload = await getPayload({ config });
 
 export default async function MainPage(props: {
-  params: Promise<{ locale: "en" | "hu" }>;
+  params: Promise<{ locale: LocaleType }>;
 }) {
   const params = await props.params;
   const { locale } = params;
@@ -24,21 +26,14 @@ export default async function MainPage(props: {
   const buildingTypes = await getBuildingTypes(locale);
   const { docs: youtubeLinks } = await payload.find({
     collection: "youtube-links",
-    locale: locale as "hu" | "en",
+    locale: locale,
     where: {
       language: {
         equals: locale,
       },
     },
   });
-  const { docs: buildings } = await payload.find({
-    collection: "buildings",
-    locale: locale as "hu" | "en",
-  });
-  console.log(countries);
-  console.log(buildingTypes);
-  console.log(youtubeLinks);
-  console.log(buildings);
+  const buildings = await getMainPageBuildings(locale);
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-4 lg:flex-row">
@@ -102,7 +97,7 @@ export default async function MainPage(props: {
                   key={building.id}
                   href={{
                     pathname: "/building/[slug]",
-                    params: { slug: building.slug! },
+                    params: { slug: building.slug },
                   }}
                   className="group relative flex items-center gap-4"
                 >
@@ -171,7 +166,7 @@ export default async function MainPage(props: {
         <Newsletter />
       </div>
       {/* Videos Section */}
-      <VideoCarousel videos={youtubeLinks} />
+      {youtubeLinks.length > 0 && <VideoCarousel videos={youtubeLinks} />}
     </div>
   );
 }

@@ -1,29 +1,39 @@
-import Breadcrumbs from "@/app/(frontend)/locale/_components/breadcrumbs";
+import Breadcrumbs from "@/_components/breadcrumbs";
 import Divider from "@/components/icons/divider";
-import { IBuilding } from "@/server/db/zodSchemaTypes";
-import { api } from "@/trpc/server";
+import { LocaleType } from "@/lib/constans";
+import { getBuildingsByFilter } from "@/lib/queries/building";
+import { getBuildingTypes } from "@/lib/queries/building-type";
+import { getCityBySlug } from "@/lib/queries/city";
 import { notFound } from "next/navigation";
+import { Country, County } from "payload-types";
 import SimplePage from "../../../_components/simple-page";
 
 interface Props {
   params: Promise<{
-    locale: string;
+    locale: LocaleType;
     slug: string;
   }>;
 }
 
-export default async function CountyPage(props: Props) {
+export default async function CityPage(props: Props) {
   const params = await props.params;
 
   const { locale, slug } = params;
 
-  const city = await api.city.getCityBySlug({ slug, lang: locale });
-  const buildingTypes = await api.buildingType.getBuildingTypes({
-    lang: locale,
-  });
+  const city = await getCityBySlug(locale, slug);
+
+  const buildingTypes = await getBuildingTypes(locale);
   if (!city) {
     notFound();
   }
+
+  const cityBuildings = await getBuildingsByFilter(locale, {
+    city: {
+      equals: city.id,
+    },
+  });
+  const cityCountry = city.country as Country;
+  const cityCounty = city.county as County;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -31,28 +41,28 @@ export default async function CountyPage(props: Props) {
         <Breadcrumbs
           items={[
             {
-              name: city.country!.name,
+              name: cityCountry.name,
               href: {
                 pathname: "/country/[slug]",
-                params: { slug: city.country!.slug },
+                params: { slug: cityCountry.slug },
               },
             },
             {
-              name: city.county!.name,
+              name: cityCounty.name,
               href: {
                 pathname: "/county/[slug]",
-                params: { slug: city.county!.slug },
+                params: { slug: cityCounty.slug },
               },
             },
-            { name: city.name! },
+            { name: city.name },
           ]}
         />
         <Divider orientation="horizontal" />
       </div>
       <SimplePage
-        name={city.name!}
+        name={city.name}
         description={city.description}
-        buildings={city.buildings as IBuilding[]}
+        buildings={cityBuildings}
         position={city.position}
         buildingTypes={buildingTypes}
       />

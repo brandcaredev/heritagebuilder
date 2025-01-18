@@ -1,20 +1,13 @@
 import type { CollectionConfig } from "payload";
 
-export const Media: CollectionConfig = {
-  slug: "media",
+export const BuildingTypesMedia: CollectionConfig = {
+  slug: "building-types-media",
   upload: {
-    staticDir: "media",
     imageSizes: [
       {
         name: "thumbnail",
-        width: 400,
-        height: 300,
-        position: "centre",
-      },
-      {
-        name: "card",
-        width: 768,
-        height: 1024,
+        width: 200,
+        height: 200,
         position: "centre",
       },
     ],

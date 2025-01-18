@@ -71,9 +71,13 @@ html {
 }
 
 svg.map path {
-  fill: #6A573A
+  fill: #6a573a;
 }
 
 svg.map path:hover {
   fill: #403423;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
 }

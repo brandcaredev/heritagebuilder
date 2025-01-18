@@ -9,11 +9,10 @@ import {
   ResidentalBuildingIcon,
 } from "@/components/icons/leaflet-icons";
 import { Link } from "@/i18n/routing";
-import { IBuilding } from "@/server/db/zodSchemaTypes";
-import { createClient } from "@/supabase/client";
 import L, { type MarkerCluster } from "leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import Image from "next/image";
+import { Building, BuildingType, Media } from "payload-types";
 import { useCallback, useEffect } from "react";
 import {
   MapContainer,
@@ -30,13 +29,11 @@ const BuildingsMap = ({
   zoom,
   className,
 }: {
-  buildings: IBuilding[];
+  buildings: Building[];
   center?: [number, number];
   zoom?: number;
   className?: string;
 }) => {
-  const supabase = createClient();
-
   const SearchControl = () => {
     const map = useMapEvents({});
 
@@ -103,17 +100,11 @@ const BuildingsMap = ({
           chunkedLoading
         >
           {buildings.map((building) => {
-            const {
-              data: { publicUrl },
-            } = supabase.storage
-              .from("heritagebuilder-test")
-              .getPublicUrl(building.featuredImage ?? "");
-
             return (
               <Marker
                 key={building.id}
                 position={[building.position[0], building.position[1]]}
-                icon={typeBasedIcon(building.buildingtypeid)}
+                icon={typeBasedIcon((building.buildingType as BuildingType).id)}
               >
                 <Popup>
                   <Link
@@ -126,7 +117,10 @@ const BuildingsMap = ({
                     <div className="overflow-hidden">
                       <div className="relative h-[200px] w-full">
                         <Image
-                          src={publicUrl}
+                          src={
+                            (building.featuredImage as Media).sizes?.card
+                              ?.url ?? ""
+                          }
                           alt={building.name}
                           fill
                           className="object-cover"
@@ -137,7 +131,7 @@ const BuildingsMap = ({
                           {building.name}
                         </h3>
                         <p className="text-muted-foreground line-clamp-5 text-sm text-brown-4">
-                          {building.history}
+                          {building.summary || building.history}
                         </p>
                       </div>
                     </div>

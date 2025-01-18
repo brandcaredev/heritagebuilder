@@ -1,10 +1,12 @@
 import { Link } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
-import { getCountries } from "@/lib/queries";
-import { MapIcon, Search } from "lucide-react";
+import { MapIcon } from "lucide-react";
 import { getLocale } from "next-intl/server";
 import AccountButton from "./account-button";
 import LocaleSwitcher from "./language-switcher";
+import ExpandableSearch from "./search";
+import { Suspense } from "react";
+import { getCountries } from "@/lib/queries/country";
 
 export async function Header() {
   const locale = (await getLocale()) as LocaleType;
@@ -35,9 +37,9 @@ export async function Header() {
             <Link href={{ pathname: "/map" }} className="hover:text-stone-300">
               <MapIcon className="h-5 w-5" />
             </Link>
-            <button aria-label="Search" className="hover:text-stone-300">
-              <Search className="h-5 w-5" />
-            </button>
+            <Suspense>
+              <ExpandableSearch />
+            </Suspense>
             <AccountButton />
             <LocaleSwitcher />
           </div>

@@ -1,7 +1,10 @@
 import { BuildingTypes } from "@/collections/building-types";
+import { BuildingTypesMedia } from "@/collections/building-types-media";
 import { Buildings } from "@/collections/buildings";
+import { BuildingsMedia } from "@/collections/buildings-media";
 import { Cities } from "@/collections/cities";
 import { Countries } from "@/collections/countries";
+import { CountriesMedia } from "@/collections/countries-media";
 import { Counties } from "@/collections/county";
 import { Media } from "@/collections/media";
 import { Regions } from "@/collections/regions";
@@ -15,6 +18,9 @@ import path from "path";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 import { fileURLToPath } from "url";
+import { searchPlugin } from "@payloadcms/plugin-search";
+import { searchFields } from "@/collections/buildings/searchFields";
+import { beforeSyncWithSearch } from "@/collections/buildings/beforeSync";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -25,20 +31,23 @@ export default buildConfig({
 
   // Define and configure your collections in this array
   collections: [
-    Countries,
     Buildings,
-    Media,
+    BuildingsMedia,
+    BuildingTypes,
+    BuildingTypesMedia,
+    Countries,
+    CountriesMedia,
     Regions,
     Counties,
     Cities,
-    BuildingTypes,
     YoutubeLinks,
+    Media,
   ],
 
   // Your Payload secret - should be a complex and secure string, unguessable
-  secret: process.env.PAYLOAD_SECRET || "",
+  secret: env.PAYLOAD_SECRET || "",
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL || "" },
+    pool: { connectionString: env.DATABASE_URL || "" },
     schemaName: "payload",
   }),
   i18n: {
@@ -58,6 +67,15 @@ export default buildConfig({
         media: {
           prefix: "media",
         },
+        "buildings-media": {
+          prefix: "building",
+        },
+        "building-types-media": {
+          prefix: "building-type",
+        },
+        "countries-media": {
+          prefix: "country",
+        },
       },
       bucket: env.S3_BUCKET,
       config: {
@@ -69,6 +87,15 @@ export default buildConfig({
         region: env.S3_REGION,
         endpoint: env.S3_ENDPOINT,
       },
+    }),
+    searchPlugin({
+      collections: ["buildings"],
+      searchOverrides: {
+        slug: "search",
+        fields: ({ defaultFields }) => [...defaultFields, ...searchFields],
+        admin: { defaultColumns: ["slug", "name"], useAsTitle: "name" },
+      },
+      beforeSync: beforeSyncWithSearch,
     }),
   ],
   sharp,

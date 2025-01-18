@@ -1,3 +1,4 @@
+"use client";
 import {
   Carousel,
   CarouselMainContainer,
@@ -6,10 +7,10 @@ import {
   SliderThumbItem,
 } from "@/components/carousel-bottom-thumbnails";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { type BuildingPreviewData } from "@/lib/types";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { Building, BuildingType } from "payload-types";
 
 const MapPosition = dynamic(() => import("@/components/map-position"), {
   ssr: false,
@@ -17,12 +18,12 @@ const MapPosition = dynamic(() => import("@/components/map-position"), {
 
 export default function BuildingComponent({
   building,
+  buildingImages,
 }: {
-  building: BuildingPreviewData;
+  building: Building;
+  buildingImages: string[];
 }) {
   const t = useTranslations();
-  const buildingImages = [building.featuredImage, ...building.images];
-
   return (
     <div className="flex flex-col gap-10 lg:flex-row">
       <div className="flex flex-col gap-4 lg:w-1/2">
@@ -36,7 +37,6 @@ export default function BuildingComponent({
                 <Image
                   src={img}
                   alt={`${t("building.imageAlt")} ${index + 1}`}
-                  loading="lazy"
                   fill
                   className="object-contain"
                 />
@@ -53,7 +53,6 @@ export default function BuildingComponent({
                 <Image
                   src={img}
                   alt={`${t("building.imageAlt")} ${index + 1}`}
-                  loading="lazy"
                   fill
                   className="aspect-square object-cover"
                 />
@@ -63,7 +62,7 @@ export default function BuildingComponent({
         </Carousel>
         <MapPosition
           position={building.position}
-          type={building.buildingtypeid}
+          type={(building.buildingType as BuildingType).id}
           className="h-[400px] w-full md:h-[600px]"
         />
       </div>
@@ -81,13 +80,13 @@ export default function BuildingComponent({
           </h3>
           <span className="font-source-sans-3">{building.style}</span>
 
-          {building.famousresidents && (
+          {building.famousResidents && (
             <>
               <h3 className="text-2xl font-bold text-brown">
                 {t("building.famousResidents")}
               </h3>
               <span className="font-source-sans-3">
-                {building.famousresidents}
+                {building.famousResidents}
               </span>
             </>
           )}
@@ -104,7 +103,7 @@ export default function BuildingComponent({
           <h3 className="text-2xl font-bold text-brown">
             {t("building.presentDay")}
           </h3>
-          <span className="font-source-sans-3">{building.presentday}</span>
+          <span className="font-source-sans-3">{building.presentDay}</span>
         </div>
       </ScrollArea>
     </div>

@@ -1,36 +1,25 @@
-import { notFound } from "next/navigation";
+import BuildingComponent from "@/_components/building";
+import { LocaleType } from "@/lib/constans";
+import { getBuildingBySlug } from "@/lib/queries/building";
 import { api } from "@/trpc/server";
-import BuildingComponent from "@/app/(frontend)/locale/_components/building";
-import { createClient } from "@/supabase/server";
+import { notFound } from "next/navigation";
+import { Media } from "payload-types";
 
 export default async function BuildingPage(props: {
-  params: Promise<{ slug: string; locale: string }>;
+  params: Promise<{ slug: string; locale: LocaleType }>;
 }) {
   const params = await props.params;
 
   const { slug, locale } = params;
 
   if (!slug) return notFound();
-  const building = await api.building
-    .getBuildingBySlug({
-      slug,
-      lang: locale,
-    })
-    .catch(() => null);
+  const building = await getBuildingBySlug(locale, slug);
   if (!building) return notFound();
-
-  const supabase = await createClient();
-
-  building.featuredImage = supabase.storage
-    .from("heritagebuilder-test")
-    .getPublicUrl(building.featuredImage ?? "").data.publicUrl;
-  building.images = await Promise.all(
-    building.images.map(async (image) => {
-      const { data } = supabase.storage
-        .from("heritagebuilder-test")
-        .getPublicUrl(image);
-      return data.publicUrl;
-    }),
+  const buildingImages = [
+    (building.featuredImage as Media).url,
+    ...(building.images as Media[]).map((img) => img.url),
+  ].filter((img) => typeof img === "string");
+  return (
+    <BuildingComponent building={building} buildingImages={buildingImages} />
   );
-  return <BuildingComponent building={building} />;
 }
