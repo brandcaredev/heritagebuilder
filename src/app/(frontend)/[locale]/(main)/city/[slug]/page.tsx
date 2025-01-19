@@ -27,14 +27,13 @@ export default async function CityPage(props: Props) {
     notFound();
   }
 
-  const cityBuildings = await getBuildingsByFilter(locale, {
+  const { buildings: cityBuildings } = await getBuildingsByFilter(locale, {
     city: {
       equals: city.id,
     },
   });
   const cityCountry = city.country as Country;
   const cityCounty = city.county as County;
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex w-fit flex-col">

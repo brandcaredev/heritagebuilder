@@ -25,7 +25,7 @@ export default async function CountyPage(props: Props) {
   if (!county) {
     notFound();
   }
-  const countyBuildings = await getBuildingsByFilter(locale, {
+  const { buildings: countyBuildings } = await getBuildingsByFilter(locale, {
     city: {
       equals: county.id,
     },

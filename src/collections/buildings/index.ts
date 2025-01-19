@@ -72,6 +72,11 @@ export const Buildings: CollectionConfig = {
       name: "position",
       type: "point",
       required: true,
+      admin: {
+        components: {
+          Field: "@/collections/cities/custom-position-selector",
+        },
+      },
     },
     {
       name: "country",

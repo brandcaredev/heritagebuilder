@@ -23,6 +23,11 @@ export const Cities: CollectionConfig = {
     {
       name: "position",
       type: "point",
+      admin: {
+        components: {
+          Field: "@/collections/cities/custom-position-selector",
+        },
+      },
     },
     {
       name: "country",
