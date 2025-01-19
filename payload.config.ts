@@ -21,6 +21,7 @@ import { fileURLToPath } from "url";
 import { searchPlugin } from "@payloadcms/plugin-search";
 import { searchFields } from "@/collections/buildings/searchFields";
 import { beforeSyncWithSearch } from "@/collections/buildings/beforeSync";
+import Users from "@/collections/users";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -42,6 +43,7 @@ export default buildConfig({
     Cities,
     YoutubeLinks,
     Media,
+    Users,
   ],
 
   // Your Payload secret - should be a complex and secure string, unguessable

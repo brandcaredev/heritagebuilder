@@ -71,8 +71,6 @@ const translatedContentSchema = z.object({
   presentDay: z.string(),
   famousResidents: z.string().optional(),
   renovation: z.string().optional(),
-  city: z.string(),
-  county: z.string(),
 });
 
 const optionalSchema = z.object({
@@ -83,8 +81,6 @@ const optionalSchema = z.object({
   presentDay: z.string().optional(),
   famousResidents: z.string().optional(),
   renovation: z.string().optional(),
-  city: z.string(),
-  county: z.string(),
 });
 
 export const formSchema = z.object({
@@ -151,6 +147,7 @@ export const formSchema = z.object({
   position: z.tuple([z.number(), z.number()]),
   creatorname: z.string().optional(),
   creatoremail: z.string().optional(),
+  source: z.string().optional(),
 });
 
 export default function BuildingForm({
@@ -216,79 +213,6 @@ export default function BuildingForm({
         }),
       );
 
-      // get countyid if exits, insert a new county if not
-      let countyid = await trpc.county.getCountyBySlug
-        .fetch({
-          slug: slugify(values.en.county!),
-          lang: "en",
-        })
-        .then((data) => data?.id)
-        .catch(() => undefined);
-      if (!countyid) {
-        const countyData = {
-          countryid: values.country,
-          en: {
-            slug: slugify(values.en.county!),
-            name: values.en.county!,
-            language: "en",
-          },
-          hu: {
-            slug: slugify(values.hu.county) || slugify(values.en.county!),
-            name: values.hu.county,
-            language: "hu",
-          },
-          regionid: null,
-          position: null,
-        };
-        await createCounty(
-          { ...countyData },
-          {
-            onSuccess: (data) => (countyid = data),
-            onError: () => {
-              throw new Error();
-            },
-          },
-        );
-      }
-      if (!countyid) throw new Error();
-      //get cityid if exits, insert a new city if not
-      let cityid = await trpc.city.getCityBySlug
-        .fetch({
-          slug: slugify(values.en.city!),
-          lang: "en",
-        })
-        .then((data) => data?.id)
-        .catch(() => undefined);
-
-      if (!cityid) {
-        const cityData = {
-          countryid: values.country,
-          countyid,
-          en: {
-            slug: slugify(values.en.city!),
-            name: values.en.city!,
-            language: "en",
-          },
-          hu: {
-            slug: slugify(values.hu.city) || slugify(values.en.city!),
-            name: values.hu.city,
-            language: "hu",
-          },
-          position: null,
-        };
-
-        await createCity(
-          { ...cityData },
-          {
-            onSuccess: (data) => (cityid = data),
-            onError: () => {
-              throw new Error();
-            },
-          },
-        );
-      }
-      if (!cityid) throw new Error();
-
       const hunPayload = {
         name: values.hu.name,
         summary: values.hu.summary,
@@ -300,13 +224,12 @@ export default function BuildingForm({
         renovation: values.hu.renovation || "",
         buildingType: parseInt(values.type),
         country: values.country,
-        county: countyid,
-        city: cityid,
         position: [values.position[0], values.position[1]],
         creatorName: values.creatorname || "",
         creatorEmail: values.creatoremail || "",
         images: imageIDs,
         featuredImage: featuredImageID,
+        source: values.source || "",
       };
 
       const hunResponse = await fetch(`/api/buildings?locale=hu`, {
@@ -667,12 +590,6 @@ export default function BuildingForm({
                       setCountry={(value: string) =>
                         form.setValue(`country`, value)
                       }
-                      setCounty={async (value: string, lang: LocaleType) =>
-                        form.setValue(`${lang}.county`, value)
-                      }
-                      setCity={async (value: string, lang: LocaleType) =>
-                        form.setValue(`${lang}.city`, value)
-                      }
                     />
                   </FormControl>
                 </FormItem>
@@ -705,6 +622,21 @@ export default function BuildingForm({
                   </FormControl>
                   <FormDescription>
                     {t("form.descriptions.creatoremail")}
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={"source"}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.source")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    {t("form.descriptions.source")}
                   </FormDescription>
                 </FormItem>
               )}

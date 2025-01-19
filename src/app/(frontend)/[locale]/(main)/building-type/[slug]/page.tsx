@@ -10,10 +10,10 @@ import { getCountries } from "@/lib/queries/country";
 import { getCountiesByFilter } from "@/lib/queries/county";
 import { getCitiesByFilter } from "@/lib/queries/city";
 
-export default async function BuildingTypePage(props: {
+const BuildingTypePage = async (props: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;
-}) {
+}) => {
   const params = await props.params;
   const searchParams = await props.searchParams;
 
@@ -75,4 +75,6 @@ export default async function BuildingTypePage(props: {
       <Pagination currentPage={page} totalPages={totalPages} />
     </div>
   );
-}
+};
+
+export default BuildingTypePage;

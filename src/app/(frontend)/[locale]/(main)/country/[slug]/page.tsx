@@ -16,7 +16,7 @@ export default async function CountryMainPage(props: {
   const country = await getCountryBySlug(locale, slug);
   const buildingTypes = await getBuildingTypes(locale);
   if (!country) return notFound();
-  const countryBuildings = await getBuildingsByFilter(locale, {
+  const { buildings: countryBuildings } = await getBuildingsByFilter(locale, {
     country: {
       equals: country.id,
     },

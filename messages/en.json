@@ -18,8 +18,9 @@
     "featuredImage": "Featured image",
     "images": "Images",
     "position": "Position",
-    "creatorname": "Creator name",
+    "creatorname": "Creators name",
     "creatoremail": "Creator email",
+    "source": "Source",
     "descriptions": {
       "name": "Name of the building",
       "history": "The history of the building",
@@ -28,7 +29,8 @@
       "renovation": "The status or the story of the renovation",
       "creatorname": "Enter your name if you want to be credited for the building",
       "creatoremail": "Enter your email if you want to get notified when the building is approved",
-      "summary": "Short summary which will show up for the building"
+      "summary": "Short summary which will show up for the building",
+      "source": "Enter the source of the data if you want to show on the building page"
     },
     "summary": "Summary"
   },
