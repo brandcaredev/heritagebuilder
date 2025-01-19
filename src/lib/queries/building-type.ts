@@ -1,4 +1,4 @@
-"use server";
+"server only";
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { LocaleType } from "../constans";
@@ -12,6 +12,24 @@ export const getBuildingTypes = async (locale: LocaleType) => {
     sort: "id",
   });
   return buildingTypes;
+};
+
+export const getBuildingTypeBySlug = async (
+  locale: LocaleType,
+  slug: string,
+) => {
+  const { docs: buildingType } = await payload.find({
+    collection: "building-types",
+    locale: locale,
+    where: {
+      slug: {
+        equals: slug,
+      },
+    },
+    limit: 1,
+    depth: 1,
+  });
+  return buildingType[0] || null;
 };
 
 export const getNextLanguageBuildingTypeSlug = async (

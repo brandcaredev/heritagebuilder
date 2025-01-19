@@ -1,5 +1,5 @@
-"use server";
-import { getPayload } from "payload";
+"server only";
+import { getPayload, Where } from "payload";
 import config from "@payload-config";
 import { LocaleType } from "../constans";
 
@@ -15,7 +15,7 @@ export const getCityBySlug = async (locale: LocaleType, slug: string) => {
       },
     },
     limit: 1,
-    depth: 2,
+    depth: 1,
   });
   return city[0] || null;
 };
@@ -38,4 +38,14 @@ export const getNextLanguageCitySlug = async (
   });
   const citySlugs = city[0]?.slug as unknown as Record<LocaleType, string>;
   return citySlugs[nextLang];
+};
+
+export const getCitiesByFilter = async (locale: LocaleType, filter: Where) => {
+  const { docs: cities, totalPages } = await payload.find({
+    collection: "cities",
+    locale: locale,
+    where: filter,
+    sort: "createdAt",
+  });
+  return { cities, totalPages };
 };

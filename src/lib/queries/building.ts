@@ -1,4 +1,4 @@
-"use server";
+"server only";
 import { getPayload, Where } from "payload";
 import config from "@payload-config";
 import { LocaleType } from "../constans";
@@ -74,13 +74,13 @@ export const getBuildingsByFilter = async (
   locale: LocaleType,
   filter: Where,
 ) => {
-  const { docs: buildings } = await payload.find({
+  const { docs: buildings, totalPages } = await payload.find({
     collection: "buildings",
     locale: locale,
     where: filter,
     sort: "createdAt",
   });
-  return buildings;
+  return { buildings, totalPages };
 };
 
 export const getBuilding = async (locale: LocaleType, slug: string) => {
