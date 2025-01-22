@@ -1,3 +1,4 @@
+import { revalidatePath, revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 export const Counties: CollectionConfig = {
@@ -55,9 +56,22 @@ export const Counties: CollectionConfig = {
   ],
   admin: {
     useAsTitle: "name",
+    defaultColumns: ["name", "slug", "description", "_status"],
   },
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateTag(`counties`);
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidateTag(`counties`);
+      },
+    ],
   },
   access: {
     read: () => true,

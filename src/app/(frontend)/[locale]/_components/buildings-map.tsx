@@ -130,7 +130,7 @@ const BuildingsMap = ({
                         <h3 className="mb-1 text-xl font-semibold text-brown">
                           {building.name}
                         </h3>
-                        <p className="text-muted-foreground line-clamp-5 text-sm text-brown-4">
+                        <p className="text-muted-foreground text-brown-900 line-clamp-5 text-sm">
                           {building.summary || building.history}
                         </p>
                       </div>

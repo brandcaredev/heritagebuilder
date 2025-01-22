@@ -34,7 +34,7 @@ const BuildingList = ({
         </div>
       </div>
 
-      <div className="mb-8 flex items-center gap-4 overflow-x-auto rounded-sm bg-brown-2 p-2">
+      <div className="bg-brown-200 mb-8 flex items-center gap-4 overflow-x-auto rounded-sm p-2">
         <span className="text-brown-dark-20 text-lg font-semibold">Filter</span>
         {buildingTypes.map((buildingType, index) => (
           <Toggle

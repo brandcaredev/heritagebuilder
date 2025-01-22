@@ -6,7 +6,10 @@
     "renovation": "Felújítás",
     "presentDay": "Jelenlegi állapot",
     "imageAlt": "Épület kép",
-    "preview": "Épület előnézet"
+    "preview": "Épület előnézet",
+    "suggestEdit": "Szerkesztés javaslata",
+    "creatorDescription": "Ha szeretne megjelenni a szerkesztők között",
+    "creatorName": "Neve"
   },
   "form": {
     "country": "Ország",

@@ -50,6 +50,7 @@ export const Cities: CollectionConfig = {
   ],
   admin: {
     useAsTitle: "name",
+    defaultColumns: ["name", "slug", "description", "_status"],
   },
   versions: {
     drafts: true,

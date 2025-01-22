@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 export const BuildingTypes: CollectionConfig = {
@@ -33,6 +34,18 @@ export const BuildingTypes: CollectionConfig = {
   },
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateTag(`building-types`);
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidateTag(`building-types`);
+      },
+    ],
   },
   access: {
     read: () => true,

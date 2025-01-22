@@ -23,6 +23,7 @@ export interface Config {
     'youtube-links': YoutubeLink;
     media: Media;
     users: User;
+    'building-suggestions': BuildingSuggestion;
     search: Search;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -36,6 +37,9 @@ export interface Config {
       relatedBuildings: 'buildings';
       relatedCounties: 'counties';
       relatedCities: 'cities';
+    };
+    regions: {
+      relatedCounties: 'counties';
     };
     counties: {
       relatedBuildings: 'buildings';
@@ -58,6 +62,7 @@ export interface Config {
     'youtube-links': YoutubeLinksSelect<false> | YoutubeLinksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'building-suggestions': BuildingSuggestionsSelect<false> | BuildingSuggestionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -311,6 +316,10 @@ export interface Region {
   name: string;
   slug: string;
   country: string | Country;
+  relatedCounties?: {
+    docs?: (number | County)[] | null;
+    hasNextPage?: boolean | null;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -410,6 +419,20 @@ export interface User {
   password?: string | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "building-suggestions".
+ */
+export interface BuildingSuggestion {
+  id: number;
+  building: number | Building;
+  field: 'name' | 'summary' | 'history' | 'style' | 'presentDay' | 'famousResidents' | 'renovation';
+  suggestedContent: string;
+  status?: ('pending' | 'reviewed') | null;
+  submitterName?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -486,6 +509,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'building-suggestions';
+        value: number | BuildingSuggestion;
       } | null)
     | ({
         relationTo: 'search';
@@ -715,6 +742,7 @@ export interface RegionsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   country?: T;
+  relatedCounties?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -823,6 +851,19 @@ export interface UsersSelect<T extends boolean = true> {
   hash?: T;
   loginAttempts?: T;
   lockUntil?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "building-suggestions_select".
+ */
+export interface BuildingSuggestionsSelect<T extends boolean = true> {
+  building?: T;
+  field?: T;
+  suggestedContent?: T;
+  status?: T;
+  submitterName?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

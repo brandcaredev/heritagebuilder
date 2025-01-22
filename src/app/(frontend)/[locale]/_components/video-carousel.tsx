@@ -104,7 +104,7 @@ const VideoCarousel = ({ videos }: { videos: YoutubeLink[] }) => {
   }
 
   return (
-    <div className="embla w-full overflow-hidden rounded-lg bg-brown-4">
+    <div className="embla bg-brown-900 w-full overflow-hidden rounded-lg">
       <div className="p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-4xl font-bold text-white">

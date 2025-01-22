@@ -2,23 +2,35 @@
 import { getPayload, Where } from "payload";
 import config from "@payload-config";
 import { LocaleType } from "../constans";
+import { unstable_cache } from "next/cache";
 
 const payload = await getPayload({ config });
 
-export const getCountyBySlug = async (locale: LocaleType, slug: string) => {
-  const { docs: county } = await payload.find({
-    collection: "counties",
-    locale: locale,
-    where: {
-      slug: {
-        equals: slug,
+export const getCountyBySlug = unstable_cache(
+  async (locale: LocaleType, slug: string) => {
+    const { docs: county } = await payload.find({
+      collection: "counties",
+      locale: locale,
+      where: {
+        slug: {
+          equals: slug,
+        },
+        _status: {
+          equals: "published",
+        },
       },
-    },
-    limit: 1,
-    depth: 1,
-  });
-  return county[0] || null;
-};
+      joins: {
+        relatedBuildings: { where: { _status: { equals: "published" } } },
+        relatedCities: { where: { _status: { equals: "published" } } },
+      },
+      limit: 1,
+      depth: 1,
+    });
+    return county[0] || null;
+  },
+  [],
+  { tags: ["counties"] },
+);
 
 export const getNextLanguageCountySlug = async (
   slug: string,
@@ -40,15 +52,20 @@ export const getNextLanguageCountySlug = async (
   return countySlugs[nextLang];
 };
 
-export const getCountiesByFilter = async (
-  locale: LocaleType,
-  filter: Where,
-) => {
-  const { docs: counties, totalPages } = await payload.find({
-    collection: "counties",
-    locale: locale,
-    where: filter,
-    sort: "createdAt",
-  });
-  return { counties, totalPages };
-};
+export const getCountiesByFilter = unstable_cache(
+  async (locale: LocaleType, filter: Where) => {
+    const { docs: counties, totalPages } = await payload.find({
+      collection: "counties",
+      locale: locale,
+      where: { ...filter, _status: { equals: "published" } },
+      joins: {
+        relatedBuildings: { where: { _status: { equals: "published" } } },
+        relatedCities: { where: { _status: { equals: "published" } } },
+      },
+      sort: "createdAt",
+    });
+    return { counties, totalPages };
+  },
+  [],
+  { tags: ["counties"] },
+);

@@ -1,7 +1,6 @@
 import BuildingComponent from "@/_components/building";
 import { LocaleType } from "@/lib/constans";
 import { getBuildingBySlug } from "@/lib/queries/building";
-import { api } from "@/trpc/server";
 import { notFound } from "next/navigation";
 import { Media } from "payload-types";
 

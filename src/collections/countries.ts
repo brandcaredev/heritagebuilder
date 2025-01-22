@@ -46,18 +46,23 @@ export const Countries: CollectionConfig = {
       on: "country",
     },
   ],
+  admin: {
+    useAsTitle: "name",
+  },
+  versions: {
+    drafts: true,
+  },
   hooks: {
     afterChange: [
       () => {
         revalidateTag("countries");
       },
     ],
-  },
-  admin: {
-    useAsTitle: "name",
-  },
-  versions: {
-    drafts: true,
+    afterDelete: [
+      () => {
+        revalidateTag("countries");
+      },
+    ],
   },
   access: {
     read: () => true,

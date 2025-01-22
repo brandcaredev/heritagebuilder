@@ -2,7 +2,8 @@
 import { cn } from "@/lib/utils";
 import { Building, BuildingType } from "payload-types";
 import BuildingList from "./building-list";
-import BuildingsMap from "./buildings-map";
+import dynamic from "next/dynamic";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SimplePage = ({
   name,
@@ -17,6 +18,18 @@ const SimplePage = ({
   position?: [number, number] | null;
   buildingTypes: BuildingType[];
 }) => {
+  const BuildingsMap = dynamic(() => import("./buildings-map"), {
+    loading: () => (
+      <Skeleton
+        className={cn(
+          "rounded-lg",
+          description ? "h-[400px] w-full lg:w-1/2" : "h-[400px] w-full",
+        )}
+      />
+    ),
+    ssr: false,
+  });
+
   return (
     <div className="flex flex-col">
       <h1 className="text-brown-800 text-4xl font-bold">{name}</h1>

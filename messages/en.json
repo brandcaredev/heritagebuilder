@@ -7,7 +7,10 @@
     "renovation": "Renovation",
     "presentDay": "Present day",
     "imageAlt": "Building image",
-    "preview": "Building Preview"
+    "preview": "Building Preview",
+    "suggestEdit": "Suggest edit",
+    "creatorDescription": "If you want to be featured in the editors section",
+    "creatorName": "Name"
   },
   "form": {
     "country": "Country",

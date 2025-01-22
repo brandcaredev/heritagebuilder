@@ -55,7 +55,9 @@ const BuildingTypePage = async (props: {
   });
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Buildings</h1>
+      <h1 className="mb-8 text-3xl font-bold text-brown">
+        {buildingType.name}
+      </h1>
       <Suspense fallback={<div>Loading filters...</div>}>
         <FilterForm
           buildingType={buildingType.slug}

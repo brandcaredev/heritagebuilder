@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 export const YoutubeLinks: CollectionConfig = {
@@ -31,6 +32,18 @@ export const YoutubeLinks: CollectionConfig = {
   defaultSort: "sort",
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateTag(`youtube-links`);
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidateTag(`youtube-links`);
+      },
+    ],
   },
   access: {
     read: () => true,

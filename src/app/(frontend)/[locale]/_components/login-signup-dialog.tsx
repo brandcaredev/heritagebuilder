@@ -15,7 +15,7 @@ const LoginSignupDialog = ({
   );
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="z-[9999] mx-auto flex w-full flex-col justify-center space-y-6 border-none bg-brown-2 sm:w-[450px]">
+      <DialogContent className="bg-brown-200 z-[9999] mx-auto flex w-full flex-col justify-center space-y-6 border-none sm:w-[450px]">
         {activeDialog === "login" ? (
           <Login
             switchDialog={() => setActiveDialog("register")}

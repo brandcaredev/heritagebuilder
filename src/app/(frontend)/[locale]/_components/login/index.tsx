@@ -104,7 +104,7 @@ export default function Login({
                 autoComplete="email"
                 autoCorrect="off"
                 disabled={isLoading}
-                className="bg-white-2 text-brown-4 placeholder:text-brown-2"
+                className="text-brown-900 placeholder:text-brown-200 bg-white-2"
                 {...register("email")}
               />
               {errors.email && (
@@ -122,7 +122,7 @@ export default function Login({
                 autoComplete="password"
                 autoCorrect="off"
                 disabled={isLoading}
-                className="bg-white-2 text-brown-4 placeholder:text-brown-2"
+                className="text-brown-900 placeholder:text-brown-200 bg-white-2"
                 {...register("password")}
               />
               {errors.password && (

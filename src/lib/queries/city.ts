@@ -13,6 +13,12 @@ export const getCityBySlug = async (locale: LocaleType, slug: string) => {
       slug: {
         equals: slug,
       },
+      _status: {
+        equals: "published",
+      },
+    },
+    joins: {
+      relatedBuildings: { where: { _status: { equals: "published" } } },
     },
     limit: 1,
     depth: 1,
@@ -44,7 +50,10 @@ export const getCitiesByFilter = async (locale: LocaleType, filter: Where) => {
   const { docs: cities, totalPages } = await payload.find({
     collection: "cities",
     locale: locale,
-    where: filter,
+    where: { ...filter, _status: { equals: "published" } },
+    joins: {
+      relatedBuildings: { where: { _status: { equals: "published" } } },
+    },
     sort: "createdAt",
   });
   return { cities, totalPages };

@@ -11,7 +11,7 @@ import { City, Country, Media } from "payload-types";
 import { LocaleType } from "@/lib/constans";
 import { getCountries } from "@/lib/queries/country";
 import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getMainPageBuildings } from "@/lib/queries/building";
+import { getBuildings } from "@/lib/queries/building";
 
 const payload = await getPayload({ config });
 
@@ -33,7 +33,7 @@ export default async function MainPage(props: {
       },
     },
   });
-  const buildings = await getMainPageBuildings(locale);
+  const buildings = await getBuildings(locale, 6);
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-4 lg:flex-row">
@@ -90,7 +90,7 @@ export default async function MainPage(props: {
           <h2 className="mb-6 text-4xl font-bold text-brown">
             {t("page.latestBuildings")}
           </h2>
-          <div className="space-y-4 text-brown-4">
+          <div className="text-brown-900 space-y-4">
             {buildings.map((building) => {
               return (
                 <Link
@@ -153,7 +153,7 @@ export default async function MainPage(props: {
         })}
       </div>
       {/* Newsletter Section */}
-      <div className="flex items-center gap-8 rounded-lg bg-brown-3 p-8">
+      <div className="bg-brown-700 flex items-center gap-8 rounded-lg p-8">
         <div className="hidden md:block md:w-1/3">
           <Image
             src="/newsletter-image.jpg"

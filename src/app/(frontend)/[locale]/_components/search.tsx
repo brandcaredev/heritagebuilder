@@ -91,7 +91,7 @@ const ExpandableSearch = () => {
               value={value}
               type="search"
               placeholder="Search..."
-              className="focus:none h-7 w-full rounded-l pl-2 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              className="h-7 w-full rounded-l pl-2"
               aria-label="Search input"
             />
             {isLoading && (
@@ -120,7 +120,7 @@ const ExpandableSearch = () => {
               }}
             >
               <div className="flex flex-wrap items-center gap-x-1 text-base">
-                <span className="text-brown-4">
+                <span className="text-brown-900">
                   {highlightText(result.name, debouncedValue)}
                 </span>
                 {typeof result.buildingType !== "number" && (

@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
 export const Buildings: CollectionConfig = {
@@ -8,6 +9,11 @@ export const Buildings: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      admin: {
+        components: {
+          Field: "@/collections/buildings/field-with-suggestions",
+        },
+      },
     },
     {
       name: "slug",
@@ -20,6 +26,11 @@ export const Buildings: CollectionConfig = {
       type: "textarea",
       localized: true,
       required: true,
+      admin: {
+        components: {
+          Field: "@/collections/buildings/field-with-suggestions",
+        },
+      },
     },
     {
       name: "buildingType",
@@ -32,28 +43,53 @@ export const Buildings: CollectionConfig = {
       type: "textarea",
       localized: true,
       required: true,
+      admin: {
+        components: {
+          Field: "@/collections/buildings/field-with-suggestions",
+        },
+      },
     },
     {
       name: "style",
       type: "textarea",
       localized: true,
       required: true,
+      admin: {
+        components: {
+          Field: "@/collections/buildings/field-with-suggestions",
+        },
+      },
     },
     {
       name: "presentDay",
       type: "textarea",
       localized: true,
       required: true,
+      admin: {
+        components: {
+          Field: "@/collections/buildings/field-with-suggestions",
+        },
+      },
     },
     {
       name: "famousResidents",
       type: "textarea",
       localized: true,
+      admin: {
+        components: {
+          Field: "@/collections/buildings/field-with-suggestions",
+        },
+      },
     },
     {
       name: "renovation",
       type: "textarea",
       localized: true,
+      admin: {
+        components: {
+          Field: "@/collections/buildings/field-with-suggestions",
+        },
+      },
     },
     {
       name: "featuredImage",
@@ -108,6 +144,18 @@ export const Buildings: CollectionConfig = {
   },
   versions: {
     drafts: true,
+  },
+  hooks: {
+    afterChange: [
+      () => {
+        revalidateTag("buildings");
+      },
+    ],
+    afterDelete: [
+      () => {
+        revalidateTag("buildings");
+      },
+    ],
   },
   access: {
     read: () => true,
