@@ -1,3 +1,4 @@
+import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
@@ -27,6 +28,11 @@ export const BuildingTypes: CollectionConfig = {
       type: "join",
       collection: "buildings",
       on: "buildingType",
+      where: {
+        _status: {
+          equals: "published",
+        },
+      },
     },
   ],
   admin: {
@@ -48,7 +54,7 @@ export const BuildingTypes: CollectionConfig = {
     ],
   },
   access: {
-    read: () => true,
+    read: authenticatedOrPublished,
     create: () => true,
     update: () => true,
     delete: () => true,

@@ -28,8 +28,8 @@ export const CountriesMedia: CollectionConfig = {
   ],
   access: {
     read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
+    delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
   },
 };

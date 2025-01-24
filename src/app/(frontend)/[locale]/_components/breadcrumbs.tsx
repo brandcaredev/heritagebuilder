@@ -11,9 +11,9 @@ type BreadcrumbItem = {
 export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   const router = useRouter();
   return (
-    <div className="flex items-center gap-6">
+    <div className="flex items-center gap-2 md:gap-6">
       <ChevronLeft
-        className="text-brown-700 h-5 w-5 cursor-pointer"
+        className="h-5 w-5 cursor-pointer text-brown-700"
         onClick={() => router.back()}
       />
       {items.map((item, index) => (
@@ -21,17 +21,17 @@ export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
           {item.href ? (
             <Link
               href={item.href}
-              className="text-brown-700 text-lg font-semibold"
+              className="text-lg font-semibold text-brown-700"
             >
               {item.name}
             </Link>
           ) : (
-            <span className="text-brown-700 text-lg font-semibold">
+            <span className="text-lg font-semibold text-brown-700">
               {item.name}
             </span>
           )}
           {index < items.length - 1 && (
-            <span className="text-brown-700 text-lg">/</span>
+            <span className="text-lg text-brown-700">/</span>
           )}
         </Fragment>
       ))}

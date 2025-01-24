@@ -39,6 +39,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import Breadcrumbs from "./breadcrumbs";
+import Divider from "@/components/icons/divider";
 
 const MapPositionSelector = dynamic(
   () => import("@/components/map-position-selector"),
@@ -310,37 +312,21 @@ export default function BuildingForm({
 
   return (
     <div>
+      <div className="flex w-fit flex-col">
+        <Breadcrumbs
+          items={[
+            {
+              name: t("common.submitNewBuilding"),
+            },
+          ]}
+        />
+        <Divider orientation="horizontal" />
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="mx-auto max-w-3xl space-y-8 py-10"
         >
-          <FormField
-            control={form.control}
-            name="type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("form.type")}</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger value={field.value}>
-                      <SelectValue placeholder={t("form.type")} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {buildingTypes.map((type) => (
-                      <SelectItem key={type.id} value={type.id.toString()}>
-                        {type.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
           <Tabs
             value={activeLanguage}
             onValueChange={(v) => setActiveLanguage(v as LocaleType)}
@@ -355,6 +341,22 @@ export default function BuildingForm({
 
             {Object.values(locales).map((lang) => (
               <TabsContent key={lang} value={lang}>
+                <FormField
+                  control={form.control}
+                  name={`${lang}.name`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("form.name")}</FormLabel>
+                      <FormControl>
+                        <Input placeholder="" type="text" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        {t("form.descriptions.name")}
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name={`${lang}.summary`}
@@ -376,23 +378,36 @@ export default function BuildingForm({
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
-                  name={`${lang}.name`}
-                  rules={{ deps: ["en", "hu"] }}
+                  name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("form.name")}</FormLabel>
-                      <FormControl>
-                        <Input placeholder="" type="text" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        {t("form.descriptions.name")}
-                      </FormDescription>
+                      <FormLabel>{t("form.type")}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger value={field.value}>
+                            <SelectValue placeholder={t("form.type")} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {buildingTypes.map((type) => (
+                            <SelectItem
+                              key={type.id}
+                              value={type.id.toString()}
+                            >
+                              {type.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormItem>
                   )}
                 />
-
                 <div className="space-y-8">
                   <FormField
                     control={form.control}

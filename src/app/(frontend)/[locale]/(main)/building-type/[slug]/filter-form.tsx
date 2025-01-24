@@ -19,6 +19,7 @@ export default function FilterForm({
   county,
   city,
   buildingType,
+  setLoading,
 }: {
   buildingType: string;
   countries: Country[];
@@ -27,6 +28,7 @@ export default function FilterForm({
   country?: string;
   county?: string;
   city?: string;
+  setLoading: (isLoading: boolean) => void;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -35,6 +37,7 @@ export default function FilterForm({
     filterType: string,
     value: string | undefined,
   ) => {
+    setLoading(true);
     const params = new URLSearchParams(searchParams.toString());
     if (filterType === "country") {
       params.delete("city");
@@ -54,6 +57,7 @@ export default function FilterForm({
       params: { slug: buildingType },
       query: Object.fromEntries(params.entries()),
     });
+    setTimeout(() => setLoading(false), 1000);
   };
 
   return (
@@ -63,7 +67,7 @@ export default function FilterForm({
         value={country || ""}
       >
         <SelectTrigger
-          className="w-[180px]"
+          className="w-[150px] min-w-[150px] max-w-[300px] flex-1"
           onReset={() => handleFilterChange("country", undefined)}
           value={country || ""}
         >
@@ -81,9 +85,10 @@ export default function FilterForm({
       <Select
         onValueChange={(value) => handleFilterChange("county", value)}
         value={county || ""}
+        disabled={counties.length === 0}
       >
         <SelectTrigger
-          className="w-[180px]"
+          className="w-[150px] min-w-[150px] max-w-[300px] flex-1"
           onReset={() => handleFilterChange("county", undefined)}
           value={county || ""}
         >
@@ -101,9 +106,10 @@ export default function FilterForm({
       <Select
         onValueChange={(value) => handleFilterChange("city", value)}
         value={city || ""}
+        disabled={cities.length === 0}
       >
         <SelectTrigger
-          className="w-[180px]"
+          className="w-[150px] min-w-[150px] max-w-[300px] flex-1"
           onReset={() => handleFilterChange("city", undefined)}
           value={city || ""}
         >

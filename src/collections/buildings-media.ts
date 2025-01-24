@@ -30,7 +30,7 @@ export const BuildingsMedia: CollectionConfig = {
   access: {
     read: () => true,
     create: () => true,
-    update: () => true,
-    delete: () => true,
+    update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
+    delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
   },
 };

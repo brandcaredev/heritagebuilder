@@ -1,3 +1,4 @@
+import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
@@ -32,18 +33,33 @@ export const Countries: CollectionConfig = {
       type: "join",
       collection: "buildings",
       on: "country",
+      where: {
+        _status: {
+          equals: "published",
+        },
+      },
     },
     {
       name: "relatedCounties",
       type: "join",
       collection: "counties",
       on: "country",
+      where: {
+        _status: {
+          equals: "published",
+        },
+      },
     },
     {
       name: "relatedCities",
       type: "join",
       collection: "cities",
       on: "country",
+      where: {
+        _status: {
+          equals: "published",
+        },
+      },
     },
   ],
   admin: {
@@ -65,9 +81,9 @@ export const Countries: CollectionConfig = {
     ],
   },
   access: {
-    read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    read: authenticatedOrPublished,
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
+    delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
   },
 };

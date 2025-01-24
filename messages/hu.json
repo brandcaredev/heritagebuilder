@@ -51,7 +51,8 @@
     "hu": "Magyar",
     "en": "Angol",
     "back": "Vissza a listához",
-    "selectLocation": "Helyszín kiválasztása"
+    "selectLocation": "Helyszín kiválasztása",
+    "submitNewBuilding": "Új épület hozzáadása"
   },
   "successDialog": {
     "title": "Köszönjük a hozzájárulását!",

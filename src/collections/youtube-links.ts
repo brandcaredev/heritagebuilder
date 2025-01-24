@@ -1,3 +1,4 @@
+import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
@@ -46,7 +47,7 @@ export const YoutubeLinks: CollectionConfig = {
     ],
   },
   access: {
-    read: () => true,
+    read: authenticatedOrPublished,
     create: () => true,
     update: () => true,
     delete: () => true,

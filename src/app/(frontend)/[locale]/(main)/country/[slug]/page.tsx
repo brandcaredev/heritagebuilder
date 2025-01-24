@@ -2,7 +2,7 @@ import { LocaleType } from "@/lib/constans";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountryBySlug } from "@/lib/queries/country";
 import { notFound } from "next/navigation";
-import CountryPage from "./country";
+import CountryPage from "./page.client";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 
 export default async function CountryMainPage(props: {

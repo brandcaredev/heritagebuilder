@@ -52,7 +52,8 @@
     "hu": "Hungarian",
     "en": "English",
     "back": "Back to List",
-    "selectLocation": "Select Location"
+    "selectLocation": "Select Location",
+    "submitNewBuilding": "Submit new building"
   },
   "successDialog": {
     "title": "Thank you for your contribution!",

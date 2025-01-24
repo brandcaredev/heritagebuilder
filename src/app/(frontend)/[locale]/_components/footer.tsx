@@ -12,9 +12,9 @@ export async function Footer() {
 
   return (
     <footer className="bg-green py-12 text-stone-100">
-      <div className="container mx-auto px-4">
-        <div className="grid gap-8 md:grid-cols-4">
-          <div>
+      <div className="container mx-auto px-8">
+        <div className="flex flex-col items-center sm:flex-row sm:items-start">
+          <div className="flex-1">
             <h2 className="mb-4 text-2xl">Heritage builder</h2>
             <div className="flex space-x-4">
               <Instagram className="h-5 w-5 cursor-pointer hover:text-stone-300" />
@@ -23,78 +23,80 @@ export async function Footer() {
               <Twitter className="h-5 w-5 cursor-pointer hover:text-stone-300" />
             </div>
           </div>
-          <div>
-            <h3 className="mb-2 font-bold">Countries</h3>
-            <ul className="space-y-2">
-              {countries.map((country) => (
-                <li key={country.id}>
+          <div className="mt-5 flex flex-wrap gap-5 sm:mt-0">
+            <div>
+              <h3 className="mb-2 font-bold">Countries</h3>
+              <ul className="space-y-2">
+                {countries.map((country) => (
+                  <li key={country.id}>
+                    <Link
+                      href={{
+                        pathname: "/country/[slug]",
+                        params: { slug: country.slug },
+                      }}
+                      className="hover:text-stone-300"
+                    >
+                      {country.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="mb-2 font-bold">Building Types</h3>
+              <ul className="space-y-2">
+                {buildingTypes.map((type) => (
+                  <li key={type.id}>
+                    <Link
+                      href={{
+                        pathname: "/building-type/[slug]",
+                        params: { slug: type.slug },
+                      }}
+                      className="hover:text-stone-300"
+                    >
+                      {type.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="mb-2 font-bold">Legal</h3>
+              <ul className="space-y-2">
+                <li>
                   <Link
-                    href={{
-                      pathname: "/country/[slug]",
-                      params: { slug: country.slug },
-                    }}
+                    href={{ pathname: "/terms-of-service" }}
                     className="hover:text-stone-300"
                   >
-                    {country.name}
+                    Terms Of Service
                   </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-2 font-bold">Building Types</h3>
-            <ul className="space-y-2">
-              {buildingTypes.map((type) => (
-                <li key={type.id}>
+                <li>
                   <Link
-                    href={{
-                      pathname: "/building-type/[slug]",
-                      params: { slug: type.slug },
-                    }}
+                    href={{ pathname: "/privacy-policy" }}
                     className="hover:text-stone-300"
                   >
-                    {type.name}
+                    Privacy Policy
                   </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3 className="mb-2 font-bold">Legal</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href={{ pathname: "/terms-of-service" }}
-                  className="hover:text-stone-300"
-                >
-                  Terms Of Service
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{ pathname: "/privacy-policy" }}
-                  className="hover:text-stone-300"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{ pathname: "/cookies-policy" }}
-                  className="hover:text-stone-300"
-                >
-                  Cookies Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={{ pathname: "/about-us" }}
-                  className="hover:text-stone-300"
-                >
-                  About Us
-                </Link>
-              </li>
-            </ul>
+                <li>
+                  <Link
+                    href={{ pathname: "/cookies-policy" }}
+                    className="hover:text-stone-300"
+                  >
+                    Cookies Policy
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href={{ pathname: "/about-us" }}
+                    className="hover:text-stone-300"
+                  >
+                    About Us
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import type { CollectionConfig } from "payload";
 
 export const Cities: CollectionConfig = {
@@ -46,6 +47,11 @@ export const Cities: CollectionConfig = {
       type: "join",
       collection: "buildings",
       on: "city",
+      where: {
+        _status: {
+          equals: "published",
+        },
+      },
     },
   ],
   admin: {
@@ -56,9 +62,9 @@ export const Cities: CollectionConfig = {
     drafts: true,
   },
   access: {
-    read: () => true,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    read: authenticatedOrPublished,
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
+    delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
   },
 };

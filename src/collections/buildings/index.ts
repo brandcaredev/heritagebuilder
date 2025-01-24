@@ -1,3 +1,4 @@
+import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 
@@ -158,9 +159,9 @@ export const Buildings: CollectionConfig = {
     ],
   },
   access: {
-    read: () => true,
+    read: authenticatedOrPublished,
     create: () => true,
-    update: () => true,
-    delete: () => true,
+    update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
+    delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
   },
 };

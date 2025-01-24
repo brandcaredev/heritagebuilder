@@ -1,16 +1,12 @@
 import { LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypeBySlug } from "@/lib/queries/building-type";
+import { getCountries } from "@/lib/queries/country";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import FilterForm from "./filter-form";
-import BuildingCard from "./building-card";
-import Pagination from "./pagination";
-import { getCountries } from "@/lib/queries/country";
-import { getCountiesByFilter } from "@/lib/queries/county";
-import { getCitiesByFilter } from "@/lib/queries/city";
+import { BuildingTypePage } from "./page.client";
 
-const BuildingTypePage = async (props: {
+const Page = async (props: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;
 }) => {
@@ -24,23 +20,29 @@ const BuildingTypePage = async (props: {
 
   const page =
     typeof searchParams?.page === "string" ? Number(searchParams.page) : 1;
-  const country =
+  const selectedCountry =
     typeof searchParams?.country === "string"
       ? searchParams.country
       : undefined;
-  const county =
+  const selectedCounty =
     typeof searchParams?.county === "string" ? searchParams.county : undefined;
-  const city =
+  const selectedCity =
     typeof searchParams?.city === "string" ? searchParams.city : undefined;
 
   const countries = await getCountries(locale);
-  const { counties } = await getCountiesByFilter(locale, {
-    ...(country && { "country.slug": { equals: country } }),
-  });
-  const { cities } = await getCitiesByFilter(locale, {
-    ...(country && { "country.slug": { equals: country } }),
-    ...(county && { "county.slug": { equals: county } }),
-  });
+  const counties = countries
+    .filter((country) => country.slug === selectedCountry)
+    .map((country) => country.relatedCounties?.docs)
+    .filter((county) => county !== undefined && county !== null)
+    .flat()
+    .filter((county) => typeof county === "object");
+  const cities = countries
+    .filter((country) => country.slug === selectedCountry)
+    .map((country) => country.relatedCities?.docs)
+    .filter((city) => city !== undefined && city !== null)
+    .flat()
+    .filter((city) => typeof city === "object");
+
   const { buildings, totalPages } = await getBuildingsByFilter(locale, {
     and: [
       {
@@ -48,35 +50,31 @@ const BuildingTypePage = async (props: {
           equals: buildingType.id,
         },
       },
-      ...(city ? [{ "city.slug": { equals: city } }] : []),
-      ...(county ? [{ "county.slug": { equals: county } }] : []),
-      ...(country ? [{ "country.slug": { equals: country } }] : []),
+      ...(selectedCity ? [{ "city.slug": { equals: selectedCity } }] : []),
+      ...(selectedCounty
+        ? [{ "county.slug": { equals: selectedCounty } }]
+        : []),
+      ...(selectedCountry
+        ? [{ "country.slug": { equals: selectedCountry } }]
+        : []),
     ],
   });
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold text-brown">
-        {buildingType.name}
-      </h1>
-      <Suspense fallback={<div>Loading filters...</div>}>
-        <FilterForm
-          buildingType={buildingType.slug}
-          country={country}
-          county={county}
-          city={city}
-          counties={counties}
-          cities={cities}
-          countries={countries}
-        />
-      </Suspense>
-      <div className="my-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {buildings.map((building) => (
-          <BuildingCard key={building.id} building={building} />
-        ))}
-      </div>
-      <Pagination currentPage={page} totalPages={totalPages} />
-    </div>
+    <Suspense fallback={<div>Loading ...</div>}>
+      <BuildingTypePage
+        buildings={buildings}
+        buildingType={buildingType}
+        country={selectedCountry}
+        county={selectedCounty}
+        city={selectedCity}
+        counties={counties}
+        cities={cities}
+        countries={countries}
+        page={page}
+        totalPages={totalPages}
+      />
+    </Suspense>
   );
 };
 
-export default BuildingTypePage;
+export default Page;

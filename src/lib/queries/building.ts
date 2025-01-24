@@ -51,9 +51,6 @@ export const getBuildingBySlug = unstable_cache(
         slug: {
           equals: slug,
         },
-        _status: {
-          equals: "published",
-        },
       },
       limit: 1,
     });
@@ -68,11 +65,6 @@ export const getBuildings = unstable_cache(
     const { docs: buildings } = await payload.find({
       collection: "buildings",
       locale: locale,
-      where: {
-        _status: {
-          equals: "published",
-        },
-      },
       ...(limit && { limit }),
       sort: "createdAt",
     });
@@ -87,7 +79,7 @@ export const getBuildingsByFilter = unstable_cache(
     const { docs: buildings, totalPages } = await payload.find({
       collection: "buildings",
       locale: locale,
-      where: { ...filter, _status: { equals: "published" } },
+      where: { ...filter },
       sort: "createdAt",
     });
     return { buildings, totalPages };
