@@ -82,7 +82,7 @@ export default function BuildingComponent({
     <div className="flex flex-col gap-10 lg:flex-row">
       <div className="flex flex-col gap-4 lg:w-1/2">
         <Carousel>
-          <CarouselMainContainer className="h-[400px] md:h-[600px]">
+          <CarouselMainContainer className="h-[400px] md:h-[700px]">
             {buildingImages.map((img, index) => (
               <SliderMainItem
                 key={index}
@@ -92,7 +92,7 @@ export default function BuildingComponent({
                   src={img}
                   alt={`${t("building.imageAlt")} ${index + 1}`}
                   fill
-                  className="object-contain"
+                  className="object-cover"
                 />
               </SliderMainItem>
             ))}

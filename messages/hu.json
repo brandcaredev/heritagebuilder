@@ -156,7 +156,7 @@
   "fileUploader": {
     "dragAndDrop": "Húzza ide a fájlokat, vagy kattintson a kiválasztáshoz",
     "dropHere": "Dobja ide a fájlokat",
-    "multipleFiles": "{count} fájlt tölthet fel (egyenként maximum {size})",
+    "multipleFiles": "{count} fájlt tölthet fel",
     "singleFile": "Feltölthet egy fájlt maximum {size} méretben",
     "uploadingFiles": "{count} fájl feltöltése...",
     "uploadingFile": "Fájl feltöltése...",

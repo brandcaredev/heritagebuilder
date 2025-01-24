@@ -12,7 +12,7 @@ export const beforeSyncWithSearch: BeforeSync = async ({
     name,
     buildingType,
     featuredImage,
-    city: city.name,
-    country: country.name,
+    city: city?.name,
+    country: country?.name,
   };
 };

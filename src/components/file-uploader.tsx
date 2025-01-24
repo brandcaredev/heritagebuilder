@@ -1,130 +1,55 @@
 "use client";
 
-import * as React from "react";
-import Image from "next/image";
-import { FileText, Upload, X } from "lucide-react";
-import Dropzone, {
-  type DropzoneProps,
-  type FileRejection,
-} from "react-dropzone";
-import { toast } from "sonner";
+import { Trash2, Upload } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
+import * as React from "react";
+import Dropzone, { type FileRejection } from "react-dropzone";
+import { toast } from "sonner";
 
-import { cn, formatBytes } from "@/lib/utils";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useControllableState } from "@/hooks/use-controllable-state";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
-interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Value of the uploader.
-   * @type File[]
-   * @default undefined
-   * @example value={files}
-   */
-  value?: File[];
+type Props = {
+  featuredImage: File[];
+  featuredImageChange: (files: File[]) => void;
+  images: File[];
+  imagesChange: (files: File[]) => void;
+};
 
-  /**
-   * Function to be called when the value changes.
-   * @type (files: File[]) => void
-   * @default undefined
-   * @example onValueChange={(files) => setFiles(files)}
-   */
-  onValueChange?: (files: File[]) => void;
-
-  /**
-   * Function to be called when files are uploaded.
-   * @type (files: File[]) => Promise<void>
-   * @default undefined
-   * @example onUpload={(files) => uploadFiles(files)}
-   */
-  onUpload?: (files: File[]) => Promise<void>;
-
-  /**
-   * Progress of the uploaded files.
-   * @type Record<string, number> | undefined
-   * @default undefined
-   * @example progresses={{ "file1.png": 50 }}
-   */
-  progresses?: Record<string, number>;
-
-  /**
-   * Accepted file types for the uploader.
-   * @type { [key: string]: string[]}
-   * @default
-   * ```ts
-   * { "image/*": [] }
-   * ```
-   * @example accept={["image/png", "image/jpeg"]}
-   */
-  accept?: DropzoneProps["accept"];
-
-  /**
-   * Maximum file size for the uploader.
-   * @type number | undefined
-   * @default 1024 * 1024 * 2 // 2MB
-   * @example maxSize={1024 * 1024 * 2} // 2MB
-   */
-  maxSize?: DropzoneProps["maxSize"];
-
-  /**
-   * Maximum number of files for the uploader.
-   * @type number | undefined
-   * @default 1
-   * @example maxFileCount={4}
-   */
-  maxFileCount?: DropzoneProps["maxFiles"];
-
-  /**
-   * Whether the uploader should accept multiple files.
-   * @type boolean
-   * @default false
-   * @example multiple
-   */
-  multiple?: boolean;
-
-  /**
-   * Whether the uploader is disabled.
-   * @type boolean
-   * @default false
-   * @example disabled
-   */
-  disabled?: boolean;
-}
-
-export function FileUploader(props: FileUploaderProps) {
-  const {
-    value: valueProp,
-    onValueChange,
-    onUpload,
-    progresses,
-    accept = {
-      "image/*": [],
-    },
-    maxSize = 1024 * 1024 * 2,
-    maxFileCount = 1,
-    multiple = false,
-    disabled = false,
-    className,
-    ...dropzoneProps
-  } = props;
+export function FileUploader(props: Props) {
+  const { featuredImage, featuredImageChange, images, imagesChange } = props;
 
   const [files, setFiles] = useControllableState({
-    prop: valueProp,
-    onChange: onValueChange,
+    prop: images,
+    onChange: imagesChange,
+  });
+
+  const [featuredImageFiles, setFeaturedImageFiles] = useControllableState({
+    prop: featuredImage,
+    onChange: featuredImageChange,
   });
 
   const t = useTranslations("fileUploader");
 
   const onDrop = React.useCallback(
-    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+    (
+      acceptedFiles: File[],
+      rejectedFiles: FileRejection[],
+      multiple: boolean,
+      maxFileCount: number,
+      featured?: boolean,
+    ) => {
       if (!multiple && maxFileCount === 1 && acceptedFiles.length > 1) {
         toast.error(t("maxFileError"));
         return;
       }
 
-      if ((files?.length ?? 0) + acceptedFiles.length > maxFileCount) {
+      if (featured && acceptedFiles.length > 1) {
+        toast.error(t("maxFileError"));
+        return;
+      } else if ((files?.length ?? 0) + acceptedFiles.length > maxFileCount) {
         toast.error(t("maxFilesError", { count: maxFileCount }));
         return;
       }
@@ -134,52 +59,34 @@ export function FileUploader(props: FileUploaderProps) {
           preview: URL.createObjectURL(file),
         }),
       );
-
-      const updatedFiles = files ? [...files, ...newFiles] : newFiles;
-
-      setFiles(updatedFiles);
+      if (featured) {
+        setFeaturedImageFiles(newFiles);
+      } else {
+        const updatedFiles = files ? [...files, ...newFiles] : newFiles;
+        setFiles(updatedFiles);
+      }
 
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file }) => {
           toast.error(t("fileRejected", { name: file.name }));
         });
       }
-
-      if (
-        onUpload &&
-        updatedFiles.length > 0 &&
-        updatedFiles.length <= maxFileCount
-      ) {
-        toast.promise(onUpload(updatedFiles), {
-          loading: t(
-            updatedFiles.length > 1 ? "uploadingFiles" : "uploadingFile",
-            {
-              count: `${updatedFiles.length} files`,
-            },
-          ),
-          success: () => {
-            setFiles([]);
-            return t(
-              updatedFiles.length > 1 ? "filesUploaded" : "fileUploaded",
-              {
-                count: `${updatedFiles.length}`,
-              },
-            );
-          },
-          error: t("uploadError", {
-            count: `${updatedFiles.length}`,
-          }),
-        });
-      }
     },
-    [files, maxFileCount, multiple, onUpload, setFiles, t],
+    [files, setFeaturedImageFiles, setFiles, t],
   );
 
-  function onRemove(index: number) {
-    if (!files) return;
-    const newFiles = files.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    onValueChange?.(newFiles);
+  function onRemove(index: number, featured?: boolean) {
+    if (featured) {
+      if (!featuredImageFiles) return;
+      const newFiles = featuredImageFiles.filter((_, i) => i !== index);
+      setFeaturedImageFiles(newFiles);
+      featuredImageChange(newFiles);
+    } else {
+      if (!files) return;
+      const newFiles = files.filter((_, i) => i !== index);
+      setFiles(newFiles);
+      imagesChange(newFiles);
+    }
   }
 
   // Revoke preview url when component unmounts
@@ -194,17 +101,112 @@ export function FileUploader(props: FileUploaderProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const isDisabled = disabled || (files?.length ?? 0) >= maxFileCount;
-
+  React.useEffect(() => {
+    return () => {
+      if (!featuredImageFiles) return;
+      featuredImageFiles.forEach((file) => {
+        if (isFileWithPreview(file)) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const isDisabled = (files?.length ?? 0) >= 4;
+  const featuredIsDisabled = (featuredImageFiles?.length ?? 0) >= 1;
+  console.log(featuredIsDisabled);
   return (
     <div className="relative flex flex-col gap-6 overflow-hidden">
+      <div
+        className={cn(
+          "group relative h-[400px] flex-col gap-4 rounded-lg border border-brown-900 md:h-[700px]",
+          !!featuredImageFiles?.length && "border-0",
+        )}
+      >
+        {featuredImageFiles?.map((file, index) => (
+          <FileCard
+            key={index}
+            file={file}
+            onRemove={() => onRemove(index, true)}
+          />
+        ))}
+      </div>
+      <ScrollArea>
+        <div className="flex w-max space-x-4 p-4">
+          {[...Array(5).keys()].map((i) => (
+            <div
+              key={i}
+              className={cn(
+                "group relative h-32 w-32 rounded-lg border border-brown-900 bg-transparent",
+                !!files?.[i] && "border-0",
+              )}
+            >
+              {files?.[i] ? (
+                <FileCard file={files[i]} onRemove={() => onRemove(i)} />
+              ) : null}
+            </div>
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
       <Dropzone
-        onDrop={onDrop}
-        accept={accept}
-        maxSize={maxSize}
-        maxFiles={maxFileCount}
-        multiple={maxFileCount > 1 || multiple}
+        onDrop={(acceptedFiles, rejectedFiles) =>
+          onDrop(acceptedFiles, rejectedFiles, false, 1, true)
+        }
+        accept={{ "image/*": [] }}
+        maxFiles={1}
+        multiple={false}
+        disabled={featuredIsDisabled}
+      >
+        {({ getRootProps, getInputProps, isDragActive }) => (
+          <div
+            {...getRootProps()}
+            className={cn(
+              "border-muted-foreground/25 hover:bg-muted/25 group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition",
+              "ring-offset-background focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+              isDragActive && "border-muted-foreground/50",
+              featuredIsDisabled && "pointer-events-none opacity-60",
+            )}
+          >
+            <input {...getInputProps()} />
+            {isDragActive ? (
+              <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+                <div className="rounded-full border border-dashed p-3">
+                  <Upload
+                    className="text-muted-foreground size-7"
+                    aria-hidden="true"
+                  />
+                </div>
+                <p className="text-muted-foreground font-medium">
+                  {t("dropHere")}
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+                <div className="rounded-full border border-dashed p-3">
+                  <Upload
+                    className="text-muted-foreground size-7"
+                    aria-hidden="true"
+                  />
+                </div>
+                <div className="flex flex-col gap-px">
+                  <p className="text-muted-foreground font-medium">
+                    {t("dragAndDrop")}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </Dropzone>
+
+      <Dropzone
+        onDrop={(acceptedFiles, rejectedFiles) =>
+          onDrop(acceptedFiles, rejectedFiles, true, 4)
+        }
+        accept={{ "image/*": [] }}
+        maxFiles={4}
+        multiple={true}
         disabled={isDisabled}
       >
         {({ getRootProps, getInputProps, isDragActive }) => (
@@ -215,9 +217,7 @@ export function FileUploader(props: FileUploaderProps) {
               "ring-offset-background focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
               isDragActive && "border-muted-foreground/50",
               isDisabled && "pointer-events-none opacity-60",
-              className,
             )}
-            {...dropzoneProps}
           >
             <input {...getInputProps()} />
             {isDragActive ? (
@@ -245,15 +245,9 @@ export function FileUploader(props: FileUploaderProps) {
                     {t("dragAndDrop")}
                   </p>
                   <p className="text-muted-foreground/70 text-sm">
-                    {maxFileCount > 1
-                      ? t("multipleFiles", {
-                          count:
-                            maxFileCount === Infinity
-                              ? "multiple"
-                              : maxFileCount,
-                          size: formatBytes(maxSize),
-                        })
-                      : t("singleFile", { size: formatBytes(maxSize) })}
+                    {t("multipleFiles", {
+                      count: 4,
+                    })}
                   </p>
                 </div>
               </div>
@@ -261,88 +255,43 @@ export function FileUploader(props: FileUploaderProps) {
           </div>
         )}
       </Dropzone>
-      {files?.length ? (
-        <ScrollArea className="h-fit w-full px-3">
-          <div className="flex max-h-48 flex-col gap-4">
-            {files?.map((file, index) => (
-              <FileCard
-                key={index}
-                file={file}
-                onRemove={() => onRemove(index)}
-                progress={progresses?.[file.name]}
-              />
-            ))}
-          </div>
-        </ScrollArea>
-      ) : null}
     </div>
   );
 }
 
-interface FileCardProps {
+function FileCard({
+  file,
+  featured,
+  onRemove,
+}: {
   file: File;
+  featured?: boolean;
   onRemove: () => void;
-  progress?: number;
-}
-
-function FileCard({ file, progress, onRemove }: FileCardProps) {
+}) {
   const t = useTranslations("fileUploader");
 
-  return (
-    <div className="relative flex items-center gap-2.5">
-      <div className="flex flex-1 gap-2.5">
-        {isFileWithPreview(file) ? <FilePreview file={file} /> : null}
-        <div className="flex w-full flex-col gap-2">
-          <div className="flex flex-col gap-px">
-            <p className="text-foreground/80 line-clamp-1 text-sm font-medium">
-              {file.name}
-            </p>
-            <p className="text-muted-foreground text-xs">
-              {formatBytes(file.size)}
-            </p>
-          </div>
-          {progress ? <Progress value={progress} /> : null}
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="size-7"
+  if (isFileWithPreview(file)) {
+    return (
+      <>
+        <Image
+          src={file.preview}
+          alt={file.name}
+          fill
+          loading="lazy"
+          className={cn("object-cover", !featured && "aspect-square")}
+        />
+        <div
+          className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
           onClick={onRemove}
         >
-          <X className="size-4" aria-hidden="true" />
-          <span className="sr-only">{t("removeFile")}</span>
-        </Button>
-      </div>
-    </div>
-  );
+          <Trash2 className="h-6 w-6 text-white" />
+        </div>
+      </>
+    );
+  }
+  return null;
 }
 
 function isFileWithPreview(file: File): file is File & { preview: string } {
   return "preview" in file && typeof file.preview === "string";
-}
-
-interface FilePreviewProps {
-  file: File & { preview: string };
-}
-
-function FilePreview({ file }: FilePreviewProps) {
-  if (file.type.startsWith("image/")) {
-    return (
-      <Image
-        src={file.preview}
-        alt={file.name}
-        width={48}
-        height={48}
-        loading="lazy"
-        className="aspect-square shrink-0 rounded-md object-cover"
-      />
-    );
-  }
-
-  return (
-    <FileText className="text-muted-foreground size-10" aria-hidden="true" />
-  );
 }

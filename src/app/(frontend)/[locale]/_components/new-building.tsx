@@ -235,7 +235,10 @@ export default function BuildingForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify(hunPayload),
-      }).then((res) => res.json());
+      }).then((res) => {
+        if (!res.ok) throw new Error("Failed to submit the building");
+        return res.json();
+      });
 
       const hasEnglishData =
         values.en &&
@@ -263,7 +266,13 @@ export default function BuildingForm({
           },
           method: "PATCH",
           body: JSON.stringify(enPayload),
-        }).then((res) => res.json());
+        }).then((res) => {
+          if (!res.ok)
+            throw new Error(
+              "Failed to submit the english part of the building",
+            );
+          return res.json();
+        });
       }
       toast.success(t("toast.buildingCreated"), {
         id: "building-creation-toast",
@@ -325,283 +334,255 @@ export default function BuildingForm({
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="mx-auto max-w-3xl space-y-8 py-10"
+          className="mt-10 flex flex-col gap-10 lg:flex-row"
         >
-          <Tabs
-            value={activeLanguage}
-            onValueChange={(v) => setActiveLanguage(v as LocaleType)}
-          >
-            <TabsList>
-              {Object.values(locales).map((locale) => (
-                <TabsTrigger key={locale} value={locale}>
-                  {t(`common.${locale}`)}
-                </TabsTrigger>
+          <div className="lg:max-h-screen lg:w-1/2">
+            <FileUploader
+              featuredImage={form.getValues().featuredImage}
+              featuredImageChange={(files) =>
+                form.setValue("featuredImage", files)
+              }
+              images={form.getValues().images}
+              imagesChange={(files) => form.setValue("images", files)}
+            />
+          </div>
+          <div className="flex flex-col gap-4 lg:w-1/2">
+            <Tabs
+              value={activeLanguage}
+              onValueChange={(v) => setActiveLanguage(v as LocaleType)}
+            >
+              <TabsList>
+                {Object.values(locales).map((locale) => (
+                  <TabsTrigger key={locale} value={locale}>
+                    {t(`common.${locale}`)}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {Object.values(locales).map((lang) => (
+                <TabsContent key={lang} value={lang}>
+                  <FormField
+                    control={form.control}
+                    name={`${lang}.name`}
+                    rules={{ deps: ["en", "hu"] }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.name")}</FormLabel>
+                        <FormControl>
+                          <Input placeholder="" type="text" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          {t("form.descriptions.name")}
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`${lang}.summary`}
+                    rules={{ deps: ["en", "hu"] }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.summary")}</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder=""
+                            type="text"
+                            {...field}
+                            maxLength={200}
+                          />
+                        </FormControl>
+                        <FormDescription>
+                          {t("form.descriptions.summary")}
+                        </FormDescription>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="type"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("form.type")}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger value={field.value}>
+                              <SelectValue placeholder={t("form.type")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {buildingTypes.map((type) => (
+                              <SelectItem
+                                key={type.id}
+                                value={type.id.toString()}
+                              >
+                                {type.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormItem>
+                    )}
+                  />
+                  <div className="space-y-8">
+                    <FormField
+                      control={form.control}
+                      name={`${lang}.history`}
+                      rules={{ deps: ["en", "hu"] }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("building.history")}</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            {t("form.descriptions.history")}
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`${lang}.style`}
+                      rules={{ deps: ["en", "hu"] }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("building.style")}</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            {t("form.descriptions.style")}
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`${lang}.presentDay`}
+                      rules={{ deps: ["en", "hu"] }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("building.presentDay")}</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            {t("form.descriptions.presentDay")}
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`${lang}.famousResidents`}
+                      rules={{ deps: ["en", "hu"] }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("building.famousResidents")}</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`${lang}.renovation`}
+                      rules={{ deps: ["en", "hu"] }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("building.renovation")}</FormLabel>
+                          <FormControl>
+                            <Textarea placeholder="" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            {t("form.descriptions.renovation")}
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </TabsContent>
               ))}
-            </TabsList>
+            </Tabs>
 
-            {Object.values(locales).map((lang) => (
-              <TabsContent key={lang} value={lang}>
-                <FormField
-                  control={form.control}
-                  name={`${lang}.name`}
-                  rules={{ deps: ["en", "hu"] }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("form.name")}</FormLabel>
-                      <FormControl>
-                        <Input placeholder="" type="text" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        {t("form.descriptions.name")}
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`${lang}.summary`}
-                  rules={{ deps: ["en", "hu"] }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("form.summary")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder=""
-                          type="text"
-                          {...field}
-                          maxLength={200}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t("form.descriptions.summary")}
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("form.type")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger value={field.value}>
-                            <SelectValue placeholder={t("form.type")} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {buildingTypes.map((type) => (
-                            <SelectItem
-                              key={type.id}
-                              value={type.id.toString()}
-                            >
-                              {type.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                <div className="space-y-8">
-                  <FormField
-                    control={form.control}
-                    name={`${lang}.history`}
-                    rules={{ deps: ["en", "hu"] }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("building.history")}</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          {t("form.descriptions.history")}
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`${lang}.style`}
-                    rules={{ deps: ["en", "hu"] }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("building.style")}</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          {t("form.descriptions.style")}
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`${lang}.presentDay`}
-                    rules={{ deps: ["en", "hu"] }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("building.presentDay")}</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          {t("form.descriptions.presentDay")}
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`${lang}.famousResidents`}
-                    rules={{ deps: ["en", "hu"] }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("building.famousResidents")}</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name={`${lang}.renovation`}
-                    rules={{ deps: ["en", "hu"] }}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("building.renovation")}</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          {t("form.descriptions.renovation")}
-                        </FormDescription>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
-
-          <FormField
-            control={form.control}
-            name="featuredImage"
-            render={({ field }) => (
-              <div className="space-y-6">
-                <FormItem className="w-full">
-                  <FormLabel>{t("form.featuredImage")}</FormLabel>
+            <FormField
+              control={form.control}
+              name="position"
+              render={({ field: { value, onChange } }) => (
+                <FormItem>
+                  <FormLabel>{t("form.position")}</FormLabel>
                   <FormControl>
-                    <FileUploader
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      maxFileCount={1}
-                      maxSize={4 * 1024 * 1024}
+                    <MapPositionSelector
+                      type={parseInt(form.getValues().type ?? "1")}
+                      position={value}
+                      setPosition={(value) => onChange(value)}
+                      setCountry={(value: string) =>
+                        form.setValue(`country`, value)
+                      }
                     />
                   </FormControl>
                 </FormItem>
-              </div>
-            )}
-          />
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="images"
-            render={({ field }) => (
-              <div className="space-y-6">
-                <FormItem className="w-full">
-                  <FormLabel>{t("form.images")}</FormLabel>
+            <FormField
+              control={form.control}
+              name={"creatorname"}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.creatorname")}</FormLabel>
                   <FormControl>
-                    <FileUploader
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      maxFileCount={4}
-                      maxSize={4 * 1024 * 1024}
-                    />
+                    <Input placeholder="" type="text" {...field} />
                   </FormControl>
+                  <FormDescription>
+                    {t("form.descriptions.creatorname")}
+                  </FormDescription>
                 </FormItem>
-              </div>
-            )}
-          />
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={"creatoremail"}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.creatoremail")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    {t("form.descriptions.creatoremail")}
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name={"source"}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("form.source")}</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    {t("form.descriptions.source")}
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="position"
-            render={({ field: { value, onChange } }) => (
-              <FormItem>
-                <FormLabel>{t("form.position")}</FormLabel>
-                <FormControl>
-                  <MapPositionSelector
-                    type={parseInt(form.getValues().type ?? "1")}
-                    position={value}
-                    setPosition={(value) => onChange(value)}
-                    setCountry={(value: string) =>
-                      form.setValue(`country`, value)
-                    }
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name={"creatorname"}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("form.creatorname")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="" type="text" {...field} />
-                </FormControl>
-                <FormDescription>
-                  {t("form.descriptions.creatorname")}
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name={"creatoremail"}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("form.creatoremail")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="" type="text" {...field} />
-                </FormControl>
-                <FormDescription>
-                  {t("form.descriptions.creatoremail")}
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name={"source"}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t("form.source")}</FormLabel>
-                <FormControl>
-                  <Input placeholder="" type="text" {...field} />
-                </FormControl>
-                <FormDescription>
-                  {t("form.descriptions.source")}
-                </FormDescription>
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit">{t("common.submit")}</Button>
+            <Button type="submit">{t("common.submit")}</Button>
+          </div>
         </form>
       </Form>
       <SuccessDialog />

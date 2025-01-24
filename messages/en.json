@@ -160,8 +160,8 @@
   "fileUploader": {
     "dragAndDrop": "Drag 'n' drop files here, or click to select files",
     "dropHere": "Drop the files here",
-    "multipleFiles": "You can upload {count} files (up to {size} each)",
-    "singleFile": "You can upload a file with {size}",
+    "multipleFiles": "You can upload {count} files ",
+    "singleFile": "You can upload a file",
     "uploadingFiles": "Uploading {count} files...",
     "uploadingFile": "Uploading file...",
     "filesUploaded": "{count} files uploaded",
