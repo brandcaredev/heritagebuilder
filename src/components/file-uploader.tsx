@@ -114,7 +114,6 @@ export function FileUploader(props: Props) {
   }, []);
   const isDisabled = (files?.length ?? 0) >= 4;
   const featuredIsDisabled = (featuredImageFiles?.length ?? 0) >= 1;
-  console.log(featuredIsDisabled);
   return (
     <div className="relative flex flex-col gap-6 overflow-hidden">
       <div

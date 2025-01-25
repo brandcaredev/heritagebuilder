@@ -15,6 +15,9 @@ export const getCountyBySlug = unstable_cache(
         slug: {
           equals: slug,
         },
+        _status: {
+          equals: "published",
+        },
       },
       limit: 1,
       depth: 1,
@@ -50,7 +53,12 @@ export const getCountiesByFilter = unstable_cache(
     const { docs: counties, totalPages } = await payload.find({
       collection: "counties",
       locale: locale,
-      where: { ...filter },
+      where: {
+        ...filter,
+        _status: {
+          equals: "published",
+        },
+      },
       sort: "createdAt",
     });
     return { counties, totalPages };

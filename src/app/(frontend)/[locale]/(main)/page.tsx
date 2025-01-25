@@ -90,7 +90,7 @@ export default async function MainPage(props: {
           <h2 className="mb-6 text-4xl font-bold text-brown">
             {t("page.latestBuildings")}
           </h2>
-          <div className="text-brown-900 space-y-4">
+          <div className="space-y-4 text-brown-900">
             {buildings.map((building) => {
               return (
                 <Link
@@ -103,7 +103,7 @@ export default async function MainPage(props: {
                 >
                   <div className="aspect-square">
                     <Image
-                      src={(building.featuredImage as Media).url ?? ""}
+                      src={(building.featuredImage as Media).thumbnailURL ?? ""}
                       alt={building.name ?? t("building.imageAlt")}
                       width={50}
                       height={50}
@@ -115,7 +115,7 @@ export default async function MainPage(props: {
                       {building.name}
                     </h3>
                     <p className="text-brown-dark-20 font-source-sans-3 text-xs uppercase">
-                      {`${(building.city as City).name}, ${(building.country as Country).name}`}
+                      {`${building.city ? (building.city as City).name : ""} ${building.city && building.country ? ", " : ""} ${building.country ? (building.country as Country).name : ""}`}
                     </p>
                   </div>
                 </Link>
@@ -153,7 +153,7 @@ export default async function MainPage(props: {
         })}
       </div>
       {/* Newsletter Section */}
-      <div className="bg-brown-700 flex items-center gap-8 rounded-lg p-8">
+      <div className="flex items-center gap-8 rounded-lg bg-brown-700 p-8">
         <div className="hidden md:block md:w-1/3">
           <Image
             src="/newsletter-image.jpg"

@@ -8,6 +8,7 @@ import { useDebounce } from "@/lib/hooks";
 import { useLocale } from "next-intl";
 import { api } from "@/trpc/react";
 import { useRouter } from "@/i18n/routing";
+import { City, Country } from "payload-types";
 
 export function highlightText(text: string, query: string) {
   if (!query) return text;
@@ -134,7 +135,7 @@ const ExpandableSearch = () => {
                 <span className="text-brown">•</span>
                 <span className="break-all text-brown">
                   {highlightText(
-                    `${result.country}, ${result.city}`,
+                    `${result.city ?? ""} ${result.city && result.country ? ", " : ""} ${result.country ?? ""}`,
                     debouncedValue,
                   )}
                 </span>

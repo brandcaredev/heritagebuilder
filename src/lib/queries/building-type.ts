@@ -11,6 +11,11 @@ export const getBuildingTypes = unstable_cache(
     const { docs: buildingTypes } = await payload.find({
       collection: "building-types",
       locale: locale,
+      where: {
+        _status: {
+          equals: "published",
+        },
+      },
       sort: "id",
     });
     return buildingTypes;
@@ -29,6 +34,9 @@ export const getBuildingTypeBySlug = async (
     where: {
       slug: {
         equals: slug,
+      },
+      _status: {
+        equals: "published",
       },
     },
     limit: 1,

@@ -11,6 +11,11 @@ export const getCountries = unstable_cache(
     const { docs: countries } = await payload.find({
       collection: "countries",
       locale: locale,
+      where: {
+        _status: {
+          equals: "published",
+        },
+      },
       sort: "createdAt",
     });
     return countries;
@@ -28,6 +33,9 @@ export const getCountryBySlug = async (locale: LocaleType, slug: string) => {
     where: {
       slug: {
         equals: slug,
+      },
+      _status: {
+        equals: "published",
       },
     },
     draft: false,
