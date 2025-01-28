@@ -8,7 +8,6 @@ import { useDebounce } from "@/lib/hooks";
 import { useLocale } from "next-intl";
 import { api } from "@/trpc/react";
 import { useRouter } from "@/i18n/routing";
-import { City, Country } from "payload-types";
 
 export function highlightText(text: string, query: string) {
   if (!query) return text;

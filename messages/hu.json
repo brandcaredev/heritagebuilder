@@ -166,6 +166,10 @@
     "maxFilesError": "Nem tölthet fel {count} fájlnál többet",
     "maxFileError": "Egyszerre csak 1 fájlt tölthet fel",
     "fileRejected": "A(z) {name} fájl elutasítva",
-    "removeFile": "Fájl eltávolítása"
+    "removeFile": "Fájl eltávolítása",
+    "form": {
+      "featuredImage": "Kiemelt kép",
+      "images": "Képek"
+    }
   }
 }

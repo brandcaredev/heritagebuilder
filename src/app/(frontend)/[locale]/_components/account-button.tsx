@@ -48,7 +48,7 @@ export default function AccountButton() {
           >
             <User className="h-5 w-5" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="z-[9999]">
+          <DropdownMenuContent className="z-10">
             <DropdownMenuLabel>{t("account.myAccount")}</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-brown-200" />
             <Link href="/admin">

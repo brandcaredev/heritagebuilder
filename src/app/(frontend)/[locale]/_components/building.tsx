@@ -22,6 +22,7 @@ import Image from "next/image";
 import { Building, BuildingType } from "payload-types";
 import { useState } from "react";
 import { toast } from "sonner";
+import GalleryWithDialog from "./image-gallery";
 
 const MapPosition = dynamic(() => import("@/components/map-position"), {
   ssr: false,
@@ -81,39 +82,7 @@ export default function BuildingComponent({
   return (
     <div className="flex flex-col gap-10 lg:flex-row">
       <div className="flex flex-col gap-4 lg:w-1/2">
-        <Carousel>
-          <CarouselMainContainer className="h-[400px] md:h-[700px]">
-            {buildingImages.map((img, index) => (
-              <SliderMainItem
-                key={index}
-                className="relative h-full w-full bg-transparent"
-              >
-                <Image
-                  src={img}
-                  alt={`${t("building.imageAlt")} ${index + 1}`}
-                  fill
-                  className="object-cover"
-                />
-              </SliderMainItem>
-            ))}
-          </CarouselMainContainer>
-          <CarouselThumbsContainer>
-            {buildingImages.map((img, index) => (
-              <SliderThumbItem
-                key={index}
-                index={index}
-                className="h-32 bg-transparent"
-              >
-                <Image
-                  src={img}
-                  alt={`${t("building.imageAlt")} ${index + 1}`}
-                  fill
-                  className="aspect-square object-cover"
-                />
-              </SliderThumbItem>
-            ))}
-          </CarouselThumbsContainer>
-        </Carousel>
+        <GalleryWithDialog images={buildingImages} />
         <MapPosition
           position={building.position}
           type={(building.buildingType as BuildingType).id}

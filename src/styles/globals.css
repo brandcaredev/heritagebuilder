@@ -46,6 +46,10 @@ html {
   padding: 0 !important;
 }
 
+.leaflet-pane, .leaflet-top, .leaflet-bottom, .leaflet-control{
+  z-index: inherit !important
+}
+
 .embla {
   --slide-spacing: 1rem;
   --slide-size: 70%;

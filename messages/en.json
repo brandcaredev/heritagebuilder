@@ -170,6 +170,10 @@
     "maxFilesError": "Cannot upload more than {count} files",
     "maxFileError": "Cannot upload more than 1 file at a time",
     "fileRejected": "File {name} was rejected",
-    "removeFile": "Remove file"
+    "removeFile": "Remove file",
+    "form": {
+      "featuredImage": "Featured image",
+      "images": "Images"
+    }
   }
 }

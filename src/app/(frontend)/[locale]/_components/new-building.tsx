@@ -291,7 +291,7 @@ export default function BuildingForm({
 
     return (
       <Dialog open={showSuccessDialog} onOpenChange={() => router.replace("/")}>
-        <DialogContent className="z-[9999] sm:max-w-[425px]">
+        <DialogContent className="z-10 sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex justify-center text-2xl font-semibold text-brown">
               {t("successDialog.title")}
@@ -337,37 +337,50 @@ export default function BuildingForm({
           className="mt-10 flex flex-col gap-10 lg:flex-row"
         >
           <div className="lg:max-h-screen lg:w-1/2">
-            <FileUploader
-              featuredImage={form.getValues().featuredImage}
-              featuredImageChange={(files) =>
-                form.setValue("featuredImage", files)
-              }
-              images={form.getValues().images}
-              imagesChange={(files) => form.setValue("images", files)}
-            />
+            <FileUploader form={form} />
           </div>
-          <div className="flex flex-col gap-4 lg:w-1/2">
-            <Tabs
-              value={activeLanguage}
-              onValueChange={(v) => setActiveLanguage(v as LocaleType)}
-            >
-              <TabsList>
-                {Object.values(locales).map((locale) => (
-                  <TabsTrigger key={locale} value={locale}>
-                    {t(`common.${locale}`)}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+          <Tabs
+            value={activeLanguage}
+            onValueChange={(v) => setActiveLanguage(v as LocaleType)}
+            className="flex flex-col space-y-5 lg:w-1/2"
+          >
+            <TabsList>
+              {Object.values(locales).map((locale) => (
+                <TabsTrigger key={locale} value={locale}>
+                  {t(`common.${locale}`)}
+                </TabsTrigger>
+              ))}
+            </TabsList>
 
-              {Object.values(locales).map((lang) => (
-                <TabsContent key={lang} value={lang}>
-                  <FormField
-                    control={form.control}
-                    name={`${lang}.name`}
-                    rules={{ deps: ["en", "hu"] }}
-                    render={({ field }) => (
+            {Object.values(locales).map((lang) => (
+              <TabsContent className="space-y-5" key={lang} value={lang}>
+                <FormField
+                  control={form.control}
+                  name={`${lang}.name`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => {
+                    const enStyle = form.watch("en.style");
+                    const enPresentDay = form.watch("en.presentDay");
+                    const enFamousResidents = form.watch("en.famousResidents");
+                    const enRenovation = form.watch("en.renovation");
+                    const enSummary = form.watch("en.summary");
+                    const isRequired =
+                      lang === "hu" ||
+                      (lang === "en" &&
+                        !!(
+                          enStyle ||
+                          enPresentDay ||
+                          enFamousResidents ||
+                          enRenovation ||
+                          enSummary ||
+                          field.value
+                        ));
+
+                    return (
                       <FormItem>
-                        <FormLabel>{t("form.name")}</FormLabel>
+                        <FormLabel required={isRequired}>
+                          {t("form.name")}
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="" type="text" {...field} />
                         </FormControl>
@@ -375,15 +388,39 @@ export default function BuildingForm({
                           {t("form.descriptions.name")}
                         </FormDescription>
                       </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`${lang}.summary`}
-                    rules={{ deps: ["en", "hu"] }}
-                    render={({ field }) => (
+                    );
+                  }}
+                />
+                <FormField
+                  control={form.control}
+                  name={`${lang}.summary`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => {
+                    const enHistory = form.watch("en.history");
+                    const enPresentDay = form.watch("en.presentDay");
+                    const enFamousResidents = form.watch("en.famousResidents");
+                    const enRenovation = form.watch("en.renovation");
+                    const enStyle = form.watch("en.style");
+                    const enName = form.watch("en.name");
+
+                    const isRequired =
+                      lang === "hu" ||
+                      (lang === "en" &&
+                        !!(
+                          enHistory ||
+                          enPresentDay ||
+                          enFamousResidents ||
+                          enRenovation ||
+                          enStyle ||
+                          enName ||
+                          field.value
+                        ));
+
+                    return (
                       <FormItem>
-                        <FormLabel>{t("form.summary")}</FormLabel>
+                        <FormLabel required={isRequired}>
+                          {t("form.summary")}
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder=""
@@ -396,131 +433,201 @@ export default function BuildingForm({
                           {t("form.descriptions.summary")}
                         </FormDescription>
                       </FormItem>
-                    )}
-                  />
+                    );
+                  }}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel required>{t("form.type")}</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger value={field.value}>
+                            <SelectValue placeholder={t("form.type")} />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {buildingTypes.map((type) => (
+                            <SelectItem
+                              key={type.id}
+                              value={type.id.toString()}
+                            >
+                              {type.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`${lang}.history`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => {
+                    const enStyle = form.watch("en.style");
+                    const enPresentDay = form.watch("en.presentDay");
+                    const enFamousResidents = form.watch("en.famousResidents");
+                    const enRenovation = form.watch("en.renovation");
+                    const enSummary = form.watch("en.summary");
+                    const enName = form.watch("en.name");
+
+                    const isRequired =
+                      lang === "hu" ||
+                      (lang === "en" &&
+                        !!(
+                          enStyle ||
+                          enPresentDay ||
+                          enFamousResidents ||
+                          enRenovation ||
+                          enSummary ||
+                          enName ||
+                          field.value
+                        ));
+
+                    return (
                       <FormItem>
-                        <FormLabel>{t("form.type")}</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger value={field.value}>
-                              <SelectValue placeholder={t("form.type")} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {buildingTypes.map((type) => (
-                              <SelectItem
-                                key={type.id}
-                                value={type.id.toString()}
-                              >
-                                {type.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FormLabel required={isRequired}>
+                          {t("building.history")}
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          {t("form.descriptions.history")}
+                        </FormDescription>
                       </FormItem>
-                    )}
-                  />
-                  <div className="space-y-8">
-                    <FormField
-                      control={form.control}
-                      name={`${lang}.history`}
-                      rules={{ deps: ["en", "hu"] }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("building.history")}</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            {t("form.descriptions.history")}
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
+                    );
+                  }}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name={`${lang}.style`}
-                      rules={{ deps: ["en", "hu"] }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("building.style")}</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            {t("form.descriptions.style")}
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
+                <FormField
+                  control={form.control}
+                  name={`${lang}.style`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => {
+                    const enHistory = form.watch("en.history");
+                    const enPresentDay = form.watch("en.presentDay");
+                    const enFamousResidents = form.watch("en.famousResidents");
+                    const enRenovation = form.watch("en.renovation");
+                    const enSummary = form.watch("en.summary");
+                    const enName = form.watch("en.name");
 
-                    <FormField
-                      control={form.control}
-                      name={`${lang}.presentDay`}
-                      rules={{ deps: ["en", "hu"] }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("building.presentDay")}</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            {t("form.descriptions.presentDay")}
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
+                    const isRequired =
+                      lang === "hu" ||
+                      (lang === "en" &&
+                        !!(
+                          enHistory ||
+                          enPresentDay ||
+                          enFamousResidents ||
+                          enRenovation ||
+                          enSummary ||
+                          enName ||
+                          field.value
+                        ));
 
-                    <FormField
-                      control={form.control}
-                      name={`${lang}.famousResidents`}
-                      rules={{ deps: ["en", "hu"] }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("building.famousResidents")}</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="" {...field} />
-                          </FormControl>
-                        </FormItem>
-                      )}
-                    />
+                    return (
+                      <FormItem>
+                        <FormLabel required={isRequired}>
+                          {t("building.style")}
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          {t("form.descriptions.style")}
+                        </FormDescription>
+                      </FormItem>
+                    );
+                  }}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name={`${lang}.renovation`}
-                      rules={{ deps: ["en", "hu"] }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("building.renovation")}</FormLabel>
-                          <FormControl>
-                            <Textarea placeholder="" {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            {t("form.descriptions.renovation")}
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
+                <FormField
+                  control={form.control}
+                  name={`${lang}.presentDay`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => {
+                    const enHistory = form.watch("en.history");
+                    const enStyle = form.watch("en.style");
+                    const enFamousResidents = form.watch("en.famousResidents");
+                    const enRenovation = form.watch("en.renovation");
+                    const enSummary = form.watch("en.summary");
+                    const enName = form.watch("en.name");
+
+                    const isRequired =
+                      lang === "hu" ||
+                      (lang === "en" &&
+                        !!(
+                          enHistory ||
+                          enStyle ||
+                          enFamousResidents ||
+                          enRenovation ||
+                          enSummary ||
+                          enName ||
+                          field.value
+                        ));
+
+                    return (
+                      <FormItem>
+                        <FormLabel required={isRequired}>
+                          {t("building.presentDay")}
+                        </FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="" {...field} />
+                        </FormControl>
+                        <FormDescription>
+                          {t("form.descriptions.presentDay")}
+                        </FormDescription>
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`${lang}.famousResidents`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("building.famousResidents")}</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`${lang}.renovation`}
+                  rules={{ deps: ["en", "hu"] }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t("building.renovation")}</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        {t("form.descriptions.renovation")}
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </TabsContent>
+            ))}
 
             <FormField
               control={form.control}
               name="position"
               render={({ field: { value, onChange } }) => (
                 <FormItem>
-                  <FormLabel>{t("form.position")}</FormLabel>
+                  <FormLabel required>{t("form.position")}</FormLabel>
                   <FormControl>
                     <MapPositionSelector
                       type={parseInt(form.getValues().type ?? "1")}
@@ -541,12 +648,12 @@ export default function BuildingForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("form.creatorname")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" type="text" {...field} />
-                  </FormControl>
                   <FormDescription>
                     {t("form.descriptions.creatorname")}
                   </FormDescription>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
                 </FormItem>
               )}
             />
@@ -580,9 +687,10 @@ export default function BuildingForm({
                 </FormItem>
               )}
             />
-
-            <Button type="submit">{t("common.submit")}</Button>
-          </div>
+            <Button className="w-24" type="submit">
+              {t("common.submit")}
+            </Button>
+          </Tabs>
         </form>
       </Form>
       <SuccessDialog />
