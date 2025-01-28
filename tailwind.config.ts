@@ -34,8 +34,8 @@ export default {
           "700": "#403423",
           "900": "#201A11",
         },
-        black: "#000000", // pure black
-        white: "#ffffff", // pure white
+        black: "#000000",
+        white: "#ffffff",
         "white-2": "#EDEEEB",
       },
     },

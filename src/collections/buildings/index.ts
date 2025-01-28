@@ -144,7 +144,9 @@ export const Buildings: CollectionConfig = {
     useAsTitle: "name",
   },
   versions: {
-    drafts: true,
+    drafts: {
+      autosave: true,
+    },
   },
   hooks: {
     afterChange: [

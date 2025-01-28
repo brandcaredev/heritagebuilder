@@ -66,7 +66,9 @@ export const Countries: CollectionConfig = {
     useAsTitle: "name",
   },
   versions: {
-    drafts: true,
+    drafts: {
+      autosave: true,
+    },
   },
   hooks: {
     afterChange: [

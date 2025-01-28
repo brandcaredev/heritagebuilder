@@ -76,10 +76,7 @@ export const routing = defineRouting({
       en: "/reset-password",
       hu: "/jelszó-visszaállítás",
     },
-    "/admin": {
-      en: "/admin",
-      hu: "/admin",
-    },
+    admin: "admin",
   },
 });
 

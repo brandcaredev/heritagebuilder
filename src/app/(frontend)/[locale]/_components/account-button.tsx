@@ -51,7 +51,7 @@ export default function AccountButton() {
           <DropdownMenuContent className="z-10">
             <DropdownMenuLabel>{t("account.myAccount")}</DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-brown-200" />
-            <Link href="/admin">
+            <Link href="admin">
               <DropdownMenuItem>
                 <ShieldEllipsis />
                 <span>{t("account.admin")}</span>

@@ -34,7 +34,9 @@ export const Regions: CollectionConfig = {
     useAsTitle: "name",
   },
   versions: {
-    drafts: true,
+    drafts: {
+      autosave: true,
+    },
   },
   hooks: {
     afterChange: [

@@ -59,7 +59,9 @@ export const Cities: CollectionConfig = {
     defaultColumns: ["name", "slug", "description", "_status"],
   },
   versions: {
-    drafts: true,
+    drafts: {
+      autosave: true,
+    },
   },
   access: {
     read: authenticatedOrPublished,

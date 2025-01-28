@@ -70,7 +70,9 @@ export const Counties: CollectionConfig = {
     defaultColumns: ["name", "slug", "description", "_status"],
   },
   versions: {
-    drafts: true,
+    drafts: {
+      autosave: true,
+    },
   },
   hooks: {
     afterChange: [

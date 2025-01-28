@@ -14,7 +14,7 @@ export async function Header() {
 
   return (
     <header className="bg-brown text-stone-100">
-      <div className="container mx-auto px-8 py-2">
+      <div className="mx-auto px-2 py-2 md:container md:px-8">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-2xl">
             Heritage builder

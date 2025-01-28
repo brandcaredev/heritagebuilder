@@ -14,6 +14,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import {
+  CarouselContent as DefaultCarouselContent,
+  CarouselItem as DefaultCarouselItem,
+  Carousel as DefaultCarousel,
+} from "@/components/ui/carousel";
+import { cn } from "@/lib/utils";
 
 export default function GalleryWithDialog({ images }: { images: string[] }) {
   const [open, setOpen] = useState(false);
@@ -79,12 +85,9 @@ function FullScreenCarousel({
   initialIndex: number;
   images: string[];
 }) {
-  const t = useTranslations();
-
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  const [thumbsRef, thumbsApi] = useEmblaCarousel({
-    containScroll: "keepSnaps",
-    dragFree: true,
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    loop: true,
+    startIndex: initialIndex,
   });
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
 
@@ -101,10 +104,10 @@ function FullScreenCarousel({
 
   const scrollTo = useCallback(
     (index: number) => {
-      if (!emblaApi || !thumbsApi) return;
+      if (!emblaApi) return;
       emblaApi.scrollTo(index);
     },
-    [emblaApi, thumbsApi],
+    [emblaApi],
   );
 
   const scrollPrev = useCallback(() => {
@@ -117,11 +120,11 @@ function FullScreenCarousel({
   }, [emblaApi]);
 
   return (
-    <div className="container mx-auto flex flex-col items-center justify-center">
-      {/* Main Embla Carousel */}
-      <div className="relative w-full max-w-4xl overflow-hidden" ref={emblaRef}>
+    <div className="container relative mx-auto flex flex-col justify-center gap-4 overflow-hidden">
+      {/* Main Embla Carousel  */}
+      <div className="relative w-full overflow-hidden" ref={emblaRef}>
         <div className="flex">
-          {[...images, ...images].map((src, index) => (
+          {images.map((src, index) => (
             <div
               key={index}
               className="relative flex h-[80vh] w-full flex-[0_0_100%] justify-center rounded-lg sm:h-[80vh] sm:w-auto"
@@ -148,29 +151,30 @@ function FullScreenCarousel({
           <ChevronRight className="text-white" size={32} />
         </button>
       </div>
-
-      {/* Thumbnails */}
-      <div
-        className="container mt-4 flex items-center justify-center space-x-2 overflow-hidden"
-        ref={thumbsRef}
-      >
-        {[...images, ...images].map((src, index) => (
-          <div
-            key={index}
-            onClick={() => scrollTo(index)}
-            className={`relative h-24 w-24 cursor-pointer rounded-lg border ${
-              index === selectedIndex ? "border-white" : "border-transparent"
-            }`}
-          >
-            <Image
-              src={src}
-              alt={`Thumbnail ${index + 1}`}
-              className="aspect-square rounded-lg object-cover"
-              fill
-            />
-          </div>
-        ))}
-      </div>
+      <DefaultCarousel>
+        <DefaultCarouselContent className="ml-0 flex gap-4 lg:items-center lg:justify-center">
+          {images.map((src, index) => (
+            <DefaultCarouselItem key={index}>
+              <div
+                onClick={() => scrollTo(index)}
+                className={cn(
+                  "relative h-24 w-24 cursor-pointer rounded-lg border",
+                  index === selectedIndex
+                    ? "border-white"
+                    : "border-transparent",
+                )}
+              >
+                <Image
+                  src={src}
+                  alt={`Thumbnail ${index + 1}`}
+                  className="rounded-lg object-cover"
+                  fill
+                />
+              </div>
+            </DefaultCarouselItem>
+          ))}
+        </DefaultCarouselContent>
+      </DefaultCarousel>
     </div>
   );
 }

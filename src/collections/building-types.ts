@@ -39,7 +39,9 @@ export const BuildingTypes: CollectionConfig = {
     useAsTitle: "name",
   },
   versions: {
-    drafts: true,
+    drafts: {
+      autosave: true,
+    },
   },
   hooks: {
     afterChange: [
@@ -55,8 +57,8 @@ export const BuildingTypes: CollectionConfig = {
   },
   access: {
     read: authenticatedOrPublished,
-    create: () => true,
-    update: () => true,
-    delete: () => true,
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
+    delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
   },
 };
