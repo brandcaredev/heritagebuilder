@@ -1,13 +1,19 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Loader2, Search } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { api } from "@/trpc/react";
 import { useRouter } from "@/i18n/routing";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export function highlightText(text: string, query: string) {
   if (!query) return text;
@@ -25,40 +31,27 @@ export function highlightText(text: string, query: string) {
 }
 
 const ExpandableSearch = () => {
+  const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
   const [value, setValue] = useState("");
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const debouncedValue = useDebounce(value);
 
   const { data: searchResults, isLoading } = api.building.search.useQuery(
     { q: debouncedValue, lang: locale },
     {
-      enabled: isExpanded && debouncedValue.length > 0,
+      enabled: isOpen && debouncedValue.length > 0,
     },
   );
+
   useEffect(() => {
-    if (isExpanded && inputRef.current) {
+    if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isExpanded]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsExpanded(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,83 +60,94 @@ const ExpandableSearch = () => {
   };
 
   return (
-    <div className="relative">
-      <form onSubmit={handleSubmit} className="flex items-center">
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
         <Button
-          type="button"
           variant="ghost"
           size="icon"
-          className={`w-5 rounded-full transition-all duration-300 ease-in-out hover:text-stone-300 ${isExpanded && "mr-2"}`}
-          onClick={() => setIsExpanded(!isExpanded)}
-          aria-label={isExpanded ? "Close search" : "Open search"}
+          className="w-5 rounded-full transition-all duration-300 ease-in-out hover:text-stone-300"
+          aria-label="Open search"
         >
           <Search className="h-5 w-5" />
         </Button>
-        <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out ${
-            isExpanded ? "w-40 opacity-100" : "w-0 opacity-0"
-          }`}
-        >
-          <div className="relative">
-            <Input
-              ref={inputRef}
-              onChange={(e) => setValue(e.target.value)}
-              value={value}
-              type="search"
-              placeholder="Search..."
-              className="h-7 w-full rounded-l pl-2"
-              aria-label="Search input"
-            />
-            {isLoading && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 transform">
-                <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
-              </div>
-            )}
+      </SheetTrigger>
+      <SheetContent
+        noOverlay
+        side="top"
+        className="top-[56px] h-[50vh] overflow-y-auto bg-white-2"
+      >
+        <div className="container mx-auto max-w-3xl">
+          <div className="flex items-center justify-between">
+            <SheetTitle className="text-2xl font-bold">
+              {t("common.search")}
+            </SheetTitle>
           </div>
-        </div>
-      </form>
-      {/* Search Results Dropdown */}
-      {isExpanded && searchResults && searchResults.length > 0 && (
-        <div className="border-border absolute left-0 right-0 top-full z-50 mt-2 max-h-[300px] w-80 overflow-y-auto rounded-lg border bg-white shadow-lg">
-          {searchResults.map((result, index) => (
-            <div
-              key={index}
-              className="hover:bg-muted cursor-pointer p-3"
-              onClick={() => {
-                setIsExpanded(false);
-                router.push({
-                  pathname: `/building/[slug]`,
-                  params: {
-                    slug: result.slug,
-                  },
-                });
-              }}
-            >
-              <div className="flex flex-wrap items-center gap-x-1 text-base">
-                <span className="text-brown-900">
-                  {highlightText(result.name, debouncedValue)}
-                </span>
-                {typeof result.buildingType !== "number" && (
-                  <>
-                    <span className="text-brown">•</span>
-                    <span className="text-brown">
-                      {highlightText(result.buildingType.name, debouncedValue)}
-                    </span>
-                  </>
-                )}
-                <span className="text-brown">•</span>
-                <span className="break-all text-brown">
-                  {highlightText(
-                    `${result.city ?? ""} ${result.city && result.country ? ", " : ""} ${result.country ?? ""}`,
-                    debouncedValue,
-                  )}
-                </span>
-              </div>
+          <form onSubmit={handleSubmit} className="mt-4">
+            <div className="relative">
+              <Input
+                ref={inputRef}
+                onChange={(e) => setValue(e.target.value)}
+                value={value}
+                type="search"
+                placeholder={t("common.search")}
+                className="h-10 w-full pl-10 pr-4"
+                aria-label="Search input"
+              />
+              <Search className="text-muted-foreground absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform" />
+              {isLoading && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 transform">
+                  <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
+                </div>
+              )}
             </div>
-          ))}
+          </form>
+          {/* Search Results */}
+          {searchResults && searchResults.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {searchResults.map((result, index) => (
+                <div
+                  key={index}
+                  className="cursor-pointer rounded-lg p-3 hover:bg-brown-100/70"
+                  onClick={() => {
+                    setIsOpen(false);
+                    router.push({
+                      pathname: `/building/[slug]`,
+                      params: {
+                        slug: result.slug,
+                      },
+                    });
+                  }}
+                >
+                  <div className="flex flex-wrap items-center gap-x-1 text-base">
+                    <span className="text-brown-900">
+                      {highlightText(result.name, debouncedValue)}
+                    </span>
+                    {typeof result.buildingType !== "number" && (
+                      <>
+                        <span className="text-brown">•</span>
+                        <span className="text-brown">
+                          {highlightText(
+                            result.buildingType.name,
+                            debouncedValue,
+                          )}
+                        </span>
+                      </>
+                    )}
+                    <span className="text-brown">•</span>
+                    <span className="break-all text-brown">
+                      {highlightText(
+                        `${result.city ?? ""} ${result.city && result.country ? ", " : ""} ${result.country ?? ""}`,
+                        debouncedValue,
+                      )}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 

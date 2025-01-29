@@ -52,7 +52,10 @@
     "en": "Angol",
     "back": "Vissza a listához",
     "selectLocation": "Helyszín kiválasztása",
-    "submitNewBuilding": "Új épület hozzáadása"
+    "submitNewBuilding": "Új épület hozzáadása",
+    "search": "Keresés",
+    "buildings": "Épületek",
+    "filter": "Szűrés"
   },
   "successDialog": {
     "title": "Köszönjük a hozzájárulását!",

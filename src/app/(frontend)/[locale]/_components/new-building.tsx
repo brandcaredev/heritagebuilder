@@ -28,7 +28,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "@/i18n/routing";
-import { locales, type LocaleType } from "@/lib/constans";
+import { Locales, type LocaleType } from "@/lib/constans";
 import { slugify } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import imageCompression from "browser-image-compression";
@@ -345,14 +345,14 @@ export default function BuildingForm({
             className="flex flex-col space-y-5 lg:w-1/2"
           >
             <TabsList>
-              {Object.values(locales).map((locale) => (
+              {Object.values(Locales).map((locale) => (
                 <TabsTrigger key={locale} value={locale}>
                   {t(`common.${locale}`)}
                 </TabsTrigger>
               ))}
             </TabsList>
 
-            {Object.values(locales).map((lang) => (
+            {Object.values(Locales).map((lang) => (
               <TabsContent className="space-y-5" key={lang} value={lang}>
                 <FormField
                   control={form.control}
@@ -365,8 +365,8 @@ export default function BuildingForm({
                     const enRenovation = form.watch("en.renovation");
                     const enSummary = form.watch("en.summary");
                     const isRequired =
-                      lang === "hu" ||
-                      (lang === "en" &&
+                      lang === Locales.hu ||
+                      (lang === Locales.en &&
                         !!(
                           enStyle ||
                           enPresentDay ||
@@ -404,8 +404,8 @@ export default function BuildingForm({
                     const enName = form.watch("en.name");
 
                     const isRequired =
-                      lang === "hu" ||
-                      (lang === "en" &&
+                      lang === Locales.hu ||
+                      (lang === Locales.en &&
                         !!(
                           enHistory ||
                           enPresentDay ||
@@ -479,8 +479,8 @@ export default function BuildingForm({
                     const enName = form.watch("en.name");
 
                     const isRequired =
-                      lang === "hu" ||
-                      (lang === "en" &&
+                      lang === Locales.hu ||
+                      (lang === Locales.en &&
                         !!(
                           enStyle ||
                           enPresentDay ||
@@ -520,8 +520,8 @@ export default function BuildingForm({
                     const enName = form.watch("en.name");
 
                     const isRequired =
-                      lang === "hu" ||
-                      (lang === "en" &&
+                      lang === Locales.hu ||
+                      (lang === Locales.en &&
                         !!(
                           enHistory ||
                           enPresentDay ||
@@ -561,8 +561,8 @@ export default function BuildingForm({
                     const enName = form.watch("en.name");
 
                     const isRequired =
-                      lang === "hu" ||
-                      (lang === "en" &&
+                      lang === Locales.hu ||
+                      (lang === Locales.en &&
                         !!(
                           enHistory ||
                           enStyle ||

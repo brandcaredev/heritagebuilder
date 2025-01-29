@@ -52,7 +52,10 @@
     "en": "English",
     "back": "Back to List",
     "selectLocation": "Select Location",
-    "submitNewBuilding": "Submit new building"
+    "submitNewBuilding": "Submit new building",
+    "search": "Search",
+    "buildings": "Buildings",
+    "filter": "Filter"
   },
   "successDialog": {
     "title": "Thank you for your contribution!",

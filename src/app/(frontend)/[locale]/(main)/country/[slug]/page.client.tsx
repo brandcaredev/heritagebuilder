@@ -10,8 +10,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useRouter } from "@/i18n/routing";
 import clsx from "clsx";
 import { Search } from "lucide-react";
-import { Building, BuildingType, City, Country, County } from "payload-types";
+import { useTranslations } from "next-intl";
+import {
+  Building,
+  BuildingType,
+  City,
+  Country,
+  County,
+  Media,
+} from "payload-types";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function CountryPage({
   country,
@@ -22,6 +31,7 @@ export default function CountryPage({
   buildingTypes: BuildingType[];
   countryBuildings: Building[];
 }) {
+  const t = useTranslations();
   const router = useRouter();
   const [countiesSearch, setCountiesSearch] = useState("");
   const [citiesSearch, setCitiesSearch] = useState("");
@@ -41,9 +51,9 @@ export default function CountryPage({
 
   return (
     <div>
-      <h1 className="mb-8 text-4xl font-bold text-brown">{country.name}</h1>
+      <h1 className="text-4xl font-bold text-brown">{country.name}</h1>
 
-      <div className="flex flex-col gap-10 lg:flex-row">
+      <div className="mt-16 flex flex-col gap-10 lg:flex-row">
         {/* Map Section */}
         <div
           className={clsx(
@@ -69,9 +79,9 @@ export default function CountryPage({
           <div className="relative w-1/2 overflow-hidden">
             <h2 className="mb-4 text-2xl font-bold text-brown">Counties</h2>
             <div className="relative mx-1 mb-4">
-              <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4 bg-transparent" />
+              <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
-                placeholder="Search"
+                placeholder={t("common.search")}
                 value={countiesSearch}
                 onChange={(e) => setCountiesSearch(e.target.value)}
                 className="rounded-xl pl-8"
@@ -107,9 +117,9 @@ export default function CountryPage({
           <div className="relative w-1/2 overflow-hidden">
             <h2 className="mb-4 text-2xl font-bold text-brown">Cities</h2>
             <div className="relative mx-1 mb-4">
-              <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent text-white-2" />
+              <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
-                placeholder="Search"
+                placeholder={t("common.search")}
                 value={citiesSearch}
                 onChange={(e) => setCitiesSearch(e.target.value)}
                 className="rounded-xl pl-8"
@@ -140,6 +150,33 @@ export default function CountryPage({
             </ScrollArea>
           </div>
         </div>
+      </div>
+      <div className="mt-16 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+        {buildingTypes.map((type) => {
+          return (
+            <Link
+              key={type.id}
+              href={{
+                pathname: "/building-type/[slug]",
+                params: { slug: type.slug },
+                query: { country: country.slug },
+              }}
+              className="group relative aspect-square overflow-hidden rounded-lg"
+            >
+              <Image
+                src={(type.image as Media).url ?? "/placeholder.svg"}
+                alt={type.name ?? t("page.buildingTypeImageAlt")}
+                width={200}
+                height={200}
+                className="h-full w-full object-cover transition-transform group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <h3 className="absolute bottom-2 left-2 text-sm text-white">
+                {type.name}
+              </h3>
+            </Link>
+          );
+        })}
       </div>
       <BuildingList
         buildingTypes={buildingTypes}

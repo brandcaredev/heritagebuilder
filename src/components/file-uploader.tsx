@@ -151,7 +151,7 @@ export function FileUploader(props: Props) {
         ))}
       </div>
       <Carousel>
-        <CarouselContent className="flex gap-4">
+        <CarouselContent className="ml-0 flex gap-4">
           {[...Array(5).keys()].map((i) => (
             <CarouselItem key={i}>
               <div

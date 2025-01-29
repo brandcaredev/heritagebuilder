@@ -1,10 +1,10 @@
 import { defineRouting } from "next-intl/routing";
 import { createNavigation } from "next-intl/navigation";
-import { locales } from "@/lib/constans";
+import { Locales } from "@/lib/constans";
 
 export const routing = defineRouting({
   // A list of all locales that are supported
-  locales: Object.keys(locales),
+  locales: Object.keys(Locales),
 
   // Used when no locale matches
   defaultLocale: "hu",
