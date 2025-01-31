@@ -77,7 +77,7 @@ export const BuildingSuggestions: CollectionConfig = {
           },
           req,
         });
-        if (data && data.suggestionsCount) {
+        if (data?.suggestionsCount) {
           await req.payload.update({
             collection: "buildings",
             id: doc.building.id,
