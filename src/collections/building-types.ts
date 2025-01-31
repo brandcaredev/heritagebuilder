@@ -46,7 +46,10 @@ export const BuildingTypes: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
+      ({ doc, previousDoc }) => {
+        if (doc._status === "draft" && previousDoc?._status !== "published") {
+          return;
+        }
         if (!isNextBuild()) {
           revalidateTag(`building-types`);
         }

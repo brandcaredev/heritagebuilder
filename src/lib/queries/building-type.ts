@@ -24,26 +24,27 @@ export const getBuildingTypes = unstable_cache(
   { tags: ["building-types"] },
 );
 
-export const getBuildingTypeBySlug = async (
-  locale: LocaleType,
-  slug: string,
-) => {
-  const { docs: buildingType } = await payload.find({
-    collection: "building-types",
-    locale: locale,
-    where: {
-      slug: {
-        equals: slug,
+export const getBuildingTypeBySlug = unstable_cache(
+  async (locale: LocaleType, slug: string) => {
+    const { docs: buildingType } = await payload.find({
+      collection: "building-types",
+      locale: locale,
+      where: {
+        slug: {
+          equals: slug,
+        },
+        _status: {
+          equals: "published",
+        },
       },
-      _status: {
-        equals: "published",
-      },
-    },
-    limit: 1,
-    depth: 1,
-  });
-  return buildingType[0] || null;
-};
+      limit: 1,
+      depth: 1,
+    });
+    return buildingType[0] || null;
+  },
+  [],
+  { tags: ["building-types"] },
+);
 
 export const getNextLanguageBuildingTypeSlug = async (
   slug: string,

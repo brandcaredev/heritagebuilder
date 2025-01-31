@@ -41,7 +41,10 @@ export const Regions: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
+      ({ doc, previousDoc }) => {
+        if (doc._status === "draft" && previousDoc?._status !== "published") {
+          return;
+        }
         if (!isNextBuild()) {
           revalidateTag(`regions`);
         }

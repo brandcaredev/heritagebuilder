@@ -1,6 +1,7 @@
 "use client";
 import { FileUploader } from "@/components/file-uploader";
 import CastleIcon from "@/components/icons/castle";
+import Divider from "@/components/icons/divider";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -34,13 +35,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import imageCompression from "browser-image-compression";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { BuildingType } from "payload-types";
+import { BuildingType, Country } from "payload-types";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import Breadcrumbs from "./breadcrumbs";
-import Divider from "@/components/icons/divider";
 
 const MapPositionSelector = dynamic(
   () => import("@/components/map-position-selector"),
@@ -152,8 +152,10 @@ export const formSchema = z.object({
 
 export default function BuildingForm({
   buildingTypes,
+  countries,
 }: {
   buildingTypes: BuildingType[];
+  countries: Pick<Country, "countryCode" | "id">[];
 }) {
   const t = useTranslations();
   const [activeLanguage, setActiveLanguage] = useState<LocaleType>("hu");
@@ -163,6 +165,13 @@ export default function BuildingForm({
   });
   // TODO ERROR HANDLING
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const country = countries.find((c) => c.countryCode === values.country);
+    if (!country) {
+      toast.error(t("toast.countryError"), {
+        id: "building-creation-toast",
+      });
+      return;
+    }
     const featuredImage = values.featuredImage[0];
     if (!featuredImage) {
       toast.error(t("toast.featuredImageError"), {
@@ -219,7 +228,7 @@ export default function BuildingForm({
         famousResidents: values.hu.famousResidents || "",
         renovation: values.hu.renovation || "",
         buildingType: parseInt(values.type),
-        country: values.country,
+        country: country.id,
         position: [values.position[0], values.position[1]],
         creatorName: values.creatorname || "",
         creatorEmail: values.creatoremail || "",
@@ -243,8 +252,7 @@ export default function BuildingForm({
       const hasEnglishData =
         values.en &&
         Object.entries(values.en).some(
-          ([key, value]) =>
-            value && value.trim() !== "" && key !== "city" && key !== "county",
+          ([key, value]) => value && value.trim() !== "",
         );
 
       if (hasEnglishData) {
@@ -257,7 +265,6 @@ export default function BuildingForm({
           presentDay: values.en.presentDay,
           famousResidents: values.en.famousResidents || "",
           renovation: values.en.renovation || "",
-          country: values.country,
         };
         await fetch(`/api/buildings/${hunResponse.doc.id}?locale=en`, {
           credentials: "include",

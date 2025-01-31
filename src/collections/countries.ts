@@ -7,15 +7,15 @@ export const Countries: CollectionConfig = {
   slug: "countries",
   fields: [
     {
-      name: "id",
-      required: true,
-      type: "text",
-    },
-    {
       name: "name",
       type: "text",
       required: true,
       localized: true,
+    },
+    {
+      name: "countryCode",
+      type: "text",
+      required: true,
     },
     {
       name: "slug",
@@ -65,6 +65,7 @@ export const Countries: CollectionConfig = {
   ],
   admin: {
     useAsTitle: "name",
+    defaultColumns: ["id", "name", "slug", "countryCode", "_status"],
   },
   versions: {
     drafts: {
@@ -73,7 +74,10 @@ export const Countries: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
+      ({ doc, previousDoc }) => {
+        if (doc._status === "draft" && previousDoc?._status !== "published") {
+          return;
+        }
         if (!isNextBuild()) {
           revalidateTag("countries");
         }

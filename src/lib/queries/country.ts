@@ -66,3 +66,19 @@ export const getNextLanguageCountrySlug = async (
   >;
   return countrySlugs[nextLang];
 };
+
+export const getCountriesCodes = async () => {
+  const { docs: countries } = await payload.find({
+    collection: "countries",
+    locale: "all",
+    where: {
+      _status: {
+        equals: "published",
+      },
+    },
+    select: {
+      countryCode: true,
+    },
+  });
+  return countries;
+};

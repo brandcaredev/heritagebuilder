@@ -1,5 +1,7 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
+import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
+import { isNextBuild } from "payload/shared";
 
 export const Cities: CollectionConfig = {
   slug: "cities",
@@ -62,6 +64,25 @@ export const Cities: CollectionConfig = {
     drafts: {
       autosave: true,
     },
+  },
+  hooks: {
+    afterChange: [
+      ({ doc, previousDoc }) => {
+        if (doc._status === "draft" && previousDoc?._status !== "published") {
+          return;
+        }
+        if (!isNextBuild()) {
+          revalidateTag("cities");
+        }
+      },
+    ],
+    afterDelete: [
+      () => {
+        if (!isNextBuild()) {
+          revalidateTag("cities");
+        }
+      },
+    ],
   },
   access: {
     read: authenticatedOrPublished,

@@ -1,5 +1,5 @@
 {
-  "id": "d56fdd8c-e87e-4787-958c-0dde858d5b01",
+  "id": "43619b71-6114-45ad-b262-e4e733b9276b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -34,7 +34,7 @@
         },
         "country_id": {
           "name": "country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -569,7 +569,7 @@
         },
         "version_country_id": {
           "name": "version_country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -2227,9 +2227,15 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
+        },
+        "country_code": {
+          "name": "country_code",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
         },
         "image_id": {
           "name": "image_id",
@@ -2372,7 +2378,7 @@
         },
         "_parent_id": {
           "name": "_parent_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         }
@@ -2431,6 +2437,12 @@
         },
         "parent_id": {
           "name": "parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "version_country_code": {
+          "name": "version_country_code",
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
@@ -3036,7 +3048,7 @@
         },
         "country_id": {
           "name": "country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -3240,7 +3252,7 @@
         },
         "version_country_id": {
           "name": "version_country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -3600,7 +3612,7 @@
         },
         "country_id": {
           "name": "country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -3851,7 +3863,7 @@
         },
         "version_country_id": {
           "name": "version_country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -4252,7 +4264,7 @@
         },
         "country_id": {
           "name": "country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -4503,7 +4515,7 @@
         },
         "version_country_id": {
           "name": "version_country_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -6318,7 +6330,7 @@
         },
         "countries_id": {
           "name": "countries_id",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
