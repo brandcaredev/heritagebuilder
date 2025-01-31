@@ -1,130 +1,57 @@
 "use client";
 
-import * as React from "react";
-import Image from "next/image";
-import { FileText, Upload, X } from "lucide-react";
-import Dropzone, {
-  type DropzoneProps,
-  type FileRejection,
-} from "react-dropzone";
-import { toast } from "sonner";
+import { Trash2, Upload } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
+import * as React from "react";
+import Dropzone, { type FileRejection } from "react-dropzone";
+import { toast } from "sonner";
 
-import { cn, formatBytes } from "@/lib/utils";
-import { useControllableState } from "@/hooks/use-controllable-state";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { formSchema } from "@/app/(frontend)/[locale]/_components/new-building";
+import { cn } from "@/lib/utils";
+import { UseFormReturn, useWatch } from "react-hook-form";
+import { z } from "zod";
+import { FormField, FormItem, FormLabel } from "./ui";
 
-interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  /**
-   * Value of the uploader.
-   * @type File[]
-   * @default undefined
-   * @example value={files}
-   */
-  value?: File[];
+import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 
-  /**
-   * Function to be called when the value changes.
-   * @type (files: File[]) => void
-   * @default undefined
-   * @example onValueChange={(files) => setFiles(files)}
-   */
-  onValueChange?: (files: File[]) => void;
+type Props = {
+  form: UseFormReturn<z.infer<typeof formSchema>>;
+};
 
-  /**
-   * Function to be called when files are uploaded.
-   * @type (files: File[]) => Promise<void>
-   * @default undefined
-   * @example onUpload={(files) => uploadFiles(files)}
-   */
-  onUpload?: (files: File[]) => Promise<void>;
+export function FileUploader(props: Props) {
+  const { form } = props;
 
-  /**
-   * Progress of the uploaded files.
-   * @type Record<string, number> | undefined
-   * @default undefined
-   * @example progresses={{ "file1.png": 50 }}
-   */
-  progresses?: Record<string, number>;
-
-  /**
-   * Accepted file types for the uploader.
-   * @type { [key: string]: string[]}
-   * @default
-   * ```ts
-   * { "image/*": [] }
-   * ```
-   * @example accept={["image/png", "image/jpeg"]}
-   */
-  accept?: DropzoneProps["accept"];
-
-  /**
-   * Maximum file size for the uploader.
-   * @type number | undefined
-   * @default 1024 * 1024 * 2 // 2MB
-   * @example maxSize={1024 * 1024 * 2} // 2MB
-   */
-  maxSize?: DropzoneProps["maxSize"];
-
-  /**
-   * Maximum number of files for the uploader.
-   * @type number | undefined
-   * @default 1
-   * @example maxFileCount={4}
-   */
-  maxFileCount?: DropzoneProps["maxFiles"];
-
-  /**
-   * Whether the uploader should accept multiple files.
-   * @type boolean
-   * @default false
-   * @example multiple
-   */
-  multiple?: boolean;
-
-  /**
-   * Whether the uploader is disabled.
-   * @type boolean
-   * @default false
-   * @example disabled
-   */
-  disabled?: boolean;
-}
-
-export function FileUploader(props: FileUploaderProps) {
-  const {
-    value: valueProp,
-    onValueChange,
-    onUpload,
-    progresses,
-    accept = {
-      "image/*": [],
-    },
-    maxSize = 1024 * 1024 * 2,
-    maxFileCount = 1,
-    multiple = false,
-    disabled = false,
-    className,
-    ...dropzoneProps
-  } = props;
-
-  const [files, setFiles] = useControllableState({
-    prop: valueProp,
-    onChange: onValueChange,
+  const images = useWatch({
+    control: form.control,
+    name: "images",
+  });
+  const featuredImage = useWatch({
+    control: form.control,
+    name: "featuredImage",
   });
 
   const t = useTranslations("fileUploader");
 
   const onDrop = React.useCallback(
-    (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+    (
+      onChange: (files: File[]) => void,
+      value: File[],
+      acceptedFiles: File[],
+      rejectedFiles: FileRejection[],
+      multiple: boolean,
+      maxFileCount: number,
+      featured?: boolean,
+    ) => {
       if (!multiple && maxFileCount === 1 && acceptedFiles.length > 1) {
         toast.error(t("maxFileError"));
         return;
       }
 
-      if ((files?.length ?? 0) + acceptedFiles.length > maxFileCount) {
+      if (featured && acceptedFiles.length > 1) {
+        toast.error(t("maxFileError"));
+        return;
+      } else if ((value?.length ?? 0) + acceptedFiles.length > maxFileCount) {
         toast.error(t("maxFilesError", { count: maxFileCount }));
         return;
       }
@@ -135,58 +62,58 @@ export function FileUploader(props: FileUploaderProps) {
         }),
       );
 
-      const updatedFiles = files ? [...files, ...newFiles] : newFiles;
-
-      setFiles(updatedFiles);
+      if (featured) {
+        onChange(newFiles);
+      } else {
+        const updatedFiles = value ? [...value, ...newFiles] : newFiles;
+        onChange(updatedFiles);
+      }
 
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file }) => {
           toast.error(t("fileRejected", { name: file.name }));
         });
       }
-
-      if (
-        onUpload &&
-        updatedFiles.length > 0 &&
-        updatedFiles.length <= maxFileCount
-      ) {
-        toast.promise(onUpload(updatedFiles), {
-          loading: t(
-            updatedFiles.length > 1 ? "uploadingFiles" : "uploadingFile",
-            {
-              count: `${updatedFiles.length} files`,
-            },
-          ),
-          success: () => {
-            setFiles([]);
-            return t(
-              updatedFiles.length > 1 ? "filesUploaded" : "fileUploaded",
-              {
-                count: `${updatedFiles.length}`,
-              },
-            );
-          },
-          error: t("uploadError", {
-            count: `${updatedFiles.length}`,
-          }),
-        });
-      }
     },
-    [files, maxFileCount, multiple, onUpload, setFiles, t],
+    [t],
   );
 
-  function onRemove(index: number) {
-    if (!files) return;
-    const newFiles = files.filter((_, i) => i !== index);
-    setFiles(newFiles);
-    onValueChange?.(newFiles);
+  function onRemove(
+    onChange: (files: File[]) => void,
+    value: File[],
+    index: number,
+    featured?: boolean,
+  ) {
+    if (featured) {
+      if (!value) return;
+      form.resetField("featuredImage");
+    } else {
+      if (!value) return;
+      const newFiles = value.filter((_, i) => i !== index);
+      if (newFiles.length === 0) {
+        form.resetField("images");
+      } else {
+        onChange(newFiles);
+      }
+    }
   }
 
   // Revoke preview url when component unmounts
   React.useEffect(() => {
     return () => {
-      if (!files) return;
-      files.forEach((file) => {
+      if (!images) return;
+      images.forEach((file) => {
+        if (isFileWithPreview(file)) {
+          URL.revokeObjectURL(file.preview);
+        }
+      });
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  React.useEffect(() => {
+    return () => {
+      if (!featuredImage) return;
+      featuredImage.forEach((file) => {
         if (isFileWithPreview(file)) {
           URL.revokeObjectURL(file.preview);
         }
@@ -195,154 +122,228 @@ export function FileUploader(props: FileUploaderProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const isDisabled = disabled || (files?.length ?? 0) >= maxFileCount;
+  const isDisabled = (images?.length ?? 0) >= 4;
+  const featuredIsDisabled = (featuredImage?.length ?? 0) >= 1;
 
   return (
     <div className="relative flex flex-col gap-6 overflow-hidden">
-      <Dropzone
-        onDrop={onDrop}
-        accept={accept}
-        maxSize={maxSize}
-        maxFiles={maxFileCount}
-        multiple={maxFileCount > 1 || multiple}
-        disabled={isDisabled}
-      >
-        {({ getRootProps, getInputProps, isDragActive }) => (
-          <div
-            {...getRootProps()}
-            className={cn(
-              "border-muted-foreground/25 hover:bg-muted/25 group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition",
-              "ring-offset-background focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-              isDragActive && "border-muted-foreground/50",
-              isDisabled && "pointer-events-none opacity-60",
-              className,
-            )}
-            {...dropzoneProps}
-          >
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
-                <div className="rounded-full border border-dashed p-3">
-                  <Upload
-                    className="text-muted-foreground size-7"
-                    aria-hidden="true"
-                  />
-                </div>
-                <p className="text-muted-foreground font-medium">
-                  {t("dropHere")}
-                </p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
-                <div className="rounded-full border border-dashed p-3">
-                  <Upload
-                    className="text-muted-foreground size-7"
-                    aria-hidden="true"
-                  />
-                </div>
-                <div className="flex flex-col gap-px">
-                  <p className="text-muted-foreground font-medium">
-                    {t("dragAndDrop")}
-                  </p>
-                  <p className="text-muted-foreground/70 text-sm">
-                    {maxFileCount > 1
-                      ? t("multipleFiles", {
-                          count:
-                            maxFileCount === Infinity
-                              ? "multiple"
-                              : maxFileCount,
-                          size: formatBytes(maxSize),
-                        })
-                      : t("singleFile", { size: formatBytes(maxSize) })}
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
+      <div
+        className={cn(
+          "group relative h-[400px] flex-col gap-4 rounded-lg border border-brown-900 md:h-[700px]",
+          !!featuredImage?.length && "border-0",
         )}
-      </Dropzone>
-      {files?.length ? (
-        <ScrollArea className="h-fit w-full px-3">
-          <div className="flex max-h-48 flex-col gap-4">
-            {files?.map((file, index) => (
-              <FileCard
-                key={index}
-                file={file}
-                onRemove={() => onRemove(index)}
-                progress={progresses?.[file.name]}
-              />
-            ))}
-          </div>
-        </ScrollArea>
-      ) : null}
+      >
+        {featuredImage?.map((file, index) => (
+          <FileCard
+            key={index}
+            file={file}
+            onRemove={() =>
+              onRemove(
+                (file: File[]) => form.setValue("featuredImage", file),
+                featuredImage,
+                index,
+                true,
+              )
+            }
+          />
+        ))}
+      </div>
+      <Carousel>
+        <CarouselContent className="ml-0 flex gap-4">
+          {[...Array(5).keys()].map((i) => (
+            <CarouselItem key={i}>
+              <div
+                className={cn(
+                  "group relative h-32 w-32 rounded-lg border border-brown-900 bg-transparent",
+                  !!images?.[i] && "border-0",
+                )}
+              >
+                {images?.[i] ? (
+                  <FileCard
+                    file={images[i]}
+                    onRemove={() =>
+                      onRemove(
+                        (file: File[]) => form.setValue("images", file),
+                        images,
+                        i,
+                      )
+                    }
+                  />
+                ) : null}
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+      <FormField
+        control={form.control}
+        name={`featuredImage`}
+        render={({ field: { onChange, value } }) => (
+          <FormItem>
+            <FormLabel required>{t("form.featuredImage")}</FormLabel>
+            <Dropzone
+              onDrop={(acceptedFiles, rejectedFiles) =>
+                onDrop(
+                  onChange,
+                  value,
+                  acceptedFiles,
+                  rejectedFiles,
+                  false,
+                  1,
+                  true,
+                )
+              }
+              accept={{ "image/*": [] }}
+              maxFiles={1}
+              multiple={false}
+              disabled={featuredIsDisabled}
+            >
+              {({ getRootProps, getInputProps, isDragActive }) => (
+                <div
+                  {...getRootProps()}
+                  className={cn(
+                    "border-muted-foreground/25 hover:bg-muted/25 group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition",
+                    "ring-offset-background focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+                    isDragActive && "border-muted-foreground/50",
+                    featuredIsDisabled && "pointer-events-none opacity-60",
+                  )}
+                >
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+                      <div className="rounded-full border border-dashed p-3">
+                        <Upload
+                          className="text-muted-foreground size-7"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <p className="text-muted-foreground font-medium">
+                        {t("dropHere")}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+                      <div className="rounded-full border border-dashed p-3">
+                        <Upload
+                          className="text-muted-foreground size-7"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-px">
+                        <p className="text-muted-foreground font-medium">
+                          {t("dragAndDrop")}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </Dropzone>
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name={`images`}
+        render={({ field: { onChange, value } }) => (
+          <FormItem>
+            <FormLabel required>{t("form.images")}</FormLabel>
+            <Dropzone
+              onDrop={(acceptedFiles, rejectedFiles) =>
+                onDrop(onChange, value, acceptedFiles, rejectedFiles, true, 5)
+              }
+              accept={{ "image/*": [] }}
+              maxFiles={5}
+              multiple={true}
+              disabled={isDisabled}
+            >
+              {({ getRootProps, getInputProps, isDragActive }) => (
+                <div
+                  {...getRootProps()}
+                  className={cn(
+                    "border-muted-foreground/25 hover:bg-muted/25 group relative grid h-52 w-full cursor-pointer place-items-center rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition",
+                    "ring-offset-background focus-visible:ring-ring focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
+                    isDragActive && "border-muted-foreground/50",
+                    isDisabled && "pointer-events-none opacity-60",
+                  )}
+                >
+                  <input {...getInputProps()} />
+                  {isDragActive ? (
+                    <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+                      <div className="rounded-full border border-dashed p-3">
+                        <Upload
+                          className="text-muted-foreground size-7"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <p className="text-muted-foreground font-medium">
+                        {t("dropHere")}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-4 sm:px-5">
+                      <div className="rounded-full border border-dashed p-3">
+                        <Upload
+                          className="text-muted-foreground size-7"
+                          aria-hidden="true"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-px">
+                        <p className="text-muted-foreground font-medium">
+                          {t("dragAndDrop")}
+                        </p>
+                        <p className="text-muted-foreground/70 text-sm">
+                          {t("multipleFiles", {
+                            count: 5,
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </Dropzone>
+          </FormItem>
+        )}
+      />
     </div>
   );
 }
 
-interface FileCardProps {
+function FileCard({
+  file,
+  featured,
+  onRemove,
+}: {
   file: File;
+  featured?: boolean;
   onRemove: () => void;
-  progress?: number;
-}
-
-function FileCard({ file, progress, onRemove }: FileCardProps) {
+}) {
   const t = useTranslations("fileUploader");
 
-  return (
-    <div className="relative flex items-center gap-2.5">
-      <div className="flex flex-1 gap-2.5">
-        {isFileWithPreview(file) ? <FilePreview file={file} /> : null}
-        <div className="flex w-full flex-col gap-2">
-          <div className="flex flex-col gap-px">
-            <p className="text-foreground/80 line-clamp-1 text-sm font-medium">
-              {file.name}
-            </p>
-            <p className="text-muted-foreground text-xs">
-              {formatBytes(file.size)}
-            </p>
-          </div>
-          {progress ? <Progress value={progress} /> : null}
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="size-7"
+  if (isFileWithPreview(file)) {
+    return (
+      <>
+        <Image
+          src={file.preview}
+          alt={file.name}
+          fill
+          loading="lazy"
+          className={cn("object-cover", !featured && "aspect-square")}
+        />
+        <div
+          className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
           onClick={onRemove}
         >
-          <X className="size-4" aria-hidden="true" />
-          <span className="sr-only">{t("removeFile")}</span>
-        </Button>
-      </div>
-    </div>
-  );
+          <Trash2 className="h-6 w-6 text-white" />
+        </div>
+      </>
+    );
+  }
+  return null;
 }
 
 function isFileWithPreview(file: File): file is File & { preview: string } {
   return "preview" in file && typeof file.preview === "string";
-}
-
-interface FilePreviewProps {
-  file: File & { preview: string };
-}
-
-function FilePreview({ file }: FilePreviewProps) {
-  if (file.type.startsWith("image/")) {
-    return (
-      <Image
-        src={file.preview}
-        alt={file.name}
-        width={48}
-        height={48}
-        loading="lazy"
-        className="aspect-square shrink-0 rounded-md object-cover"
-      />
-    );
-  }
-
-  return (
-    <FileText className="text-muted-foreground size-10" aria-hidden="true" />
-  );
 }

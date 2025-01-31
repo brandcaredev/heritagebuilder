@@ -35,8 +35,11 @@
         "./src/*"
       ],
       "@/_components/*": [
-        "./src/app/[locale]/_components/*"
+        "src/app/(frontend)/[locale]/_components/*"
       ],
+      "@payload-config": [
+        "./payload.config.ts"
+      ]
     }
   },
   "include": [

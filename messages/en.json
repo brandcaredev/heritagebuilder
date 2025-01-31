@@ -1,5 +1,4 @@
 {
-  "test": "test",
   "building": {
     "history": "History",
     "style": "Style",
@@ -7,7 +6,10 @@
     "renovation": "Renovation",
     "presentDay": "Present day",
     "imageAlt": "Building image",
-    "preview": "Building Preview"
+    "preview": "Building Preview",
+    "suggestEdit": "Suggest edit",
+    "creatorDescription": "If you want to be featured in the editors section",
+    "creatorName": "Name"
   },
   "form": {
     "country": "Country",
@@ -18,8 +20,9 @@
     "featuredImage": "Featured image",
     "images": "Images",
     "position": "Position",
-    "creatorname": "Creator name",
+    "creatorname": "Creators name",
     "creatoremail": "Creator email",
+    "source": "Source",
     "descriptions": {
       "name": "Name of the building",
       "history": "The history of the building",
@@ -27,8 +30,11 @@
       "presentDay": "Present day situation, function",
       "renovation": "The status or the story of the renovation",
       "creatorname": "Enter your name if you want to be credited for the building",
-      "creatoremail": "Enter your email if you want to get notified when the building is approved"
-    }
+      "creatoremail": "Enter your email if you want to get notified when the building is approved",
+      "summary": "Short summary which will show up for the building",
+      "source": "Enter the source of the data if you want to show on the building page"
+    },
+    "summary": "Summary"
   },
   "common": {
     "submit": "Submit",
@@ -45,7 +51,11 @@
     "hu": "Hungarian",
     "en": "English",
     "back": "Back to List",
-    "selectLocation": "Select Location"
+    "selectLocation": "Select Location",
+    "submitNewBuilding": "Submit new building",
+    "search": "Search",
+    "buildings": "Buildings",
+    "filter": "Filter"
   },
   "successDialog": {
     "title": "Thank you for your contribution!",
@@ -152,8 +162,8 @@
   "fileUploader": {
     "dragAndDrop": "Drag 'n' drop files here, or click to select files",
     "dropHere": "Drop the files here",
-    "multipleFiles": "You can upload {count} files (up to {size} each)",
-    "singleFile": "You can upload a file with {size}",
+    "multipleFiles": "You can upload {count} files ",
+    "singleFile": "You can upload a file",
     "uploadingFiles": "Uploading {count} files...",
     "uploadingFile": "Uploading file...",
     "filesUploaded": "{count} files uploaded",
@@ -162,6 +172,10 @@
     "maxFilesError": "Cannot upload more than {count} files",
     "maxFileError": "Cannot upload more than 1 file at a time",
     "fileRejected": "File {name} was rejected",
-    "removeFile": "Remove file"
+    "removeFile": "Remove file",
+    "form": {
+      "featuredImage": "Featured image",
+      "images": "Images"
+    }
   }
 }
