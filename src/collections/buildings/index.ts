@@ -161,20 +161,20 @@ export const Buildings: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      ({ doc }) => {
+      ({ doc, previousDoc }) => {
+        if (doc._status === "draft" && previousDoc?._status !== "published") {
+          return;
+        }
         if (!isNextBuild()) {
           revalidateTag("buildings");
         }
-        return doc;
       },
     ],
     afterDelete: [
-      ({ doc }) => {
+      () => {
         if (!isNextBuild()) {
           revalidateTag("buildings");
         }
-
-        return doc;
       },
     ],
   },
