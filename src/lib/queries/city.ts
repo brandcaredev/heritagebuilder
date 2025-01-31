@@ -2,26 +2,31 @@
 import { getPayload, Where } from "payload";
 import config from "@payload-config";
 import { LocaleType } from "../constans";
+import { unstable_cache } from "next/cache";
 
 const payload = await getPayload({ config });
 
-export const getCityBySlug = async (locale: LocaleType, slug: string) => {
-  const { docs: city } = await payload.find({
-    collection: "cities",
-    locale: locale,
-    where: {
-      slug: {
-        equals: slug,
+export const getCityBySlug = unstable_cache(
+  async (locale: LocaleType, slug: string) => {
+    const { docs: city } = await payload.find({
+      collection: "cities",
+      locale: locale,
+      where: {
+        slug: {
+          equals: slug,
+        },
+        _status: {
+          equals: "published",
+        },
       },
-      _status: {
-        equals: "published",
-      },
-    },
-    limit: 1,
-    depth: 1,
-  });
-  return city[0] || null;
-};
+      limit: 1,
+      depth: 1,
+    });
+    return city[0] || null;
+  },
+  [],
+  { tags: ["cities"] },
+);
 
 export const getNextLanguageCitySlug = async (
   slug: string,
@@ -43,17 +48,21 @@ export const getNextLanguageCitySlug = async (
   return citySlugs[nextLang];
 };
 
-export const getCitiesByFilter = async (locale: LocaleType, filter: Where) => {
-  const { docs: cities, totalPages } = await payload.find({
-    collection: "cities",
-    locale: locale,
-    where: {
-      ...filter,
-      _status: {
-        equals: "published",
+export const getCitiesByFilter = unstable_cache(
+  async (locale: LocaleType, filter: Where) => {
+    const { docs: cities, totalPages } = await payload.find({
+      collection: "cities",
+      locale: locale,
+      where: {
+        ...filter,
+        _status: {
+          equals: "published",
+        },
       },
-    },
-    sort: "createdAt",
-  });
-  return { cities, totalPages };
-};
+      sort: "createdAt",
+    });
+    return { cities, totalPages };
+  },
+  [],
+  { tags: ["cities"] },
+);

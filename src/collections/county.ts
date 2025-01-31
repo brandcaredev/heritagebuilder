@@ -77,7 +77,10 @@ export const Counties: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
+      ({ doc, previousDoc }) => {
+        if (doc._status === "draft" && previousDoc?._status !== "published") {
+          return;
+        }
         if (!isNextBuild()) {
           revalidateTag(`counties`);
         }

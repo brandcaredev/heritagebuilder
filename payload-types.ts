@@ -122,7 +122,7 @@ export interface Building {
    * @maxItems 2
    */
   position: [number, number];
-  country: string | Country;
+  country: number | Country;
   county?: (number | null) | County;
   city?: (number | null) | City;
   creatorName?: string | null;
@@ -222,8 +222,9 @@ export interface BuildingsMedia {
  * via the `definition` "countries".
  */
 export interface Country {
-  id: string;
+  id: number;
   name: string;
+  countryCode: string;
   slug: string;
   image: number | CountriesMedia;
   relatedBuildings?: {
@@ -294,7 +295,7 @@ export interface County {
    * @maxItems 2
    */
   position?: [number, number] | null;
-  country: string | Country;
+  country: number | Country;
   region?: (number | null) | Region;
   relatedBuildings?: {
     docs?: (number | Building)[] | null;
@@ -316,7 +317,7 @@ export interface Region {
   id: number;
   name: string;
   slug: string;
-  country: string | Country;
+  country: number | Country;
   relatedCounties?: {
     docs?: (number | County)[] | null;
     hasNextPage?: boolean | null;
@@ -339,7 +340,7 @@ export interface City {
    * @maxItems 2
    */
   position?: [number, number] | null;
-  country: string | Country;
+  country: number | Country;
   county: number | County;
   relatedBuildings?: {
     docs?: (number | Building)[] | null;
@@ -480,7 +481,7 @@ export interface PayloadLockedDocument {
       } | null)
     | ({
         relationTo: 'countries';
-        value: string | Country;
+        value: number | Country;
       } | null)
     | ({
         relationTo: 'countries-media';
@@ -681,8 +682,8 @@ export interface BuildingTypesMediaSelect<T extends boolean = true> {
  * via the `definition` "countries_select".
  */
 export interface CountriesSelect<T extends boolean = true> {
-  id?: T;
   name?: T;
+  countryCode?: T;
   slug?: T;
   image?: T;
   relatedBuildings?: T;

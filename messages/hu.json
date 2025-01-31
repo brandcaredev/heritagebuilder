@@ -68,7 +68,8 @@
     "buildingError": "Hiba történt az épület létrehozása közben",
     "featuredImageError": "Hiba történt az épület létrehozása közben - A kiemelt kép feltöltése sikertelen",
     "loginError": "Valami hiba történt. Kérjük, próbálja újra.",
-    "registerError": "Valami hiba történt. Kérjük, próbálja újra."
+    "registerError": "Valami hiba történt. Kérjük, próbálja újra.",
+    "countryError": "Valami hiba történt az épület országával, vegye fel a kapcsolatot a supportal"
   },
   "account": {
     "myAccount": "Fiókom",

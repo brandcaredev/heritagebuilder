@@ -68,7 +68,8 @@
     "buildingError": "Something went wrong while creating the building",
     "featuredImageError": "Something went wrong while creating the building - Featured image failed",
     "loginError": "Something went wrong. Please try again.",
-    "registerError": "Something went wrong. Please try again."
+    "registerError": "Something went wrong. Please try again.",
+    "countryError": "There is an issue with the buildings country, contact the support"
   },
   "account": {
     "myAccount": "My Account",

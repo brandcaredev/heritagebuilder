@@ -58,10 +58,10 @@ export default function CountryPage({
         <div
           className={clsx(
             "relative",
-            country.id === "ro" ? "h-[440px]" : "h-[720px]",
+            country.countryCode === "ro" ? "h-[440px]" : "h-[720px]",
           )}
         >
-          {country.id === "ro" ? (
+          {country.countryCode === "ro" ? (
             <Romania onClick={(id) => onMapCountyClick(id)} />
           ) : (
             <Serbia onClick={(id) => onMapCountyClick(id)} />

@@ -163,7 +163,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"building_type_id" integer,
   	"featured_image_id" integer,
   	"position" geometry(Point),
-  	"country_id" varchar,
+  	"country_id" integer,
   	"county_id" integer,
   	"city_id" integer,
   	"creator_name" varchar,
@@ -202,7 +202,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"version_building_type_id" integer,
   	"version_featured_image_id" integer,
   	"version_position" geometry(Point),
-  	"version_country_id" varchar,
+  	"version_country_id" integer,
   	"version_county_id" integer,
   	"version_city_id" integer,
   	"version_creator_name" varchar,
@@ -333,7 +333,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   );
   
   CREATE TABLE IF NOT EXISTS "payload"."countries" (
-  	"id" varchar PRIMARY KEY NOT NULL,
+  	"id" serial PRIMARY KEY NOT NULL,
+  	"country_code" varchar,
   	"image_id" integer,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
@@ -345,12 +346,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"slug" varchar,
   	"id" serial PRIMARY KEY NOT NULL,
   	"_locale" "payload"."_locales" NOT NULL,
-  	"_parent_id" varchar NOT NULL
+  	"_parent_id" integer NOT NULL
   );
   
   CREATE TABLE IF NOT EXISTS "payload"."_countries_v" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"parent_id" varchar,
+  	"parent_id" integer,
+  	"version_country_code" varchar,
   	"version_image_id" integer,
   	"version_updated_at" timestamp(3) with time zone,
   	"version_created_at" timestamp(3) with time zone,
@@ -402,7 +404,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   CREATE TABLE IF NOT EXISTS "payload"."regions" (
   	"id" serial PRIMARY KEY NOT NULL,
-  	"country_id" varchar,
+  	"country_id" integer,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"_status" "payload"."enum_regions_status" DEFAULT 'draft'
@@ -419,7 +421,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE IF NOT EXISTS "payload"."_regions_v" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"parent_id" integer,
-  	"version_country_id" varchar,
+  	"version_country_id" integer,
   	"version_updated_at" timestamp(3) with time zone,
   	"version_created_at" timestamp(3) with time zone,
   	"version__status" "payload"."enum__regions_v_version_status" DEFAULT 'draft',
@@ -442,7 +444,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE IF NOT EXISTS "payload"."counties" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"position" geometry(Point),
-  	"country_id" varchar,
+  	"country_id" integer,
   	"region_id" integer,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
@@ -462,7 +464,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" serial PRIMARY KEY NOT NULL,
   	"parent_id" integer,
   	"version_position" geometry(Point),
-  	"version_country_id" varchar,
+  	"version_country_id" integer,
   	"version_region_id" integer,
   	"version_updated_at" timestamp(3) with time zone,
   	"version_created_at" timestamp(3) with time zone,
@@ -487,7 +489,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE TABLE IF NOT EXISTS "payload"."cities" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"position" geometry(Point),
-  	"country_id" varchar,
+  	"country_id" integer,
   	"county_id" integer,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
@@ -507,7 +509,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"id" serial PRIMARY KEY NOT NULL,
   	"parent_id" integer,
   	"version_position" geometry(Point),
-  	"version_country_id" varchar,
+  	"version_country_id" integer,
   	"version_county_id" integer,
   	"version_updated_at" timestamp(3) with time zone,
   	"version_created_at" timestamp(3) with time zone,
@@ -655,7 +657,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"buildings_media_id" integer,
   	"building_types_id" integer,
   	"building_types_media_id" integer,
-  	"countries_id" varchar,
+  	"countries_id" integer,
   	"countries_media_id" integer,
   	"regions_id" integer,
   	"counties_id" integer,
