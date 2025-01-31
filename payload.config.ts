@@ -53,7 +53,6 @@ export default buildConfig({
   db: postgresAdapter({
     pool: { connectionString: env.DATABASE_URL || "" },
     schemaName: "payload",
-    push: env.IS_LOCAL === "true",
   }),
   i18n: {
     fallbackLanguage: "hu",
