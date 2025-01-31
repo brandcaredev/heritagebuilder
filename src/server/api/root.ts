@@ -5,7 +5,6 @@ import { buildingRouter } from "./routers/building";
 import { cityRouter } from "./routers/city";
 import { countyRouter } from "./routers/county";
 import { userRouter } from "./routers/user";
-import { youtubeRouter } from "./routers/youtube";
 
 export const appRouter = createTRPCRouter({
   country: countryRouter,
@@ -14,7 +13,6 @@ export const appRouter = createTRPCRouter({
   city: cityRouter,
   county: countyRouter,
   user: userRouter,
-  youtube: youtubeRouter,
 });
 
 export type AppRouter = typeof appRouter;

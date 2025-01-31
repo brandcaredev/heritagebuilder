@@ -1,9 +1,9 @@
-import React, { useCallback } from "react";
-import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
-import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
-import { useEffect } from "react";
-import { type LatLng } from "leaflet";
+"use client";
 import { useMutation } from "@tanstack/react-query";
+import { type LatLng } from "leaflet";
+import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
+import { useCallback, useEffect } from "react";
+import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
 import { toast } from "sonner";
 import {
   CastleIcon,
@@ -14,7 +14,6 @@ import {
   MapPinIcon,
   ResidentalBuildingIcon,
 } from "./icons/leaflet-icons";
-import { type LocaleType } from "@/lib/constans";
 
 type LocationData = {
   place_id: number;
@@ -67,15 +66,11 @@ const MapPositionSelector = ({
   position,
   setPosition,
   setCountry,
-  setCounty,
-  setCity,
   type,
 }: {
   position?: [number, number];
   setPosition: (value: [number, number]) => void;
   setCountry?: (value: string) => void;
-  setCounty?: (value: string, lang: LocaleType) => void;
-  setCity?: (value: string, lang: LocaleType) => void;
   type?: number;
 }) => {
   const { mutate } = useMutation({ mutationFn: getPositionData });
@@ -83,7 +78,7 @@ const MapPositionSelector = ({
     const map = useMapEvents({
       click(e) {
         setPosition([e.latlng.lat, e.latlng.lng]);
-        if (setCountry && setCounty && setCity) {
+        if (setCountry) {
           mutate(
             { position: e.latlng, lang: "en" },
             {
@@ -97,26 +92,7 @@ const MapPositionSelector = ({
                   );
                   return;
                 }
-                setTimeout(() => {
-                  mutate(
-                    { position: e.latlng, lang: "hu" },
-                    {
-                      onSuccess: (datahu) => {
-                        setCity(
-                          data.address.city ?? data.address.village!,
-                          "en",
-                        );
-                        setCity(
-                          datahu.address.city ?? datahu.address.village!,
-                          "hu",
-                        );
-                        setCounty(data.address.county, "en");
-                        setCounty(datahu.address.county, "hu");
-                        setCountry(data.address.country_code);
-                      },
-                    },
-                  );
-                }, 100);
+                setCountry(data.address.country_code);
               },
             },
           );

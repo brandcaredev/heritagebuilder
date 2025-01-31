@@ -6,7 +6,10 @@
     "renovation": "Felújítás",
     "presentDay": "Jelenlegi állapot",
     "imageAlt": "Épület kép",
-    "preview": "Épület előnézet"
+    "preview": "Épület előnézet",
+    "suggestEdit": "Szerkesztés javaslata",
+    "creatorDescription": "Ha szeretne megjelenni a szerkesztők között",
+    "creatorName": "Neve"
   },
   "form": {
     "country": "Ország",
@@ -17,17 +20,21 @@
     "featuredImage": "Kiemelt kép",
     "images": "Képek",
     "position": "Elhelyezkedés",
-    "creatorname": "Létrehozó neve",
+    "creatorname": "Szerzők nevei",
     "creatoremail": "Létrehozó email",
+    "source": "Forrás",
     "descriptions": {
       "name": "Az épület neve",
       "history": "Az épület története",
       "style": "Építészeti stílus és megjelenés",
       "presentDay": "Jelenlegi helyzet, funkció",
       "renovation": "A felújítás állapota vagy története",
-      "creatorname": "Adja meg a nevét, ha szeretné, hogy a neve megjelenjen az épületnél",
-      "creatoremail": "Adja meg az email címét, ha szeretné, hogy értesítést kapjon, amikor az épület jóváhagyásra kerül"
-    }
+      "creatorname": "Adja meg a szerzők nevét, ha szeretné, hogy megjelenjen az épületnél",
+      "creatoremail": "Adja meg az email címét, ha szeretné, hogy értesítést kapjon, amikor az épület jóváhagyásra kerül",
+      "source": "Adja meg az adatok forrását, ha szeretné, hogy megjelenjen az épületnél",
+      "summary": "Rövid összefoglaló az épületről"
+    },
+    "summary": "Összefoglaló"
   },
   "common": {
     "submit": "Küldés",
@@ -44,7 +51,11 @@
     "hu": "Magyar",
     "en": "Angol",
     "back": "Vissza a listához",
-    "selectLocation": "Helyszín kiválasztása"
+    "selectLocation": "Helyszín kiválasztása",
+    "submitNewBuilding": "Új épület hozzáadása",
+    "search": "Keresés",
+    "buildings": "Épületek",
+    "filter": "Szűrés"
   },
   "successDialog": {
     "title": "Köszönjük a hozzájárulását!",
@@ -148,7 +159,7 @@
   "fileUploader": {
     "dragAndDrop": "Húzza ide a fájlokat, vagy kattintson a kiválasztáshoz",
     "dropHere": "Dobja ide a fájlokat",
-    "multipleFiles": "{count} fájlt tölthet fel (egyenként maximum {size})",
+    "multipleFiles": "{count} fájlt tölthet fel",
     "singleFile": "Feltölthet egy fájlt maximum {size} méretben",
     "uploadingFiles": "{count} fájl feltöltése...",
     "uploadingFile": "Fájl feltöltése...",
@@ -158,6 +169,10 @@
     "maxFilesError": "Nem tölthet fel {count} fájlnál többet",
     "maxFileError": "Egyszerre csak 1 fájlt tölthet fel",
     "fileRejected": "A(z) {name} fájl elutasítva",
-    "removeFile": "Fájl eltávolítása"
+    "removeFile": "Fájl eltávolítása",
+    "form": {
+      "featuredImage": "Kiemelt kép",
+      "images": "Képek"
+    }
   }
 }

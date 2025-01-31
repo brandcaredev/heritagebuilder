@@ -1,4 +1,5 @@
 import createNextIntlPlugin from "next-intl/plugin";
+import { withPayload } from "@payloadcms/next/withPayload";
 await import("./src/env.js");
 
 const withNextIntl = createNextIntlPlugin();
@@ -13,6 +14,16 @@ const config = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "7mb",
+    },
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
-export default withNextIntl(config);
+export default withPayload(withNextIntl(config));

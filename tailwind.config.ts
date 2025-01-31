@@ -29,12 +29,13 @@ export default {
         },
         brown: {
           DEFAULT: "#6a573a",
-          "2": "#A69A89",
-          "3": "#403423",
-          "4": "#201A11",
+          "100": "#CBC4BA",
+          "200": "#A69A89",
+          "700": "#403423",
+          "900": "#201A11",
         },
-        black: "#000000", // pure black
-        white: "#ffffff", // pure white
+        black: "#000000",
+        white: "#ffffff",
         "white-2": "#EDEEEB",
       },
     },

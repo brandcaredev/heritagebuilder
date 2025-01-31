@@ -1,1 +1,0 @@
-ALTER TABLE "County" ALTER COLUMN "regionid" SET DATA TYPE integer;
