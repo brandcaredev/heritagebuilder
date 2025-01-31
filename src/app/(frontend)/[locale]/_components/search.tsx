@@ -1,19 +1,19 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useDebounce } from "@/lib/hooks";
-import { useLocale, useTranslations } from "next-intl";
-import { api } from "@/trpc/react";
-import { useRouter } from "@/i18n/routing";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useRouter } from "@/i18n/routing";
+import { useDebounce } from "@/lib/hooks";
+import { api } from "@/trpc/react";
+import { Loader2, Search } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
 
 export function highlightText(text: string, query: string) {
   if (!query) return text;

@@ -1,11 +1,4 @@
 "use client";
-import {
-  Carousel,
-  CarouselMainContainer,
-  CarouselThumbsContainer,
-  SliderMainItem,
-  SliderThumbItem,
-} from "@/components/carousel-bottom-thumbnails";
 import { Button, Input, Textarea } from "@/components/ui";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,7 +11,6 @@ import {
 import { Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { Building, BuildingType } from "payload-types";
 import { useState } from "react";
 import { toast } from "sonner";

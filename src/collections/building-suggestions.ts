@@ -59,7 +59,7 @@ export const BuildingSuggestions: CollectionConfig = {
               collection: "buildings",
               id: doc.building,
               data: {
-                suggestionsCount: (data.suggestionsCount || 0) + 1,
+                suggestionsCount: (data.suggestionsCount ?? 0) + 1,
               },
               req,
             });

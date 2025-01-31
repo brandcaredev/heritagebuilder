@@ -1,5 +1,4 @@
 "use client";
-import { Button } from "@/components/ui";
 import { usePathname } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
 import { api } from "@/trpc/react";

@@ -7,13 +7,11 @@ import * as React from "react";
 import Dropzone, { type FileRejection } from "react-dropzone";
 import { toast } from "sonner";
 
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useControllableState } from "@/hooks/use-controllable-state";
-import { cn } from "@/lib/utils";
-import { FormField, FormItem, FormLabel } from "./ui";
-import { UseFormReturn, useWatch } from "react-hook-form";
 import { formSchema } from "@/app/(frontend)/[locale]/_components/new-building";
+import { cn } from "@/lib/utils";
+import { UseFormReturn, useWatch } from "react-hook-form";
 import { z } from "zod";
+import { FormField, FormItem, FormLabel } from "./ui";
 
 import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 
