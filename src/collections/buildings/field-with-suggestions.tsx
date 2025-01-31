@@ -19,10 +19,10 @@ const FieldWithSuggestions: React.FC<{
     const fetchSuggestions = async () => {
       if (id) {
         const response = await fetch(
-          `/api/building-suggestions?where[building][equals]=${id}&where[field][equals]=${path}&where[status][equals]=pending`,
+          `/api/building-suggestions?where[building][equals]=${id}&where[field][equals]=${path}`,
         );
         const data = await response.json();
-        setSuggestions(data.docs);
+        setSuggestions(data.docs || []);
       }
     };
     void fetchSuggestions();
@@ -30,19 +30,16 @@ const FieldWithSuggestions: React.FC<{
 
   const markAsReviewed = async (suggestionId: number) => {
     await fetch(`/api/building-suggestions/${suggestionId}`, {
-      method: "PATCH",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({
-        status: "reviewed",
-      }),
     });
 
     // Refresh suggestions
     const response = await fetch(
-      `/api/building-suggestions?where[building][equals]=${id}&where[field][equals]=${path}&where[status][equals]=pending`,
+      `/api/building-suggestions?where[building][equals]=${id}&where[field][equals]=${path}`,
     );
     const data = await response.json();
     setSuggestions(data.docs);
@@ -74,7 +71,7 @@ const FieldWithSuggestions: React.FC<{
                         className="w-40 rounded border border-black bg-white px-4 py-2 text-sm text-black hover:bg-gray-300"
                         onClick={() => markAsReviewed(suggestion.id)}
                       >
-                        Mark as Reviewed
+                        Mark as Reviewed (Delete)
                       </button>
                     </div>
                     {suggestion.submitterName && (

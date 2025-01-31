@@ -1,6 +1,7 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
+import { isNextBuild } from "payload/shared";
 
 export const BuildingTypes: CollectionConfig = {
   slug: "building-types",
@@ -46,12 +47,16 @@ export const BuildingTypes: CollectionConfig = {
   hooks: {
     afterChange: [
       () => {
-        revalidateTag(`building-types`);
+        if (!isNextBuild()) {
+          revalidateTag(`building-types`);
+        }
       },
     ],
     afterDelete: [
       () => {
-        revalidateTag(`building-types`);
+        if (!isNextBuild()) {
+          revalidateTag(`building-types`);
+        }
       },
     ],
   },

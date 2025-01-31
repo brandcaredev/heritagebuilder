@@ -76,6 +76,7 @@ export const getBuildings = unstable_cache(
       },
       sort: "createdAt",
     });
+    console.log(buildings);
     return buildings;
   },
   [],
@@ -83,7 +84,7 @@ export const getBuildings = unstable_cache(
 );
 
 export const getBuildingsByFilter = unstable_cache(
-  async (locale: LocaleType, filter: Where) => {
+  async (locale: LocaleType, filter: Where, limit?: number, page?: number) => {
     const { docs: buildings, totalPages } = await payload.find({
       collection: "buildings",
       locale: locale,
@@ -93,6 +94,8 @@ export const getBuildingsByFilter = unstable_cache(
           equals: "published",
         },
       },
+      limit,
+      page,
       sort: "createdAt",
     });
     return { buildings, totalPages };

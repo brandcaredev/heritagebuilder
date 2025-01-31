@@ -1,6 +1,7 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
+import { isNextBuild } from "payload/shared";
 
 export const Regions: CollectionConfig = {
   slug: "regions",
@@ -41,12 +42,16 @@ export const Regions: CollectionConfig = {
   hooks: {
     afterChange: [
       () => {
-        revalidateTag(`regions`);
+        if (!isNextBuild()) {
+          revalidateTag(`regions`);
+        }
       },
     ],
     afterDelete: [
       () => {
-        revalidateTag(`regions`);
+        if (!isNextBuild()) {
+          revalidateTag(`regions`);
+        }
       },
     ],
   },

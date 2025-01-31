@@ -5,6 +5,7 @@ import { getCountries } from "@/lib/queries/country";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BuildingTypePage } from "./page.client";
+import { LoaderCircle } from "lucide-react";
 
 const Page = async (props: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -43,24 +44,36 @@ const Page = async (props: {
     .flat()
     .filter((city) => typeof city === "object");
 
-  const { buildings, totalPages } = await getBuildingsByFilter(locale, {
-    and: [
-      {
-        buildingType: {
-          equals: buildingType.id,
+  const { buildings, totalPages } = await getBuildingsByFilter(
+    locale,
+    {
+      and: [
+        {
+          buildingType: {
+            equals: buildingType.id,
+          },
         },
-      },
-      ...(selectedCity ? [{ "city.slug": { equals: selectedCity } }] : []),
-      ...(selectedCounty
-        ? [{ "county.slug": { equals: selectedCounty } }]
-        : []),
-      ...(selectedCountry
-        ? [{ "country.slug": { equals: selectedCountry } }]
-        : []),
-    ],
-  });
+        ...(selectedCity ? [{ "city.slug": { equals: selectedCity } }] : []),
+        ...(selectedCounty
+          ? [{ "county.slug": { equals: selectedCounty } }]
+          : []),
+        ...(selectedCountry
+          ? [{ "country.slug": { equals: selectedCountry } }]
+          : []),
+      ],
+    },
+    12,
+    page,
+  );
+
   return (
-    <Suspense fallback={<div>Loading ...</div>}>
+    <Suspense
+      fallback={
+        <div className="container relative flex h-screen w-full items-center justify-center">
+          <LoaderCircle className="h-12 w-12 animate-spin text-brown" />
+        </div>
+      }
+    >
       <BuildingTypePage
         buildings={buildings}
         buildingType={buildingType}

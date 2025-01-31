@@ -1,6 +1,7 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
+import { isNextBuild } from "payload/shared";
 
 export const YoutubeLinks: CollectionConfig = {
   slug: "youtube-links",
@@ -39,12 +40,16 @@ export const YoutubeLinks: CollectionConfig = {
   hooks: {
     afterChange: [
       () => {
-        revalidateTag(`youtube-links`);
+        if (!isNextBuild()) {
+          revalidateTag(`youtube-links`);
+        }
       },
     ],
     afterDelete: [
       () => {
-        revalidateTag(`youtube-links`);
+        if (!isNextBuild()) {
+          revalidateTag(`youtube-links`);
+        }
       },
     ],
   },

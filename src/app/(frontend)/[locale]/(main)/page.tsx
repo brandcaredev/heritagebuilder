@@ -34,7 +34,7 @@ export default async function MainPage(props: {
     },
   });
   const buildings = await getBuildings(locale, 6);
-  console.log(countries);
+
   return (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-4 lg:flex-row">

@@ -16,7 +16,12 @@ const config = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: "15mb",
+      bodySizeLimit: "7mb",
+    },
+  },
+  logging: {
+    fetches: {
+      fullUrl: true,
     },
   },
 };

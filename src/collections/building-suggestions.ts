@@ -32,15 +32,6 @@ export const BuildingSuggestions: CollectionConfig = {
       required: true,
     },
     {
-      name: "status",
-      type: "select",
-      defaultValue: "pending",
-      options: [
-        { label: "Pending", value: "pending" },
-        { label: "Reviewed", value: "reviewed" },
-      ],
-    },
-    {
       name: "submitterName",
       type: "text",
     },
@@ -50,5 +41,53 @@ export const BuildingSuggestions: CollectionConfig = {
     create: () => true,
     update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
     delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
+  },
+  hooks: {
+    afterChange: [
+      async ({ operation, doc, req }) => {
+        if (operation === "create") {
+          const data = await req.payload.findByID({
+            collection: "buildings",
+            id: doc.building,
+            select: {
+              suggestionsCount: true,
+            },
+            req,
+          });
+          if (data) {
+            await req.payload.update({
+              collection: "buildings",
+              id: doc.building,
+              data: {
+                suggestionsCount: (data.suggestionsCount || 0) + 1,
+              },
+              req,
+            });
+          }
+        }
+      },
+    ],
+    afterDelete: [
+      async ({ doc, req }) => {
+        const data = await req.payload.findByID({
+          collection: "buildings",
+          id: doc.building.id,
+          select: {
+            suggestionsCount: true,
+          },
+          req,
+        });
+        if (data && data.suggestionsCount) {
+          await req.payload.update({
+            collection: "buildings",
+            id: doc.building.id,
+            data: {
+              suggestionsCount: data.suggestionsCount - 1,
+            },
+            req,
+          });
+        }
+      },
+    ],
   },
 };

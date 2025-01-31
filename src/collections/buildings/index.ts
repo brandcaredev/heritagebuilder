@@ -1,6 +1,7 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
+import { isNextBuild } from "payload/shared";
 
 export const Buildings: CollectionConfig = {
   slug: "buildings",
@@ -139,9 +140,19 @@ export const Buildings: CollectionConfig = {
       name: "creatorEmail",
       type: "text",
     },
+    {
+      name: "suggestionsCount",
+      type: "number",
+      defaultValue: 0,
+      admin: {
+        readOnly: true,
+        hidden: true,
+      },
+    },
   ],
   admin: {
     useAsTitle: "name",
+    defaultColumns: ["id", "name", "summary", "_status", "suggestionsCount"],
   },
   versions: {
     drafts: {
@@ -150,13 +161,20 @@ export const Buildings: CollectionConfig = {
   },
   hooks: {
     afterChange: [
-      () => {
-        revalidateTag("buildings");
+      ({ doc }) => {
+        if (!isNextBuild()) {
+          revalidateTag("buildings");
+        }
+        return doc;
       },
     ],
     afterDelete: [
-      () => {
-        revalidateTag("buildings");
+      ({ doc }) => {
+        if (!isNextBuild()) {
+          revalidateTag("buildings");
+        }
+
+        return doc;
       },
     ],
   },

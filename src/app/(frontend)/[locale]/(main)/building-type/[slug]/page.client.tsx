@@ -5,6 +5,8 @@ import { Suspense, useState } from "react";
 import BuildingCard from "./building-card";
 import FilterForm from "./filter-form";
 import Pagination from "./pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const BuildingTypePage = ({
   buildings,
@@ -31,9 +33,17 @@ export const BuildingTypePage = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   return (
-    <div className="container relative mx-auto flex flex-col space-y-4">
+    <div className="container relative mx-auto flex flex-col">
       <h1 className="text-3xl font-bold text-brown">{buildingType.name}</h1>
-      <Suspense fallback={<div>Loading filters...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+            <Skeleton className="h-10 w-full rounded-md sm:w-[150px] sm:min-w-[150px] sm:max-w-[300px] sm:flex-1" />
+            <Skeleton className="h-10 w-full rounded-md sm:w-[150px] sm:min-w-[150px] sm:max-w-[300px] sm:flex-1" />
+            <Skeleton className="h-10 w-full rounded-md sm:w-[150px] sm:min-w-[150px] sm:max-w-[300px] sm:flex-1" />
+          </div>
+        }
+      >
         <FilterForm
           buildingType={buildingType.slug}
           country={country}
@@ -45,15 +55,17 @@ export const BuildingTypePage = ({
           setLoading={setIsLoading}
         />
       </Suspense>
-      <div className="flex flex-wrap gap-6">
-        {buildings.map((building) => (
-          <BuildingCard
-            key={building.id}
-            building={building}
-            loading={isLoading}
-          />
-        ))}
-      </div>
+      <ScrollArea className="mt-4 h-[calc(100vh-312px-56px)] pb-[72px]">
+        <div className="flex flex-wrap items-center justify-center gap-6">
+          {buildings.map((building) => (
+            <BuildingCard
+              key={building.id}
+              building={building}
+              loading={isLoading}
+            />
+          ))}
+        </div>
+      </ScrollArea>
       <Pagination currentPage={page} totalPages={totalPages} />
     </div>
   );

@@ -20,27 +20,39 @@ export default function Pagination({
     router.push(`?${params.toString()}`);
   };
 
+  const handleHover = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("page", page.toString());
+    router.prefetch(`?${params.toString()}`);
+  };
+
   return (
-    <div className="mt-8 flex items-center justify-center space-x-2">
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </Button>
+    <div className="absolute bottom-0 flex w-full items-center justify-between bg-white-2 pt-8">
+      <div>
+        <Button
+          variant="outline"
+          className="w-28"
+          onMouseEnter={() => handleHover(currentPage - 1)}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous page
+        </Button>
+      </div>
       <span>
         Page {currentPage} of {totalPages}
       </span>
-      <Button
-        variant="outline"
-        size="icon"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        <ChevronRight className="h-4 w-4" />
-      </Button>
+      <div>
+        <Button
+          variant="outline"
+          className="w-28"
+          onMouseEnter={() => handleHover(currentPage + 1)}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next page
+        </Button>
+      </div>
     </div>
   );
 }

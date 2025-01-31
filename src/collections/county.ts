@@ -1,6 +1,7 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
+import { isNextBuild } from "payload/shared";
 
 export const Counties: CollectionConfig = {
   slug: "counties",
@@ -77,12 +78,16 @@ export const Counties: CollectionConfig = {
   hooks: {
     afterChange: [
       () => {
-        revalidateTag(`counties`);
+        if (!isNextBuild()) {
+          revalidateTag(`counties`);
+        }
       },
     ],
     afterDelete: [
       () => {
-        revalidateTag(`counties`);
+        if (!isNextBuild()) {
+          revalidateTag(`counties`);
+        }
       },
     ],
   },

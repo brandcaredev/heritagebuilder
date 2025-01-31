@@ -61,13 +61,13 @@ export default function FilterForm({
   };
 
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="mt-4 flex flex-col justify-center gap-6 sm:flex-row sm:flex-wrap">
       <Select
         onValueChange={(value) => handleFilterChange("country", value)}
         value={country || ""}
       >
         <SelectTrigger
-          className="w-[150px] min-w-[150px] max-w-[300px] flex-1"
+          className="w-full sm:w-[150px] sm:min-w-[150px] sm:max-w-[300px] sm:flex-1"
           onReset={() => handleFilterChange("country", undefined)}
           value={country || ""}
         >
@@ -88,7 +88,7 @@ export default function FilterForm({
         disabled={counties.length === 0}
       >
         <SelectTrigger
-          className="w-[150px] min-w-[150px] max-w-[300px] flex-1"
+          className="w-full sm:w-[150px] sm:min-w-[150px] sm:max-w-[300px] sm:flex-1"
           onReset={() => handleFilterChange("county", undefined)}
           value={county || ""}
         >
@@ -109,7 +109,7 @@ export default function FilterForm({
         disabled={cities.length === 0}
       >
         <SelectTrigger
-          className="w-[150px] min-w-[150px] max-w-[300px] flex-1"
+          className="w-full sm:w-[150px] sm:min-w-[150px] sm:max-w-[300px] sm:flex-1"
           onReset={() => handleFilterChange("city", undefined)}
           value={city || ""}
         >

@@ -127,6 +127,7 @@ export interface Building {
   city?: (number | null) | City;
   creatorName?: string | null;
   creatorEmail?: string | null;
+  suggestionsCount?: number | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -427,7 +428,6 @@ export interface BuildingSuggestion {
   building: number | Building;
   field: 'name' | 'summary' | 'history' | 'style' | 'presentDay' | 'famousResidents' | 'renovation';
   suggestedContent: string;
-  status?: ('pending' | 'reviewed') | null;
   submitterName?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -582,6 +582,7 @@ export interface BuildingsSelect<T extends boolean = true> {
   city?: T;
   creatorName?: T;
   creatorEmail?: T;
+  suggestionsCount?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -860,7 +861,6 @@ export interface BuildingSuggestionsSelect<T extends boolean = true> {
   building?: T;
   field?: T;
   suggestedContent?: T;
-  status?: T;
   submitterName?: T;
   updatedAt?: T;
   createdAt?: T;
