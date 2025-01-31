@@ -18,6 +18,7 @@ export const env = createEnv({
     S3_SECRET_ACCESS_KEY: z.string(),
     S3_REGION: z.string(),
     S3_ENDPOINT: z.string(),
+    IS_LOCAL: z.string(),
   },
 
   /**
@@ -46,6 +47,7 @@ export const env = createEnv({
     S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
     S3_REGION: process.env.S3_REGION,
     S3_ENDPOINT: process.env.S3_ENDPOINT,
+    IS_LOCAL: process.env.IS_LOCAL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
