@@ -15,6 +15,9 @@ export const getCountries = unstable_cache(
         _status: {
           equals: "published",
         },
+        name: {
+          not_equals: null,
+        },
       },
       sort: "createdAt",
     });
@@ -36,6 +39,9 @@ export const getCountryBySlug = async (locale: LocaleType, slug: string) => {
       },
       _status: {
         equals: "published",
+      },
+      name: {
+        not_equals: null,
       },
     },
     draft: false,

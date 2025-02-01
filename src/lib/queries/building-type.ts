@@ -15,6 +15,9 @@ export const getBuildingTypes = unstable_cache(
         _status: {
           equals: "published",
         },
+        name: {
+          not_equals: null,
+        },
       },
       sort: "id",
     });
@@ -35,6 +38,9 @@ export const getBuildingTypeBySlug = unstable_cache(
         },
         _status: {
           equals: "published",
+        },
+        name: {
+          not_equals: null,
         },
       },
       limit: 1,
