@@ -18,6 +18,9 @@ export const getCountyBySlug = unstable_cache(
         _status: {
           equals: "published",
         },
+        name: {
+          not_equals: null,
+        },
       },
       limit: 1,
       depth: 1,
@@ -57,6 +60,9 @@ export const getCountiesByFilter = unstable_cache(
         ...filter,
         _status: {
           equals: "published",
+        },
+        name: {
+          not_equals: null,
         },
       },
       sort: "createdAt",

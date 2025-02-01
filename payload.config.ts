@@ -61,6 +61,7 @@ export default buildConfig({
   localization: {
     defaultLocale: "hu",
     locales: ["en", "hu"],
+    fallback: false,
   },
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
