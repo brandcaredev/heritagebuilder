@@ -54,6 +54,9 @@ export const getBuildingBySlug = unstable_cache(
         _status: {
           equals: "published",
         },
+        name: {
+          not_equals: null,
+        },
       },
       limit: 1,
     });
@@ -73,10 +76,12 @@ export const getBuildings = unstable_cache(
         _status: {
           equals: "published",
         },
+        name: {
+          not_equals: null,
+        },
       },
       sort: "createdAt",
     });
-    console.log(buildings);
     return buildings;
   },
   [],
@@ -92,6 +97,9 @@ export const getBuildingsByFilter = unstable_cache(
         ...filter,
         _status: {
           equals: "published",
+        },
+        name: {
+          not_equals: null,
         },
       },
       limit,

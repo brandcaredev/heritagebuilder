@@ -7,6 +7,7 @@ import FilterForm from "./filter-form";
 import Pagination from "./pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link } from "@/i18n/routing";
 
 export const BuildingTypePage = ({
   buildings,
@@ -58,11 +59,19 @@ export const BuildingTypePage = ({
       <ScrollArea className="mt-4 h-[calc(100vh-312px-56px)] pb-[72px]">
         <div className="flex flex-wrap items-center justify-center gap-6">
           {buildings.map((building) => (
-            <BuildingCard
+            <Link
               key={building.id}
-              building={building}
-              loading={isLoading}
-            />
+              href={{
+                pathname: "/building/[slug]",
+                params: { slug: building.slug },
+              }}
+            >
+              <BuildingCard
+                key={building.id}
+                building={building}
+                loading={isLoading}
+              />
+            </Link>
           ))}
         </div>
       </ScrollArea>
