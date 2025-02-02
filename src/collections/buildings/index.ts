@@ -160,8 +160,23 @@ export const Buildings: CollectionConfig = {
     },
   },
   hooks: {
+    beforeChange: [
+      async ({ data, context }) => {
+        // Store the temporary image IDs in context.imageIds
+        let temporaryImageIds = [] as string[];
+        if (data.featuredImage) {
+          temporaryImageIds.push(data.featuredImage);
+        }
+        if (data.images && Array.isArray(data.images)) {
+          temporaryImageIds = temporaryImageIds.concat(data.images);
+        }
+        context.imageIds = temporaryImageIds;
+        return data;
+      },
+    ],
     afterChange: [
-      ({ doc, previousDoc }) => {
+      ({ doc, previousDoc, context }) => {
+        delete context.imageIds;
         if (doc._status === "draft" && previousDoc?._status !== "published") {
           return;
         }
@@ -174,6 +189,21 @@ export const Buildings: CollectionConfig = {
       () => {
         if (!isNextBuild()) {
           revalidateTag("buildings");
+        }
+      },
+    ],
+    afterError: [
+      async ({ req, context }) => {
+        const temporaryImageIds = context.imageIds as string[];
+        if (temporaryImageIds && temporaryImageIds[0]) {
+          await Promise.all(
+            (temporaryImageIds as string[]).map(async (imageId) => {
+              await req.payload.delete({
+                collection: "buildings-media",
+                id: imageId,
+              });
+            }),
+          );
         }
       },
     ],
