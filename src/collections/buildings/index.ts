@@ -195,9 +195,9 @@ export const Buildings: CollectionConfig = {
     afterError: [
       async ({ req, context }) => {
         const temporaryImageIds = context.imageIds as string[];
-        if (temporaryImageIds && temporaryImageIds[0]) {
+        if (temporaryImageIds?.[0]) {
           await Promise.all(
-            (temporaryImageIds as string[]).map(async (imageId) => {
+            temporaryImageIds.map(async (imageId) => {
               await req.payload.delete({
                 collection: "buildings-media",
                 id: imageId,
