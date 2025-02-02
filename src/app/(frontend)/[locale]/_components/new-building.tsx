@@ -37,10 +37,11 @@ import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { BuildingType, Country } from "payload-types";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import Breadcrumbs from "./breadcrumbs";
+import { Loader2 } from "lucide-react";
 
 const MapPositionSelector = dynamic(
   () => import("@/components/map-position-selector"),
@@ -64,11 +65,11 @@ const compressImage = async (file: File) => {
 const fileSchema = z.instanceof(File);
 
 const translatedContentSchema = z.object({
-  summary: z.string(),
-  name: z.string(),
-  history: z.string(),
-  style: z.string(),
-  presentDay: z.string(),
+  summary: z.string().min(1, "This field is required"),
+  name: z.string().min(1, "This field is required"),
+  history: z.string().min(1, "This field is required"),
+  style: z.string().min(1, "This field is required"),
+  presentDay: z.string().min(1, "This field is required"),
   famousResidents: z.string().optional(),
   renovation: z.string().optional(),
 });
@@ -86,22 +87,32 @@ const optionalSchema = z.object({
 export const formSchema = z.object({
   country: z.string(),
   type: z.string(),
-  en: optionalSchema.partial().superRefine((values, ctx) => {
+  en: optionalSchema.optional().superRefine((values, ctx) => {
     // if `en` is not even provided, skip
     if (!values) {
       return;
     }
 
-    const { name, history, style, presentDay, summary } = values;
+    const {
+      name,
+      history,
+      style,
+      presentDay,
+      summary,
+      famousResidents,
+      renovation,
+    } = values;
 
-    // Check if ANY of these 4 fields has content
     const hasAnyEnContent = !!(
       summary?.trim() ||
       name?.trim() ||
       history?.trim() ||
       style?.trim() ||
+      famousResidents?.trim() ||
+      renovation?.trim() ||
       presentDay?.trim()
     );
+
     if (hasAnyEnContent) {
       // If there's content in at least one field, we want ALL to be filled
       if (!name?.trim()) {
@@ -163,8 +174,10 @@ export default function BuildingForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
-  // TODO ERROR HANDLING
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (
+    values,
+  ) => {
     const country = countries.find((c) => c.countryCode === values.country);
     if (!country) {
       toast.error(t("toast.countryError"), {
@@ -255,7 +268,7 @@ export default function BuildingForm({
           ([key, value]) => value && value.trim() !== "",
         );
 
-      if (hasEnglishData) {
+      if (hasEnglishData && values.en) {
         const enPayload = {
           name: values.en.name,
           summary: values.en.summary,
@@ -292,12 +305,17 @@ export default function BuildingForm({
       });
     }
   };
-
   const SuccessDialog = () => {
     const router = useRouter();
 
     return (
-      <Dialog open={showSuccessDialog} onOpenChange={() => router.replace("/")}>
+      <Dialog
+        open={showSuccessDialog}
+        onOpenChange={() => {
+          setShowSuccessDialog(false);
+          router.replace("/");
+        }}
+      >
         <DialogContent className="z-10 sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex justify-center text-2xl font-semibold text-brown">
@@ -313,11 +331,23 @@ export default function BuildingForm({
             <div className="flex space-x-4"></div>
           </div>
           <DialogFooter className="gap-4">
-            <Button variant="outline" onClick={() => router.replace("/")}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowSuccessDialog(false);
+                router.replace("/");
+              }}
+            >
               {t("common.goToHome")}
             </Button>
 
-            <Button onClick={() => router.refresh()}>
+            <Button
+              onClick={() => {
+                setShowSuccessDialog(false);
+                form.reset();
+                router.refresh();
+              }}
+            >
               {t("common.createAnother")}
             </Button>
           </DialogFooter>
@@ -325,7 +355,6 @@ export default function BuildingForm({
       </Dialog>
     );
   };
-
   return (
     <div>
       <div className="flex w-fit flex-col">
@@ -364,6 +393,7 @@ export default function BuildingForm({
                 <FormField
                   control={form.control}
                   name={`${lang}.name`}
+                  defaultValue=""
                   rules={{ deps: ["en", "hu"] }}
                   render={({ field }) => {
                     const enStyle = form.watch("en.style");
@@ -401,6 +431,7 @@ export default function BuildingForm({
                 <FormField
                   control={form.control}
                   name={`${lang}.summary`}
+                  defaultValue=""
                   rules={{ deps: ["en", "hu"] }}
                   render={({ field }) => {
                     const enHistory = form.watch("en.history");
@@ -476,6 +507,7 @@ export default function BuildingForm({
                 <FormField
                   control={form.control}
                   name={`${lang}.history`}
+                  defaultValue=""
                   rules={{ deps: ["en", "hu"] }}
                   render={({ field }) => {
                     const enStyle = form.watch("en.style");
@@ -517,6 +549,7 @@ export default function BuildingForm({
                 <FormField
                   control={form.control}
                   name={`${lang}.style`}
+                  defaultValue=""
                   rules={{ deps: ["en", "hu"] }}
                   render={({ field }) => {
                     const enHistory = form.watch("en.history");
@@ -558,6 +591,7 @@ export default function BuildingForm({
                 <FormField
                   control={form.control}
                   name={`${lang}.presentDay`}
+                  defaultValue=""
                   rules={{ deps: ["en", "hu"] }}
                   render={({ field }) => {
                     const enHistory = form.watch("en.history");
@@ -599,6 +633,7 @@ export default function BuildingForm({
                 <FormField
                   control={form.control}
                   name={`${lang}.famousResidents`}
+                  defaultValue=""
                   rules={{ deps: ["en", "hu"] }}
                   render={({ field }) => (
                     <FormItem>
@@ -613,6 +648,7 @@ export default function BuildingForm({
                 <FormField
                   control={form.control}
                   name={`${lang}.renovation`}
+                  defaultValue=""
                   rules={{ deps: ["en", "hu"] }}
                   render={({ field }) => (
                     <FormItem>
@@ -652,6 +688,7 @@ export default function BuildingForm({
             <FormField
               control={form.control}
               name={"creatorname"}
+              defaultValue=""
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("form.creatorname")}</FormLabel>
@@ -667,6 +704,7 @@ export default function BuildingForm({
             <FormField
               control={form.control}
               name={"creatoremail"}
+              defaultValue=""
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("form.creatoremail")}</FormLabel>
@@ -682,6 +720,7 @@ export default function BuildingForm({
             <FormField
               control={form.control}
               name={"source"}
+              defaultValue=""
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("form.source")}</FormLabel>
@@ -694,8 +733,16 @@ export default function BuildingForm({
                 </FormItem>
               )}
             />
-            <Button className="w-24" type="submit">
-              {t("common.submit")}
+            <Button
+              className="w-24"
+              type="submit"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
+                <Loader2 className="ml-2 animate-spin" />
+              ) : (
+                t("common.submit")
+              )}
             </Button>
           </Tabs>
         </form>
