@@ -320,8 +320,6 @@ function FileCard({
   featured?: boolean;
   onRemove: () => void;
 }) {
-  const t = useTranslations("fileUploader");
-
   if (isFileWithPreview(file)) {
     return (
       <>

@@ -19,7 +19,7 @@ export async function signUpWithEmail(data: FormData) {
     email: parsedData.email,
     password: parsedData.password,
     options: {
-      emailRedirectTo: getURL(),
+      emailRedirectTo: `${getURL()}/`,
     },
   });
 
@@ -47,7 +47,7 @@ export async function resend(email: string) {
     type: "signup",
     email,
     options: {
-      emailRedirectTo: getURL(),
+      emailRedirectTo: `${getURL()}/`,
     },
   });
 

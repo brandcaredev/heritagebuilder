@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui";
 import { Toggle } from "@/components/ui/toggle";
 import { Link } from "@/i18n/routing";
+import { getURL } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -79,7 +80,7 @@ const BuildingList = ({
               >
                 <div className="flex h-full w-full items-center">
                   <Image
-                    src={(building.featuredImage as Media).url ?? ""}
+                    src={`${getURL()}${(building.featuredImage as Media).url}`}
                     alt={building.name ?? "Building"}
                     width={100}
                     height={100}

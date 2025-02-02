@@ -12,6 +12,7 @@ import { LocaleType } from "@/lib/constans";
 import { getCountries } from "@/lib/queries/country";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getBuildings } from "@/lib/queries/building";
+import { getURL } from "@/lib/utils";
 
 const payload = await getPayload({ config });
 
@@ -57,7 +58,7 @@ export default async function MainPage(props: {
                   className="group relative aspect-[4/3] overflow-hidden rounded-lg"
                 >
                   <Image
-                    src={(country.image as Media).url ?? "/placeholder.svg"}
+                    src={`${getURL()}${(country.image as Media).url}`}
                     alt={country.name ?? t("page.countryImageAlt")}
                     width={600}
                     height={400}
@@ -104,7 +105,7 @@ export default async function MainPage(props: {
                 >
                   <div className="aspect-square">
                     <Image
-                      src={(building.featuredImage as Media).thumbnailURL ?? ""}
+                      src={`${getURL()}${(building.featuredImage as Media).thumbnailURL}`}
                       alt={building.name ?? t("building.imageAlt")}
                       width={50}
                       height={50}
@@ -139,7 +140,7 @@ export default async function MainPage(props: {
               className="group relative aspect-square overflow-hidden rounded-lg"
             >
               <Image
-                src={(type.image as Media).url ?? "/placeholder.svg"}
+                src={`${getURL()}${(type.image as Media).url}`}
                 alt={type.name ?? t("page.buildingTypeImageAlt")}
                 width={200}
                 height={200}
