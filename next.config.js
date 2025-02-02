@@ -12,6 +12,18 @@ const config = {
         protocol: "https",
         hostname: process.env.NEXT_PUBLIC_SUPABASE_URL?.split("//")[1] ?? "",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: process.env.NEXT_PUBLIC_VERCEL_URL ?? "localhost",
+      },
+      {
+        protocol: "http",
+        hostname: process.env.NEXT_PUBLIC_SITE_URL ?? "localhost",
+      },
     ],
   },
   experimental: {

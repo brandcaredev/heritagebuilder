@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Building, Media } from "payload-types";
-import { cn } from "@/lib/utils";
+import { cn, getURL } from "@/lib/utils";
 import {
   TooltipProvider,
   TooltipTrigger,
@@ -26,7 +26,7 @@ export default function BuildingCard({
     >
       <div className="relative h-[180px]">
         <Image
-          src={(building.featuredImage as Media)?.url || "/placeholder.svg"}
+          src={`${getURL()}${(building.featuredImage as Media).url}`}
           alt={building.name}
           fill
           style={{ objectFit: "cover" }}
