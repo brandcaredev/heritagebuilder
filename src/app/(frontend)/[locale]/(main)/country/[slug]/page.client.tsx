@@ -21,6 +21,7 @@ import {
 } from "payload-types";
 import { useState } from "react";
 import Image from "next/image";
+import { getURL } from "@/lib/utils";
 
 export default function CountryPage({
   country,
@@ -164,7 +165,7 @@ export default function CountryPage({
               className="group relative aspect-square overflow-hidden rounded-lg"
             >
               <Image
-                src={(type.image as Media).url ?? "/placeholder.svg"}
+                src={`${getURL()}${(type.image as Media).url}`}
                 alt={type.name ?? t("page.buildingTypeImageAlt")}
                 width={200}
                 height={200}
