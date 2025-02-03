@@ -1,34 +1,70 @@
 "use client";
 
 import { Input } from "@/components/ui";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toggle } from "@/components/ui/toggle";
-import { Link } from "@/i18n/routing";
-import { getURL } from "@/lib/utils";
+import { Link, useRouter } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
-import { Building, BuildingType, Media } from "payload-types";
+import { useSearchParams } from "next/navigation";
+import { Building, BuildingType } from "payload-types";
 import { useState } from "react";
+import BuildingCard from "../(main)/building-type/[slug]/building-card";
+import Pagination from "../(main)/building-type/[slug]/pagination";
 
 const BuildingList = ({
   buildingTypes,
   buildings,
+  buildingTypeFilter,
+  totalPages,
+  page,
+  title,
 }: {
   buildingTypes: BuildingType[];
   buildings: Building[];
+  buildingTypeFilter?: string;
+  totalPages: number;
+  page: number;
+  title?: string;
 }) => {
   const t = useTranslations();
+  const router = useRouter();
   const [articleSearch, setArticleSearch] = useState("");
-  const [buildingTypeFilter, setBuildingTypeFilter] = useState<null | number>(
-    null,
-  );
+  const [isLoading, setIsLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  const handleFilterChange = (
+    filterType: "search" | "building-type",
+    value: string | undefined,
+  ) => {
+    setIsLoading(true);
+    const params = new URLSearchParams(searchParams.toString());
+    if (filterType === "building-type") {
+      if (value === undefined) {
+        params.delete("buildingType");
+      } else {
+        params.set("buildingType", value);
+      }
+    }
+    params.set("page", "1"); // Reset to first page on filter change
+    console.log(params.toString());
+
+    //@ts-expect-error
+    router.push(`?${params.toString()}`, { scroll: false }); // Prevent page scroll
+    setTimeout(() => setIsLoading(false), 1000);
+  };
+
   return (
     <div className="mt-16">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-brown">
-          {t("common.buildings")}
+        <h2
+          className={cn("text-2xl font-bold text-brown", title && "text-4xl")}
+        >
+          {title ? title : t("common.buildings")}
         </h2>
         <div className="relative w-72">
+          {/*TODO*/}
           <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
           <Input
             placeholder={t("common.search")}
@@ -45,11 +81,15 @@ const BuildingList = ({
         </span>
         {buildingTypes.map((buildingType, index) => (
           <Toggle
+            pressed={buildingType.slug === buildingTypeFilter}
             key={"type" + index}
             variant="filter"
             onClick={() =>
-              setBuildingTypeFilter((prev) =>
-                prev === buildingType.id ? null : buildingType.id,
+              handleFilterChange(
+                "building-type",
+                buildingType.slug === buildingTypeFilter
+                  ? undefined
+                  : buildingType.slug,
               )
             }
           >
@@ -57,42 +97,30 @@ const BuildingList = ({
           </Toggle>
         ))}
       </div>
-
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {buildings
-          .filter(
-            (building) =>
-              building.name
-                .toLowerCase()
-                .includes(articleSearch.toLowerCase()) &&
-              (!buildingTypeFilter ||
-                (building.buildingType as BuildingType).id ===
-                  buildingTypeFilter),
-          )
-          .map((building, index) => {
-            return (
-              <Link
-                key={"building" + index}
-                href={{
-                  pathname: "/building/[slug]",
-                  params: { slug: building.slug },
-                }}
-              >
-                <div className="flex h-full w-full items-center">
-                  <Image
-                    src={`${getURL()}${(building.featuredImage as Media).url}`}
-                    alt={building.name ?? "Building"}
-                    width={100}
-                    height={100}
-                    className="aspect-square object-cover"
-                  />
-                  <div className="flex p-4">
-                    <h3 className="text-xl">{building.name}</h3>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+      <div
+        className={cn(
+          "relative flex flex-wrap items-center justify-center gap-6",
+          totalPages > 1 && "pb-[72px]",
+        )}
+      >
+        {buildings.map((building) => (
+          <Link
+            key={building.id}
+            href={{
+              pathname: "/building/[slug]",
+              params: { slug: building.slug },
+            }}
+          >
+            <BuildingCard
+              key={building.id}
+              building={building}
+              loading={isLoading}
+            />
+          </Link>
+        ))}
+        {totalPages > 1 && (
+          <Pagination currentPage={page} totalPages={totalPages} />
+        )}
       </div>
     </div>
   );

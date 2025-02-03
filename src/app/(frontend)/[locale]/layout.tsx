@@ -10,6 +10,8 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 import { Toaster } from "sonner";
+import IconLight from "@/public/hb-white.png";
+import IconDark from "@/public/hb.png";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -23,6 +25,18 @@ const sourceSans3 = Source_Sans_3({
 
 export const metadata: Metadata = {
   title: "Heritage Builder",
+  icons: [
+    {
+      media: "(prefers-color-scheme: light)",
+      url: IconDark.src,
+      type: "image/svg+xml",
+    },
+    {
+      media: "(prefers-color-scheme: dark)",
+      url: IconLight.src,
+      type: "image/svg+xml",
+    },
+  ],
 };
 
 export default async function FrontendLayout(

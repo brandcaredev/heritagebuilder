@@ -4,10 +4,10 @@ import { getBuildingTypeBySlug } from "@/lib/queries/building-type";
 import { getCountries } from "@/lib/queries/country";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { BuildingTypePage } from "./page.client";
+import { BuildingTypeClientPage } from "./page.client";
 import { LoaderCircle } from "lucide-react";
 
-const Page = async (props: {
+const BuildingTypePage = async (props: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;
 }) => {
@@ -74,7 +74,7 @@ const Page = async (props: {
         </div>
       }
     >
-      <BuildingTypePage
+      <BuildingTypeClientPage
         buildings={buildings}
         buildingType={buildingType}
         country={selectedCountry}
@@ -90,4 +90,4 @@ const Page = async (props: {
   );
 };
 
-export default Page;
+export default BuildingTypePage;

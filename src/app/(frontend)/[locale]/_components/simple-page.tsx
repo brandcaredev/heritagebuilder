@@ -10,13 +10,11 @@ const SimplePage = ({
   description,
   buildings,
   position,
-  buildingTypes,
 }: {
   name: string;
   description?: string | null;
   buildings: Building[];
   position?: [number, number] | null;
-  buildingTypes: BuildingType[];
 }) => {
   const BuildingsMap = dynamic(() => import("./buildings-map"), {
     loading: () => (
@@ -31,7 +29,7 @@ const SimplePage = ({
   });
 
   return (
-    <div className="flex flex-col">
+    <>
       <h1 className="text-brown-800 text-4xl font-bold">{name}</h1>
       <div className="flex h-fit flex-col gap-4 lg:flex-row">
         {description && (
@@ -41,7 +39,7 @@ const SimplePage = ({
               position ? "w-full lg:w-1/2" : "w-full",
             )}
           >
-            <p className="text-brown-700 mt-6">{description}</p>
+            <p className="mt-6 text-brown-700">{description}</p>
           </div>
         )}
         {position && (
@@ -56,8 +54,7 @@ const SimplePage = ({
           />
         )}
       </div>
-      <BuildingList buildings={buildings} buildingTypes={buildingTypes} />
-    </div>
+    </>
   );
 };
 export default SimplePage;

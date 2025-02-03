@@ -2,9 +2,9 @@ import type { CollectionConfig } from "payload";
 
 export const BuildingSuggestions: CollectionConfig = {
   slug: "building-suggestions",
-  // admin: {
-  //   hidden: true, // Hide from admin navigation since we'll show it inline
-  // },
+  admin: {
+    hidden: process.env.NODE_ENV === "production", // Hide from admin navigation since we'll show it inline
+  },
   fields: [
     {
       name: "building",

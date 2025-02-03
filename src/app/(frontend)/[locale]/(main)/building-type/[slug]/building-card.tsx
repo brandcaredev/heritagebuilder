@@ -14,7 +14,7 @@ export default function BuildingCard({
   loading,
 }: {
   building: Building;
-  loading: boolean;
+  loading?: boolean;
 }) {
   return (
     <Card

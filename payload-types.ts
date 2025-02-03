@@ -448,6 +448,7 @@ export interface Search {
     value: number | Building;
   };
   name: string;
+  summary: string;
   slug: string;
   buildingType: number | BuildingType;
   featuredImage: number | BuildingsMedia;
@@ -875,6 +876,7 @@ export interface SearchSelect<T extends boolean = true> {
   priority?: T;
   doc?: T;
   name?: T;
+  summary?: T;
   slug?: T;
   buildingType?: T;
   featuredImage?: T;

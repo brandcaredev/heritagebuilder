@@ -26,11 +26,9 @@ import { getURL } from "@/lib/utils";
 export default function CountryPage({
   country,
   buildingTypes,
-  countryBuildings,
 }: {
   country: Country;
   buildingTypes: BuildingType[];
-  countryBuildings: Building[];
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -51,9 +49,8 @@ export default function CountryPage({
   };
 
   return (
-    <div>
+    <>
       <h1 className="text-4xl font-bold text-brown">{country.name}</h1>
-
       <div className="mt-16 flex flex-col gap-10 lg:flex-row">
         {/* Map Section */}
         <div
@@ -179,10 +176,6 @@ export default function CountryPage({
           );
         })}
       </div>
-      <BuildingList
-        buildingTypes={buildingTypes}
-        buildings={countryBuildings}
-      />
-    </div>
+    </>
   );
 }
