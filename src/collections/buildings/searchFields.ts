@@ -9,6 +9,13 @@ export const searchFields: Field[] = [
     index: true,
   },
   {
+    name: "summary",
+    type: "text",
+    required: true,
+    localized: true,
+    index: true,
+  },
+  {
     name: "slug",
     type: "text",
     required: true,

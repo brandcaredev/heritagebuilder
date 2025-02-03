@@ -98,7 +98,11 @@ export default buildConfig({
       searchOverrides: {
         slug: "search",
         fields: ({ defaultFields }) => [...defaultFields, ...searchFields],
-        admin: { defaultColumns: ["slug", "name"], useAsTitle: "name" },
+        admin: {
+          defaultColumns: ["slug", "name"],
+          useAsTitle: "name",
+          hidden: process.env.NODE_ENV === "production",
+        },
       },
       beforeSync: beforeSyncWithSearch,
     }),

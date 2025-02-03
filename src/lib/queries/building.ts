@@ -7,8 +7,8 @@ import { unstable_cache } from "next/cache";
 const payload = await getPayload({ config });
 
 export const searchBuildings = unstable_cache(
-  async (q: string, locale: LocaleType) => {
-    const { docs: buildings } = await payload.find({
+  async (q: string, locale: LocaleType, limit?: number, page?: number) => {
+    const { docs: buildings, totalPages } = await payload.find({
       collection: "search",
       locale: locale,
       where: {
@@ -35,8 +35,10 @@ export const searchBuildings = unstable_cache(
           },
         ],
       },
+      limit: limit || 10,
+      page,
     });
-    return buildings;
+    return { buildings, totalPages };
   },
   [],
   { tags: ["buildings"] },
@@ -44,6 +46,7 @@ export const searchBuildings = unstable_cache(
 
 export const getBuildingBySlug = unstable_cache(
   async (locale: LocaleType, slug: string) => {
+    console.log(slug);
     const { docs: building } = await payload.find({
       collection: "buildings",
       locale: locale,

@@ -84,7 +84,7 @@ export const buildingRouter = createTRPCRouter({
     .input(z.object({ q: z.string(), lang: z.string() }))
     .query(
       async ({ input: { q, lang } }) =>
-        await searchBuildings(q, lang as LocaleType),
+        (await searchBuildings(q, lang as LocaleType)).buildings,
     ),
   getLanguageBuildingSlug: publicProcedure
     .input(z.object({ slug: z.string(), nextLang: z.string() }))
