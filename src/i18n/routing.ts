@@ -40,6 +40,10 @@ export const routing = defineRouting({
       en: "/building-type/[slug]",
       hu: "/épület-típus/[slug]",
     },
+    "/search/[slug]": {
+      en: "/search/[slug]",
+      hu: "/keresés/[slug]",
+    },
     "/terms-of-service": {
       en: "/terms-of-service",
       hu: "/szerződés",
@@ -76,6 +80,7 @@ export const routing = defineRouting({
       en: "/reset-password",
       hu: "/jelszó-visszaállítás",
     },
+
     admin: "admin",
   },
 });

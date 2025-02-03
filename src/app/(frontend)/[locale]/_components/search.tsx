@@ -55,8 +55,12 @@ const ExpandableSearch = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle search submission here
-    console.log("Search submitted:", inputRef.current?.value);
+    if (!inputRef.current?.value) return;
+    router.push({
+      pathname: "/search/[slug]",
+      params: { slug: inputRef.current.value },
+    });
+    setIsOpen(false);
   };
 
   return (

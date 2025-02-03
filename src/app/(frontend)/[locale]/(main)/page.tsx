@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import { Link } from "@/i18n/routing";
 import Divider from "@/components/icons/divider";
 import { getTranslations } from "next-intl/server";
@@ -13,6 +12,7 @@ import { getCountries } from "@/lib/queries/country";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getBuildings } from "@/lib/queries/building";
 import { getURL } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const payload = await getPayload({ config });
 
@@ -34,7 +34,7 @@ export default async function MainPage(props: {
       },
     },
   });
-  const buildings = await getBuildings(locale, 6);
+  const buildings = await getBuildings(locale, 10);
 
   return (
     <div className="flex flex-col gap-10">
@@ -86,13 +86,13 @@ export default async function MainPage(props: {
           <Divider />
         </div>
 
-        {/* TODO: Slice based on size */}
         {/* Latest Buildings Sidebar */}
         <div className="lg:w-2/6">
           <h2 className="mb-6 text-4xl font-bold text-brown">
             {t("page.latestBuildings")}
           </h2>
-          <div className="space-y-4 text-brown-900">
+          {/* TODO: SADLY THIS NEEDS TO SCALE WHEN ADDING NEW COUNTRIES */}
+          <ScrollArea className="mt-0 lg:h-[550px] 2xl:h-[600px]">
             {buildings.map((building) => {
               return (
                 <Link
@@ -101,15 +101,14 @@ export default async function MainPage(props: {
                     pathname: "/building/[slug]",
                     params: { slug: building.slug },
                   }}
-                  className="group relative flex items-center gap-4"
+                  className="group relative mb-4 flex items-center gap-4"
                 >
-                  <div className="aspect-square">
+                  <div className="relative aspect-square h-[50px] w-[50px]">
                     <Image
                       src={`${getURL()}${(building.featuredImage as Media).thumbnailURL}`}
                       alt={building.name ?? t("building.imageAlt")}
-                      width={50}
-                      height={50}
-                      className="h-full w-full rounded object-cover"
+                      fill
+                      className="rounded object-cover"
                     />
                   </div>
                   <div>
@@ -123,7 +122,7 @@ export default async function MainPage(props: {
                 </Link>
               );
             })}
-          </div>
+          </ScrollArea>
         </div>
       </div>
 

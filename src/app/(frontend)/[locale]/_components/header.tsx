@@ -7,6 +7,9 @@ import LocaleSwitcher from "./language-switcher";
 import ExpandableSearch from "./search";
 import { Suspense } from "react";
 import { getCountries } from "@/lib/queries/country";
+import HBLogo from "@/public/hb-white.png";
+import HBRow from "@/public/hb-row.png";
+import Image from "next/image";
 
 export async function Header() {
   const locale = (await getLocale()) as LocaleType;
@@ -16,8 +19,8 @@ export async function Header() {
     <header className="bg-brown text-stone-100">
       <div className="mx-auto px-2 py-2 md:container md:px-8">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-2xl">
-            Heritage builder
+          <Link href="/">
+            <Image src={HBRow} alt="Heritage Builder" width={77} />
           </Link>
           <nav className="hidden space-x-8 md:flex">
             {countries.map((country) => (

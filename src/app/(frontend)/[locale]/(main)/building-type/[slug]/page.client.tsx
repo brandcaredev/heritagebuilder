@@ -8,8 +8,9 @@ import Pagination from "./pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 
-export const BuildingTypePage = ({
+export const BuildingTypeClientPage = ({
   buildings,
   buildingType,
   country,
@@ -57,7 +58,7 @@ export const BuildingTypePage = ({
         />
       </Suspense>
       <ScrollArea className="mt-4 h-[calc(100vh-312px-56px)] pb-[72px]">
-        <div className="flex flex-wrap items-center justify-center gap-6">
+        <div className={cn("flex flex-wrap items-center justify-center gap-6")}>
           {buildings.map((building) => (
             <Link
               key={building.id}
@@ -75,7 +76,9 @@ export const BuildingTypePage = ({
           ))}
         </div>
       </ScrollArea>
-      <Pagination currentPage={page} totalPages={totalPages} />
+      {totalPages > 1 && (
+        <Pagination currentPage={page} totalPages={totalPages} />
+      )}
     </div>
   );
 };

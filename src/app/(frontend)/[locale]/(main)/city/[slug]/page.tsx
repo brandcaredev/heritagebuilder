@@ -6,32 +6,39 @@ import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCityBySlug } from "@/lib/queries/city";
 import { notFound } from "next/navigation";
 import { Country, County } from "payload-types";
-import SimplePage from "../../../_components/simple-page";
+import BuildingList from "@/_components/building-list";
+import SimplePage from "@/_components/simple-page";
 
-interface Props {
-  params: Promise<{
-    locale: LocaleType;
-    slug: string;
-  }>;
-}
-
-export default async function CityPage(props: Props) {
+const CityPage = async (props: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+  params: Promise<{ slug: string; locale: LocaleType }>;
+}) => {
   const params = await props.params;
-
-  const { locale, slug } = params;
+  const { slug, locale } = params;
+  const searchParams = await props.searchParams;
+  if (!slug) return notFound();
 
   const city = await getCityBySlug(locale, slug);
-
   const buildingTypes = await getBuildingTypes(locale);
-  if (!city) {
-    notFound();
-  }
+  if (!city) return notFound();
 
-  const { buildings: cityBuildings } = await getBuildingsByFilter(locale, {
-    city: {
-      equals: city.id,
+  const page =
+    typeof searchParams?.page === "string" ? Number(searchParams.page) : 1;
+  const { buildings, totalPages } = await getBuildingsByFilter(
+    locale,
+    {
+      city: {
+        equals: city.id,
+      },
+      ...(searchParams?.buildingType && {
+        "buildingType.slug": {
+          equals: searchParams.buildingType as string,
+        },
+      }),
     },
-  });
+    12,
+    page,
+  );
   const cityCountry = city.country as Country;
   const cityCounty = city.county as County;
   return (
@@ -58,13 +65,23 @@ export default async function CityPage(props: Props) {
         />
         <Divider orientation="horizontal" />
       </div>
-      <SimplePage
-        name={city.name}
-        description={city.description}
-        buildings={cityBuildings}
-        position={city.position}
-        buildingTypes={buildingTypes}
-      />
+      <div className="flex flex-col">
+        <SimplePage
+          name={city.name}
+          description={city.description}
+          buildings={buildings}
+          position={city.position}
+        />
+        <BuildingList
+          buildings={buildings}
+          buildingTypes={buildingTypes}
+          buildingTypeFilter={searchParams?.buildingType as string}
+          totalPages={totalPages}
+          page={page}
+        />
+      </div>
     </div>
   );
-}
+};
+
+export default CityPage;

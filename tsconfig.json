@@ -39,7 +39,10 @@
       ],
       "@payload-config": [
         "./payload.config.ts"
-      ]
+      ],
+      "@/public/*": [
+        "./public/*"
+      ],
     }
   },
   "include": [
