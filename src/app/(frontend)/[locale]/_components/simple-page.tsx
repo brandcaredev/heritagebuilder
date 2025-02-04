@@ -1,9 +1,8 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { Building, BuildingType } from "payload-types";
-import BuildingList from "./building-list";
-import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
+import { Building } from "payload-types";
 
 const SimplePage = ({
   name,

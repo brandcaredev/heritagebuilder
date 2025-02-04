@@ -265,7 +265,7 @@ export default function BuildingForm({
       const hasEnglishData =
         values.en &&
         Object.entries(values.en).some(
-          ([key, value]) => value && value.trim() !== "",
+          ([_, value]) => value && value.trim() !== "",
         );
 
       if (hasEnglishData && values.en) {

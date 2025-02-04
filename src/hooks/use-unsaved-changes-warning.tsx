@@ -1,7 +1,7 @@
 import { useDocumentInfo } from "@payloadcms/ui";
 import { useCallback, useEffect } from "react";
 
-export const useUnsavedChangesWarning = (enabled: boolean = true) => {
+export const useUnsavedChangesWarning = (enabled = true) => {
   const modified = useDocumentInfo();
 
   const handleBeforeUnload = useCallback(

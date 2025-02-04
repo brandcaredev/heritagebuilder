@@ -1,7 +1,6 @@
 "use client";
 
 import { Input } from "@/components/ui";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toggle } from "@/components/ui/toggle";
 import { Link, useRouter } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
