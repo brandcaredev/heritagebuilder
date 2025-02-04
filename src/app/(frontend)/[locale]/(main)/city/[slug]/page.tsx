@@ -35,6 +35,20 @@ const CityPage = async (props: {
           equals: searchParams.buildingType as string,
         },
       }),
+      ...(searchParams?.q && {
+        or: [
+          {
+            name: {
+              like: searchParams.q,
+            },
+          },
+          {
+            summary: {
+              like: searchParams.q,
+            },
+          },
+        ],
+      }),
     },
     12,
     page,
