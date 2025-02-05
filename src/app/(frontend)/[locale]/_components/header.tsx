@@ -1,15 +1,14 @@
 import { Link } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
+import { getCountries } from "@/lib/queries/country";
+import HBRow from "@/public/hb-row.png";
 import { MapIcon } from "lucide-react";
 import { getLocale } from "next-intl/server";
+import Image from "next/image";
+import { Suspense } from "react";
 import AccountButton from "./account-button";
 import LocaleSwitcher from "./language-switcher";
 import ExpandableSearch from "./search";
-import { Suspense } from "react";
-import { getCountries } from "@/lib/queries/country";
-import HBLogo from "@/public/hb-white.png";
-import HBRow from "@/public/hb-row.png";
-import Image from "next/image";
 
 export async function Header() {
   const locale = (await getLocale()) as LocaleType;

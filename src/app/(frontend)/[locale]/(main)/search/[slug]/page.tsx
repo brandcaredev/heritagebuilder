@@ -25,6 +25,13 @@ const SearchPage = async (props: {
     locale,
     12,
     page,
+    {
+      ...(searchParams?.buildingType && {
+        "buildingType.slug": {
+          equals: searchParams.buildingType as string,
+        },
+      }),
+    },
   );
 
   return (
@@ -41,6 +48,7 @@ const SearchPage = async (props: {
           buildingTypeFilter={searchParams?.buildingType as string}
           totalPages={totalPages}
           page={page}
+          searchPage
         />
       </div>
     </div>

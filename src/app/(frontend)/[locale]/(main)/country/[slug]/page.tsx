@@ -29,8 +29,22 @@ const CountryMainPage = async (props: {
       },
       ...(searchParams?.buildingType && {
         "buildingType.slug": {
-          equals: searchParams.buildingType as string,
+          equals: searchParams.buildingType,
         },
+      }),
+      ...(searchParams?.q && {
+        or: [
+          {
+            name: {
+              like: searchParams.q,
+            },
+          },
+          {
+            summary: {
+              like: searchParams.q,
+            },
+          },
+        ],
       }),
     },
     12,

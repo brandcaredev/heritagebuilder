@@ -1,4 +1,6 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
+import { checkSlugUniqueness } from "@/hooks/slug-uniqueness";
+import { formatSlug } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
@@ -11,6 +13,7 @@ export const Buildings: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      index: true,
       admin: {
         components: {
           Field: "@/collections/buildings/field-with-suggestions",
@@ -22,6 +25,13 @@ export const Buildings: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      index: true,
+      hooks: {
+        beforeValidate: [formatSlug("name")],
+      },
+      admin: {
+        position: "sidebar",
+      },
     },
     {
       name: "summary",
@@ -152,16 +162,25 @@ export const Buildings: CollectionConfig = {
   ],
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["id", "name", "summary", "_status", "suggestionsCount"],
+    defaultColumns: [
+      "id",
+      "slug",
+      "name",
+      "summary",
+      "_status",
+      "suggestionsCount",
+    ],
   },
   versions: {
-    drafts: {
-      autosave: true,
-    },
+    drafts: true,
   },
   hooks: {
     beforeChange: [
-      async ({ data, context }) => {
+      async (args) => {
+        await checkSlugUniqueness("buildings")(args);
+        const { data, context, operation } = args;
+        if (operation !== "create") return;
+
         // Store the temporary image IDs in context.imageIds
         let temporaryImageIds = [] as string[];
         if (data.featuredImage) {

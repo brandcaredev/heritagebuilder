@@ -1,6 +1,5 @@
 import NewBuildingForm from "@/_components/new-building";
 import { LocaleType } from "@/lib/constans";
-import { getBuildings } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountriesCodes } from "@/lib/queries/country";
 

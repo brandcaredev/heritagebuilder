@@ -1,4 +1,6 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
+import { checkSlugUniqueness } from "@/hooks/slug-uniqueness";
+import { formatSlug } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
@@ -11,6 +13,7 @@ export const Countries: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      index: true,
     },
     {
       name: "countryCode",
@@ -22,6 +25,10 @@ export const Countries: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      index: true,
+      hooks: {
+        beforeValidate: [formatSlug("name")],
+      },
     },
     {
       name: "image",
@@ -68,11 +75,10 @@ export const Countries: CollectionConfig = {
     defaultColumns: ["id", "name", "slug", "countryCode", "_status"],
   },
   versions: {
-    drafts: {
-      autosave: true,
-    },
+    drafts: true,
   },
   hooks: {
+    beforeChange: [checkSlugUniqueness("countries")],
     afterChange: [
       ({ doc, previousDoc }) => {
         if (doc._status === "draft" && previousDoc?._status !== "published") {
