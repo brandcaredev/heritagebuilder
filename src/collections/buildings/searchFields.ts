@@ -11,7 +11,6 @@ export const searchFields: Field[] = [
   {
     name: "summary",
     type: "text",
-    required: true,
     localized: true,
     index: true,
   },
