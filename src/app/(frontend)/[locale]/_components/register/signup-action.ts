@@ -7,6 +7,8 @@ export async function signUpWithEmail(data: FormData) {
   const formData = Object.fromEntries(data);
   const { success, data: parsedData } = signUpSchema.safeParse(formData);
 
+  console.log("GETURL", getURL());
+
   if (!success) {
     return {
       message: "Invalid data",
