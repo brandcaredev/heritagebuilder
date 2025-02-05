@@ -1,4 +1,6 @@
 "use client";
+import EnFlag from "@/components/icons/en-flag";
+import HunFlag from "@/components/icons/hun-flag";
 import { usePathname } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
 import { api } from "@/trpc/react";
@@ -7,8 +9,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 const languages = [
-  { label: "EN", value: "en", flag: "🇬🇧" },
-  { label: "HU", value: "hu", flag: "🇭🇺" },
+  { label: "EN", value: "en", flag: EnFlag },
+  { label: "HU", value: "hu", flag: HunFlag },
 ] as const;
 
 type SlugPages =
@@ -88,13 +90,14 @@ export default function LocaleSwitcher() {
   };
 
   const nextLanguage = locale === "en" ? languages[1] : languages[0];
+  const Flag = nextLanguage.flag;
 
   return (
     <button
       onClick={onButtonClick}
-      className="flex appearance-none items-center justify-center pt-1 text-[20px]"
+      className="flex appearance-none items-center justify-center text-[20px]"
     >
-      {nextLanguage.flag}
+      <Flag />
     </button>
   );
 }
