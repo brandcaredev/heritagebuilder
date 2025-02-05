@@ -448,7 +448,7 @@ export interface Search {
     value: number | Building;
   };
   name: string;
-  summary: string;
+  summary?: string | null;
   slug: string;
   buildingType: number | BuildingType;
   featuredImage: number | BuildingsMedia;
