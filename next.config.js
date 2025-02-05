@@ -21,8 +21,9 @@ const config = {
         hostname: process.env.NEXT_PUBLIC_VERCEL_URL ?? "localhost",
       },
       {
-        protocol: "http",
-        hostname: process.env.NEXT_PUBLIC_SITE_URL ?? "localhost",
+        protocol: "https",
+        hostname:
+          process.env.NEXT_PUBLIC_SITE_URL?.split("//")[1] ?? "localhost",
       },
     ],
   },
