@@ -1,6 +1,5 @@
 "use client";
 
-import BuildingList from "@/_components/building-list";
 import Divider from "@/components/icons/divider";
 import Romania from "@/components/icons/romania";
 import Serbia from "@/components/icons/serbia";
@@ -8,20 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useRouter } from "@/i18n/routing";
+import { getURL } from "@/lib/utils";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import {
-  Building,
-  BuildingType,
-  City,
-  Country,
-  County,
-  Media,
-} from "payload-types";
-import { useState } from "react";
 import Image from "next/image";
-import { getURL } from "@/lib/utils";
+import { BuildingType, City, Country, County, Media } from "payload-types";
+import { useState } from "react";
 
 export default function CountryPage({
   country,

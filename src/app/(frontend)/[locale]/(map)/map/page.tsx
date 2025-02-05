@@ -14,8 +14,8 @@ export default async function MapPage(props: {
   return (
     <BuildingsMap
       buildings={buildings}
-      //footer 248 padding 2*32 header 56
-      className="max-w-screen h-[calc(100vh-48px-70px)] md:-m-8 md:h-[calc(100vh-312px-56px)]"
+      //footer 248 header 56
+      className="h-[calc(100vh-56px)]"
     />
   );
 }

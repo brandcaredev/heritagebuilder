@@ -1,7 +1,6 @@
 "use client";
 
 import { Input } from "@/components/ui";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toggle } from "@/components/ui/toggle";
 import { Link, useRouter } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
@@ -20,6 +19,7 @@ const BuildingList = ({
   totalPages,
   page,
   title,
+  searchPage,
 }: {
   buildingTypes: BuildingType[];
   buildings: Building[];
@@ -27,6 +27,7 @@ const BuildingList = ({
   totalPages: number;
   page: number;
   title?: string;
+  searchPage?: boolean;
 }) => {
   const t = useTranslations();
   const router = useRouter();
@@ -46,12 +47,27 @@ const BuildingList = ({
       } else {
         params.set("buildingType", value);
       }
+    } else if (filterType === "search") {
+      if (value === "" || value === undefined) {
+        params.delete("q");
+      } else {
+        params.set("q", value);
+      }
     }
     params.set("page", "1"); // Reset to first page on filter change
     console.log(params.toString());
 
     //@ts-expect-error
     router.push(`?${params.toString()}`, { scroll: false }); // Prevent page scroll
+    setTimeout(() => setIsLoading(false), 1000);
+  };
+
+  const handleSubmit = () => {
+    setIsLoading(true);
+    router.push({
+      pathname: "/search/[slug]",
+      params: { slug: articleSearch },
+    });
     setTimeout(() => setIsLoading(false), 1000);
   };
 
@@ -63,16 +79,30 @@ const BuildingList = ({
         >
           {title ? title : t("common.buildings")}
         </h2>
-        <div className="relative w-72">
-          {/*TODO*/}
-          <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
-          <Input
-            placeholder={t("common.search")}
-            value={articleSearch}
-            onChange={(e) => setArticleSearch(e.target.value)}
-            className="rounded-xl pl-8"
-          />
-        </div>
+        <form
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+            e.preventDefault();
+            if (searchPage) {
+              if (!articleSearch) return;
+              handleSubmit();
+            } else {
+              handleFilterChange("search", articleSearch);
+            }
+          }}
+          className="mt-4"
+        >
+          <div className="relative w-72">
+            {/*TODO*/}
+            <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
+            <Input
+              placeholder={t("common.search")}
+              value={articleSearch}
+              onChange={(e) => setArticleSearch(e.target.value)}
+              className="rounded-xl pl-8"
+              type="search"
+            />
+          </div>
+        </form>
       </div>
 
       <div className="mb-8 flex items-center gap-4 overflow-x-auto rounded-sm bg-brown-200 p-2">

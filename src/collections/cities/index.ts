@@ -1,4 +1,6 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
+import { checkSlugUniqueness } from "@/hooks/slug-uniqueness";
+import { formatSlug } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
@@ -11,12 +13,17 @@ export const Cities: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      index: true,
     },
     {
       name: "slug",
       type: "text",
       required: true,
       localized: true,
+      index: true,
+      hooks: {
+        beforeValidate: [formatSlug("name")],
+      },
     },
     {
       name: "description",
@@ -61,11 +68,10 @@ export const Cities: CollectionConfig = {
     defaultColumns: ["name", "slug", "description", "_status"],
   },
   versions: {
-    drafts: {
-      autosave: true,
-    },
+    drafts: true,
   },
   hooks: {
+    beforeChange: [checkSlugUniqueness("cities")],
     afterChange: [
       ({ doc, previousDoc }) => {
         if (doc._status === "draft" && previousDoc?._status !== "published") {
