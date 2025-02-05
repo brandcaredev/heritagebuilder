@@ -30,7 +30,7 @@ export default function Register({
   const [confirmActive, setConfirmActive] = useState(false);
   const [resendActive, setResendActive] = useState(false);
   const [email, setEmail] = useState("");
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -91,8 +91,8 @@ export default function Register({
             </h1>
           </DialogTitle>
         </DialogHeader>
-        <p className="text-brown-900 text-center">{t("auth.checkEmail")}</p>
-        <p className="text-brown-900 text-center text-xl font-bold">
+        <p className="text-center text-brown-900">{t("auth.checkEmail")}</p>
+        <p className="text-center text-xl font-bold text-brown-900">
           {Math.floor(timeLeft / 60)}:
           {(timeLeft % 60).toString().padStart(2, "0")}
         </p>
@@ -148,7 +148,7 @@ export default function Register({
                 autoComplete="email"
                 autoCorrect="off"
                 disabled={isLoading}
-                className="text-brown-900 placeholder:text-brown-200 bg-white-2"
+                className="bg-white-2 text-brown-900 placeholder:text-brown-200"
                 {...register("email")}
               />
               {errors.email && (
@@ -163,7 +163,7 @@ export default function Register({
                 id="password"
                 type="password"
                 disabled={isLoading}
-                className="text-brown-900 placeholder:text-brown-200 bg-white-2"
+                className="bg-white-2 text-brown-900 placeholder:text-brown-200"
                 {...register("password")}
               />
               {errors.password && (
@@ -180,7 +180,7 @@ export default function Register({
                 id="confirmPassword"
                 type="password"
                 disabled={isLoading}
-                className="text-brown-900 placeholder:text-brown-200 bg-white-2"
+                className="bg-white-2 text-brown-900 placeholder:text-brown-200"
                 {...register("confirmPassword")}
               />
               {errors.confirmPassword && (
