@@ -1,24 +1,40 @@
-import Image from "next/image";
-import { Link } from "@/i18n/routing";
-import Divider from "@/components/icons/divider";
-import { getTranslations } from "next-intl/server";
-import VideoCarousel from "../_components/video-carousel";
-import Newsletter from "../_components/newsletter";
-import { getPayload } from "payload";
-import config from "@payload-config";
-import { City, Country, Media } from "payload-types";
-import { LocaleType } from "@/lib/constans";
-import { getCountries } from "@/lib/queries/country";
-import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getBuildings } from "@/lib/queries/building";
-import { getURL } from "@/lib/utils";
+import { Divider } from "@/components/icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Link } from "@/i18n/routing";
+import { LocaleType } from "@/lib/constans";
+import { getBuildings } from "@/lib/queries/building";
+import { getBuildingTypes } from "@/lib/queries/building-type";
+import { getCountries } from "@/lib/queries/country";
+import { getURL } from "@/lib/utils";
+import config from "@payload-config";
+import { getTranslations } from "next-intl/server";
+import Image from "next/image";
+import { getPayload } from "payload";
+import { City, Country, Media } from "payload-types";
+import Newsletter from "../_components/newsletter";
+import VideoCarousel from "../_components/video-carousel";
+import { Metadata, ResolvingMetadata } from "next";
+
+type Props = {
+  params: Promise<{ locale: LocaleType }>;
+};
 
 const payload = await getPayload({ config });
 
-export default async function MainPage(props: {
-  params: Promise<{ locale: LocaleType }>;
-}) {
+export const generateMetadata = async (
+  { params }: Props,
+  parent: ResolvingMetadata,
+): Promise<Metadata> => {
+  const locale = await params;
+  const t = await getTranslations(locale);
+  const title = (await parent).title || "Heritage Builder";
+  return {
+    title,
+    description: t("description"),
+  };
+};
+
+const MainPage = async (props: Props) => {
   const params = await props.params;
   const { locale } = params;
   const t = await getTranslations();
@@ -59,7 +75,7 @@ export default async function MainPage(props: {
                 >
                   <Image
                     src={`${getURL()}${(country.image as Media).url}`}
-                    alt={country.name ?? t("page.countryImageAlt")}
+                    alt={country.name + "country image"}
                     width={600}
                     height={400}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -106,7 +122,7 @@ export default async function MainPage(props: {
                   <div className="relative aspect-square h-[50px] w-[50px]">
                     <Image
                       src={`${getURL()}${(building.featuredImage as Media).thumbnailURL}`}
-                      alt={building.name ?? t("building.imageAlt")}
+                      alt={building.name + "building image"}
                       fill
                       className="rounded object-cover"
                     />
@@ -140,7 +156,7 @@ export default async function MainPage(props: {
             >
               <Image
                 src={`${getURL()}${(type.image as Media).url}`}
-                alt={type.name ?? t("page.buildingTypeImageAlt")}
+                alt={type.name + "building type image"}
                 width={200}
                 height={200}
                 className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -170,4 +186,5 @@ export default async function MainPage(props: {
       {youtubeLinks.length > 0 && <VideoCarousel videos={youtubeLinks} />}
     </div>
   );
-}
+};
+export default MainPage;

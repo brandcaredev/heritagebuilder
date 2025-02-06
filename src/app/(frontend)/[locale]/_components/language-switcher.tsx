@@ -1,6 +1,5 @@
 "use client";
-import EnFlag from "@/components/icons/en-flag";
-import HunFlag from "@/components/icons/hun-flag";
+import { Icons } from "@/components/icons";
 import { usePathname } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
 import { api } from "@/trpc/react";
@@ -9,8 +8,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 const languages = [
-  { label: "EN", value: "en", flag: EnFlag },
-  { label: "HU", value: "hu", flag: HunFlag },
+  { label: "EN", value: "en", flag: Icons.enFlag },
+  { label: "HU", value: "hu", flag: Icons.hunFlag },
 ] as const;
 
 type SlugPages =

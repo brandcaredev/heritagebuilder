@@ -36,7 +36,7 @@ export async function Header() {
             ))}
           </nav>
           <div className="flex items-center space-x-4">
-            <Link href={{ pathname: "/map" }} className="hover:text-stone-300">
+            <Link href={{ pathname: "/map" }} className="hover:text-stone-300" aria-label="Map">
               <MapIcon className="h-5 w-5" />
             </Link>
             <Suspense>

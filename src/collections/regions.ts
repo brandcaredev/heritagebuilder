@@ -24,6 +24,10 @@ export const Regions: CollectionConfig = {
       hooks: {
         beforeValidate: [formatSlug("name")],
       },
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+      },
     },
     {
       name: "country",
@@ -40,6 +44,7 @@ export const Regions: CollectionConfig = {
   ],
   admin: {
     useAsTitle: "name",
+    defaultColumns: ["id", "name", "slug", "_status"],
   },
   versions: {
     drafts: true,

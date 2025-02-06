@@ -24,6 +24,10 @@ export const BuildingTypes: CollectionConfig = {
       hooks: {
         beforeValidate: [formatSlug("name")],
       },
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+      },
     },
     {
       name: "image",
@@ -45,6 +49,7 @@ export const BuildingTypes: CollectionConfig = {
   ],
   admin: {
     useAsTitle: "name",
+    defaultColumns: ["id", "name", "slug", "_status"],
   },
   versions: {
     drafts: true,

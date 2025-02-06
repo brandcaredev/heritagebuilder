@@ -1,4 +1,4 @@
-function Romania({ onClick }: { onClick: (id: number) => void }) {
+export const Romania = ({ onClick }: { onClick: (id: number) => void }) => {
   return (
     <svg width="612.36395" height="432.29416" className="map">
       <path
@@ -302,5 +302,4 @@ function Romania({ onClick }: { onClick: (id: number) => void }) {
       />
     </svg>
   );
-}
-export default Romania;
+};

@@ -29,6 +29,10 @@ export const Countries: CollectionConfig = {
       hooks: {
         beforeValidate: [formatSlug("name")],
       },
+      admin: {
+        position: "sidebar",
+        readOnly: true,
+      },
     },
     {
       name: "image",

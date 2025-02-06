@@ -16,7 +16,7 @@ export const Buildings: CollectionConfig = {
       index: true,
       admin: {
         components: {
-          Field: "@/collections/buildings/field-with-suggestions",
+          Field: "@/collections/buildings/field-with-suggestions#default",
         },
       },
     },
@@ -31,6 +31,7 @@ export const Buildings: CollectionConfig = {
       },
       admin: {
         position: "sidebar",
+        readOnly: true,
       },
     },
     {
@@ -40,7 +41,7 @@ export const Buildings: CollectionConfig = {
       required: true,
       admin: {
         components: {
-          Field: "@/collections/buildings/field-with-suggestions",
+          Field: "@/collections/buildings/field-with-suggestions#default",
         },
       },
     },
@@ -57,7 +58,7 @@ export const Buildings: CollectionConfig = {
       required: true,
       admin: {
         components: {
-          Field: "@/collections/buildings/field-with-suggestions",
+          Field: "@/collections/buildings/field-with-suggestions#default",
         },
       },
     },
@@ -68,7 +69,7 @@ export const Buildings: CollectionConfig = {
       required: true,
       admin: {
         components: {
-          Field: "@/collections/buildings/field-with-suggestions",
+          Field: "@/collections/buildings/field-with-suggestions#default",
         },
       },
     },
@@ -79,7 +80,7 @@ export const Buildings: CollectionConfig = {
       required: true,
       admin: {
         components: {
-          Field: "@/collections/buildings/field-with-suggestions",
+          Field: "@/collections/buildings/field-with-suggestions#default",
         },
       },
     },
@@ -89,7 +90,7 @@ export const Buildings: CollectionConfig = {
       localized: true,
       admin: {
         components: {
-          Field: "@/collections/buildings/field-with-suggestions",
+          Field: "@/collections/buildings/field-with-suggestions#default",
         },
       },
     },
@@ -99,7 +100,7 @@ export const Buildings: CollectionConfig = {
       localized: true,
       admin: {
         components: {
-          Field: "@/collections/buildings/field-with-suggestions",
+          Field: "@/collections/buildings/field-with-suggestions#default",
         },
       },
     },

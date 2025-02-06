@@ -1,7 +1,6 @@
 "use client";
 import { FileUploader } from "@/components/file-uploader";
-import CastleIcon from "@/components/icons/castle";
-import Divider from "@/components/icons/divider";
+import { Icons, Divider } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -324,7 +323,7 @@ export default function BuildingForm({
           </DialogHeader>
           <div className="flex flex-col items-center space-y-4 p-6 text-center">
             <div className="text-brown-700">
-              <CastleIcon width={64} height={64} />
+              <Icons.castle width={64} height={64} />
             </div>
             <p className="text-gray-600">{t("successDialog.uploadSuccess")}</p>
             <p className="text-gray-600">{t("successDialog.description")}</p>

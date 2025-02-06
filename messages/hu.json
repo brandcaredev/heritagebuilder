@@ -91,7 +91,12 @@
     "latestBuildings": "Legújabb épületek",
     "countryImageAlt": "Ország",
     "buildingTypeImageAlt": "Épület típus",
-    "newsletterImageAlt": "Hírlevél háttér"
+    "newsletterImageAlt": "Hírlevél háttér",
+    "notFound": "Oldal nem található",
+    "notFoundDescription": "Hoppá! Az oldal, amit keresel, nem létezik",
+    "notFoundDescription2": "Lehet, hogy törölve, mozgatva lett vagy az URL helytelen.",
+    "recommendedBuildings": "Ajánlott épületek",
+    "goToHome": "Ugrás a kezdőlapra"
   },
   "newsletter": {
     "title": "Hírlevélre feliratkozás",

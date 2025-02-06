@@ -20,6 +20,7 @@ const BuildingList = ({
   page,
   title,
   searchPage,
+  hideFilters,
 }: {
   buildingTypes: BuildingType[];
   buildings: Building[];
@@ -28,6 +29,7 @@ const BuildingList = ({
   page: number;
   title?: string;
   searchPage?: boolean;
+  hideFilters?: boolean;
 }) => {
   const t = useTranslations();
   const router = useRouter();
@@ -79,54 +81,56 @@ const BuildingList = ({
         >
           {title ? title : t("common.buildings")}
         </h2>
-        <form
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            if (searchPage) {
-              if (!articleSearch) return;
-              handleSubmit();
-            } else {
-              handleFilterChange("search", articleSearch);
-            }
-          }}
-          className="mt-4"
-        >
-          <div className="relative w-72">
-            {/*TODO*/}
-            <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
-            <Input
-              placeholder={t("common.search")}
-              value={articleSearch}
-              onChange={(e) => setArticleSearch(e.target.value)}
-              className="rounded-xl pl-8"
-              type="search"
-            />
-          </div>
-        </form>
-      </div>
-
-      <div className="mb-8 flex items-center gap-4 overflow-x-auto rounded-sm bg-brown-200 p-2">
-        <span className="text-brown-dark-20 text-lg font-semibold">
-          {t("common.filter")}
-        </span>
-        {buildingTypes.map((buildingType, index) => (
-          <Toggle
-            pressed={buildingType.slug === buildingTypeFilter}
-            key={"type" + index}
-            variant="filter"
-            onClick={() =>
-              handleFilterChange(
-                "building-type",
-                buildingType.slug === buildingTypeFilter
-                  ? undefined
-                  : buildingType.slug,
-              )
-            }
+        {!hideFilters && (
+          <form
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+              e.preventDefault();
+              if (searchPage) {
+                if (!articleSearch) return;
+                handleSubmit();
+              } else {
+                handleFilterChange("search", articleSearch);
+              }
+            }}
+            className="mt-4"
           >
-            <p>{buildingType.name}</p>
-          </Toggle>
-        ))}
+            <div className="relative w-72">
+              <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
+              <Input
+                placeholder={t("common.search")}
+                value={articleSearch}
+                onChange={(e) => setArticleSearch(e.target.value)}
+                className="rounded-xl pl-8"
+                type="search"
+              />
+            </div>
+          </form>
+        )}
       </div>
+      {!hideFilters && (
+        <div className="mb-8 flex items-center gap-4 overflow-x-auto rounded-sm bg-brown-200 p-2">
+          <span className="text-brown-dark-20 text-lg font-semibold">
+            {t("common.filter")}
+          </span>
+          {buildingTypes.map((buildingType, index) => (
+            <Toggle
+              pressed={buildingType.slug === buildingTypeFilter}
+              key={"type" + index}
+              variant="filter"
+              onClick={() =>
+                handleFilterChange(
+                  "building-type",
+                  buildingType.slug === buildingTypeFilter
+                    ? undefined
+                    : buildingType.slug,
+                )
+              }
+            >
+              <p>{buildingType.name}</p>
+            </Toggle>
+          ))}
+        </div>
+      )}
       <div
         className={cn(
           "relative flex flex-wrap items-center justify-center gap-6",

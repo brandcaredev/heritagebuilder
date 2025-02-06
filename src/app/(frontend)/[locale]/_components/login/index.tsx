@@ -16,6 +16,7 @@ import { type z } from "zod";
 import { loginSchema } from "./login-schema";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { signInWithEmail } from "./login-action";
+import { Loader2 } from "lucide-react";
 
 type LoginValues = z.infer<typeof loginSchema>;
 
@@ -104,7 +105,7 @@ export default function Login({
                 autoComplete="email"
                 autoCorrect="off"
                 disabled={isLoading}
-                className="text-brown-900 placeholder:text-brown-200 bg-white-2"
+                className="bg-white-2 text-brown-900 placeholder:text-brown-200"
                 {...register("email")}
               />
               {errors.email && (
@@ -122,7 +123,7 @@ export default function Login({
                 autoComplete="password"
                 autoCorrect="off"
                 disabled={isLoading}
-                className="text-brown-900 placeholder:text-brown-200 bg-white-2"
+                className="bg-white-2 text-brown-900 placeholder:text-brown-200"
                 {...register("password")}
               />
               {errors.password && (
@@ -132,9 +133,7 @@ export default function Login({
               )}
             </div>
             <Button disabled={isLoading}>
-              {isLoading && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("auth.signIn")}
             </Button>
           </div>
@@ -154,7 +153,7 @@ export default function Login({
           className="border-none bg-[#3B76D6] text-white hover:bg-[#3B76D6]/80 hover:text-white"
         >
           {isLoading ? (
-            <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
             <Icons.google className="mr-2 h-4 w-4" />
           )}{" "}

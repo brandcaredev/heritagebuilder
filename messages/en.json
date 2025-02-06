@@ -91,7 +91,12 @@
     "latestBuildings": "Latest buildings",
     "countryImageAlt": "Country",
     "buildingTypeImageAlt": "Building Type",
-    "newsletterImageAlt": "Newsletter background"
+    "newsletterImageAlt": "Newsletter background",
+    "notFound": "Page not found",
+    "notFoundDescription": "Oops! The page you’re looking for doesn’t exist",
+    "notFoundDescription2": "It may have been moved, deleted, or the URL might be incorrect.",
+    "recommendedBuildings": "Recommended buildings",
+    "goToHome": "Go to homepage"
   },
   "auth": {
     "email": "Email",

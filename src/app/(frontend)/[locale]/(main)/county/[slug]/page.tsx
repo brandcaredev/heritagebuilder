@@ -1,5 +1,5 @@
 import Breadcrumbs from "@/_components/breadcrumbs";
-import Divider from "@/components/icons/divider";
+import { Divider } from "@/components/icons";
 import { LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";

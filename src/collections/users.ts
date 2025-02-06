@@ -5,6 +5,7 @@ const Users: CollectionConfig = {
   auth: true,
   admin: {
     useAsTitle: "email",
+    hidden: ({ user }) => user.role !== "admin",
   },
   fields: [
     {
@@ -18,6 +19,12 @@ const Users: CollectionConfig = {
       defaultValue: "moderator",
     },
   ],
+  access: {
+    read: ({ req: { user } }) => Boolean(user),
+    create: ({ req: { user } }) => Boolean(user),
+    update: ({ req: { user } }) => Boolean(user),
+    delete: ({ req: { user } }) => Boolean(user),
+  },
 };
 
 export default Users;
