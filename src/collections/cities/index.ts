@@ -81,13 +81,13 @@ export const Cities: CollectionConfig = {
         if (doc._status === "draft" && previousDoc?._status !== "published") {
           return;
         }
-        if (!isNextBuild()) {
-          if (doc.slug !== previousDoc?.slug) {
-            revalidatePath("/[locale]/(main)/city/[slug]", "page");
-          } else {
-            revalidatePath(`/[locale]/(main)/city/${doc.slug}`, "page");
-          }
-        }
+        // if (!isNextBuild()) {
+        //   if (doc.slug !== previousDoc?.slug) {
+        //     revalidatePath("/[locale]/(main)/city/[slug]", "page");
+        //   } else {
+        //     revalidatePath(`/[locale]/(main)/city/${doc.slug}`, "page");
+        //   }
+        // }
       },
     ],
     afterDelete: [
