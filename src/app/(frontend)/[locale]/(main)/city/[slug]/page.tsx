@@ -24,6 +24,8 @@ export const generateStaticParams = async () => {
   return params;
 };
 
+export const dynamic = "force-static";
+
 const CityPage = async (props: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;

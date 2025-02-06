@@ -27,7 +27,8 @@ export default function CountryPage({
 
   const countryCounties = (country.relatedCounties?.docs as County[]) || [];
   const countryCities = (country.relatedCities?.docs as City[]) || [];
-
+  console.log(countryCities);
+  console.log(countryCounties);
   const onMapCountyClick = (id: number) => {
     const selectedCounty = countryCounties.find((c) => c.id === id);
     if (selectedCounty) {

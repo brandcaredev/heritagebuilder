@@ -49,6 +49,9 @@ export const Countries: CollectionConfig = {
         _status: {
           equals: "published",
         },
+        name: {
+          not_equals: null,
+        },
       },
     },
     {
@@ -60,6 +63,9 @@ export const Countries: CollectionConfig = {
         _status: {
           equals: "published",
         },
+        name: {
+          not_equals: null,
+        },
       },
     },
     {
@@ -70,6 +76,9 @@ export const Countries: CollectionConfig = {
       where: {
         _status: {
           equals: "published",
+        },
+        name: {
+          not_equals: null,
         },
       },
     },

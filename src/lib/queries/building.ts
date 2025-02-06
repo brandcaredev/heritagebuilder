@@ -53,7 +53,6 @@ export const searchBuildings = unstable_cache(
 
 export const getBuildingBySlug = unstable_cache(
   async (locale: LocaleType, slug: string) => {
-    console.log(slug);
     const { docs: building } = await payload.find({
       collection: "buildings",
       locale: locale,
