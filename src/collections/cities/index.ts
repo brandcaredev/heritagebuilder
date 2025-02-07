@@ -82,11 +82,11 @@ export const Cities: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          if (doc.slug !== previousDoc?.slug) {
-            revalidatePath("/[locale]/(main)/city/[slug]", "page");
-          } else {
-            revalidatePath(`/[locale]/(main)/city/${doc.slug}`, "page");
-          }
+          // if (doc.slug !== previousDoc?.slug) {
+          //   revalidatePath("/[locale]/(main)/city/[slug]", "page");
+          // } else {
+          //   revalidatePath(`/[locale]/(main)/city/${doc.slug}`, "page");
+          // }
         }
       },
     ],
