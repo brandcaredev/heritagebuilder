@@ -1,12 +1,42 @@
 import BuildingComponent from "@/_components/building";
-import { LocaleType } from "@/lib/constans";
-import { getBuildingBySlug } from "@/lib/queries/building";
+import { Locales, LocaleType } from "@/lib/constans";
+import { getBuildingBySlug, getBuildings } from "@/lib/queries/building";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Media } from "payload-types";
 
-export default async function BuildingPage(props: {
+type Props = {
   params: Promise<{ slug: string; locale: LocaleType }>;
-}) {
+};
+
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { locale, slug } = await params;
+  const building = await getBuildingBySlug(locale, slug);
+  if (!building) return {};
+  return {
+    title: building.name,
+    description: building.summary,
+  };
+};
+
+export const generateStaticParams = async () => {
+  const params = [];
+
+  for (const locale of Object.values(Locales)) {
+    const buildings = await getBuildings(locale as LocaleType);
+    const buildingParams = buildings.map((building) => ({
+      locale,
+      slug: building.slug,
+    }));
+    params.push(...buildingParams);
+  }
+
+  return params;
+};
+
+export default async function BuildingPage(props: Props) {
   const params = await props.params;
 
   const { slug, locale } = params;

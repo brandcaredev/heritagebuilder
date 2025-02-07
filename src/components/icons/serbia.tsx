@@ -1,4 +1,4 @@
-function Serbia({ onClick }: { onClick: (id: number) => void }) {
+export const Serbia = ({ onClick }: { onClick: (id: number) => void }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -186,5 +186,4 @@ function Serbia({ onClick }: { onClick: (id: number) => void }) {
       />
     </svg>
   );
-}
-export default Serbia;
+};

@@ -19,7 +19,7 @@ export const config = {
     // - /_vercel (Vercel internals)
     // - /static (public files)
     // - .*\\..*\\.* (files with extensions)
-    "/((?!api|admin|_next|_vercel|static|.*\\..*\\.).*)",
+    "/((?!api|admin|robots.txt|_next|_vercel|static|.*\\..*\\.).*)",
     // Match all internationalized pathnames
     "/",
     "/(en|hu)/:path*",

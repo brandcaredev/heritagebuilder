@@ -28,7 +28,7 @@ export const getCountyBySlug = unstable_cache(
     return county[0] || null;
   },
   [],
-  { tags: ["counties"] },
+  { tags: ["counties", "countries"] },
 );
 
 export const getNextLanguageCountySlug = async (

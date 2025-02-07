@@ -6,7 +6,7 @@ const CustomPositionMap = ({
   value,
   setValue,
 }: {
-  value: [number, number];
+  value?: [number, number];
   setValue: (val: [number, number], disableModifyingForm?: boolean) => void;
 }) => {
   const SearchControl = () => {
