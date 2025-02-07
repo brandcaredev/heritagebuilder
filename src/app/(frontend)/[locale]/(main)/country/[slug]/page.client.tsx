@@ -1,8 +1,6 @@
 "use client";
 
-import Divider from "@/components/icons/divider";
-import Romania from "@/components/icons/romania";
-import Serbia from "@/components/icons/serbia";
+import { Divider, Romania, Serbia } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -29,7 +27,6 @@ export default function CountryPage({
 
   const countryCounties = (country.relatedCounties?.docs as County[]) || [];
   const countryCities = (country.relatedCities?.docs as City[]) || [];
-
   const onMapCountyClick = (id: number) => {
     const selectedCounty = countryCounties.find((c) => c.id === id);
     if (selectedCounty) {

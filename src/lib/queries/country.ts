@@ -25,30 +25,60 @@ export const getCountries = unstable_cache(
   },
   [],
   {
-    tags: ["countries"],
+    tags: ["countries", "counties", "cities"],
   },
 );
 
-export const getCountryBySlug = async (locale: LocaleType, slug: string) => {
-  const { docs: country } = await payload.find({
-    collection: "countries",
-    locale: locale,
-    where: {
-      slug: {
-        equals: slug,
+export const getCountriesBasic = unstable_cache(
+  async (locale: LocaleType) => {
+    const { docs: countries } = await payload.find({
+      collection: "countries",
+      locale: locale,
+      where: {
+        _status: {
+          equals: "published",
+        },
+        name: {
+          not_equals: null,
+        },
       },
-      _status: {
-        equals: "published",
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        image: true,
       },
-      name: {
-        not_equals: null,
+    });
+    return countries;
+  },
+  [],
+  { tags: ["countries"] },
+);
+
+export const getCountryBySlug = unstable_cache(
+  async (locale: LocaleType, slug: string) => {
+    const { docs: country } = await payload.find({
+      collection: "countries",
+      locale: locale,
+      where: {
+        slug: {
+          equals: slug,
+        },
+        _status: {
+          equals: "published",
+        },
+        name: {
+          not_equals: null,
+        },
       },
-    },
-    draft: false,
-    limit: 1,
-  });
-  return country[0] || null;
-};
+      draft: false,
+      limit: 1,
+    });
+    return country[0] || null;
+  },
+  [],
+  { tags: ["countries", "counties", "cities"] },
+);
 
 export const getNextLanguageCountrySlug = async (
   slug: string,

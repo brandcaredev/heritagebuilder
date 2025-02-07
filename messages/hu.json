@@ -84,14 +84,19 @@
     "county": "Válassz megyét",
     "city": "Válassz várost"
   },
-  "description": "Üdvözöljük a Heritage Builder-en, egy olyan platformon, amely Közép-Európa építészeti örökségének megőrzésére szenteli magát. Legyen Ön amatőr történész, lelkes helyi lakos vagy tapasztalt építész, létrehozhat cikkeket azokról a régi épületekről, amelyek formálják városainkat, településeinket és tájainkat - mindegyik őseink történelmének és hagyományainak tanúja. \n Ossza meg tudását, fedezzen fel történeteket más lelkes emberektől, értékelje az inspiráló cikkeket, és vegyen részt olyan értelmes beszélgetésekben, amelyek kulturális örökségünket ünneplik. \n Csatlakozzon hozzánk a Heritage Builder-en, ahol tiszteletben tartjuk régi épületeink időtlen szépségét, és elmélyítjük a büszkeséget és hazaszeretetet azok iránt a hagyományok iránt, amelyek továbbra is meghatároznak minket.",
+  "description": "Üdvözöljük a Heritage Builder -ben, egy olyan platformon, amely a Közép -Európa építészeti örökségének megőrzésére szolgál. \nFüggetlenül attól, hogy amatőr történész, szenvedélyes helyi vagy tapasztalt építész vagy, cikkeket készíthet a régi épületekről, amelyek formálják városainkat, városokat és tájakat - ez mindegyike az őseink történelmének és hagyományainak bizonysága. \n \nOssza meg tudását, fedezze fel a rajongók történeteit, értékelje az inspiráló cikkeket, és vegyen részt olyan értelmes megbeszélésekben, amelyek ünneplik kulturális örökségünket. \n \nCsatlakozzon hozzánk a Heritage Buildernél, ahol tiszteljük régi épületeink időtlen szépségét, és elősegítjük a büszkeség és a hazafiság mély érzését azoknak a hagyományoknak, amelyek továbbra is meghatároznak minket.",
   "page": {
     "discover": "Felfedezés",
     "welcomeTitle": "Üdvözöljük a Heritage Builder-en",
     "latestBuildings": "Legújabb épületek",
     "countryImageAlt": "Ország",
     "buildingTypeImageAlt": "Épület típus",
-    "newsletterImageAlt": "Hírlevél háttér"
+    "newsletterImageAlt": "Hírlevél háttér",
+    "notFound": "Oldal nem található",
+    "notFoundDescription": "Hoppá! Az oldal, amit keresel, nem létezik",
+    "notFoundDescription2": "Lehet, hogy törölve, mozgatva lett vagy az URL helytelen.",
+    "recommendedBuildings": "Ajánlott épületek",
+    "goToHome": "Ugrás a kezdőlapra"
   },
   "newsletter": {
     "title": "Hírlevélre feliratkozás",

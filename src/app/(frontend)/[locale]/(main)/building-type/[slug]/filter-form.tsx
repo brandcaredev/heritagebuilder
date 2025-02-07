@@ -97,7 +97,7 @@ export default function FilterForm({
         <SelectContent>
           {counties.map((county) => (
             <SelectItem key={county.slug} value={county.slug}>
-              {county.slug}
+              {county.name}
             </SelectItem>
           ))}
         </SelectContent>
@@ -118,7 +118,7 @@ export default function FilterForm({
         <SelectContent>
           {cities.map((city) => (
             <SelectItem key={city.slug} value={city.slug}>
-              {city.slug}
+              {city.name}
             </SelectItem>
           ))}
         </SelectContent>

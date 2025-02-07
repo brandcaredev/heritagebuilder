@@ -58,7 +58,7 @@ export default async function FrontendLayout(
   const messages = await getMessages();
 
   return (
-    <html>
+    <html lang={locale}>
       <body>
         <div className={`${playfairDisplay.variable} ${sourceSans3.variable}`}>
           <TRPCReactProvider>

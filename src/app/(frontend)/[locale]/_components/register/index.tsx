@@ -17,6 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
 
 type SignUpValues = z.infer<typeof signUpSchema>;
 
@@ -190,9 +191,7 @@ export default function Register({
               )}
             </div>
             <Button disabled={isLoading}>
-              {isLoading && (
-                <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("auth.register")}
             </Button>
           </div>

@@ -1,10 +1,12 @@
 import React from "react";
 
-interface DividerProps {
+export const Divider = ({
+  orientation = "vertical",
+  full, // when horizontal, the divider is full width
+}: {
   orientation?: "vertical" | "horizontal";
-}
-
-function Divider({ orientation = "vertical" }: DividerProps) {
+  full?: boolean;
+}) => {
   const svgWidth = 14; // Fixed width/height of the SVG content
   const arrowHeight = 25.25; // Fixed height/width of the arrows
   const circleHeight = 12.7; // Fixed height/width of the circle
@@ -19,12 +21,24 @@ function Divider({ orientation = "vertical" }: DividerProps) {
         height: isVertical ? "100%" : `${svgWidth}px`,
       }}
     >
-      {/* Top Arrow */}
-      {isVertical && (
+      {/* First Arrow */}
+      {(isVertical || full) && (
         <svg
           width={svgWidth}
           height={arrowHeight}
-          style={{ position: "absolute", top: 0, left: 0 }}
+          style={{
+            position: "absolute",
+            ...(isVertical
+              ? {
+                  top: 0,
+                  left: 0,
+                }
+              : {
+                  top: -(svgWidth / 2) + 1,
+                  left: 0,
+                  transform: "translateX(50%) rotate(-90deg)",
+                }),
+          }}
           viewBox={`0 0 ${svgWidth} ${arrowHeight}`}
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -76,7 +90,7 @@ function Divider({ orientation = "vertical" }: DividerProps) {
               }
             : {
                 top: "50%",
-                left: circleHeight / 2,
+                left: full ? "50%" : circleHeight / 2,
                 transform: "translateY(-50%) translateX(-50%) rotate(-90deg)",
               }),
         }}
@@ -94,16 +108,25 @@ function Divider({ orientation = "vertical" }: DividerProps) {
       </svg>
 
       {/* First Line */}
-      {isVertical && (
+      {(isVertical || full) && (
         <div
           style={{
             position: "absolute",
-            top: arrowHeight,
-            bottom: `calc(50% + ${circleHeight / 2}px)`,
-            left: "50%",
-            width: "2px",
+            ...(isVertical
+              ? {
+                  top: arrowHeight,
+                  bottom: `calc(50% + ${circleHeight / 2}px)`,
+                  left: "50%",
+                  width: "2px",
+                }
+              : {
+                  top: "50%",
+                  left: arrowHeight,
+                  right: `calc(50% + ${circleHeight / 2 - 1}px)`,
+                  height: "2px",
+                }),
             backgroundColor: "#6A573A",
-            transform: "translateX(-50%)",
+            transform: isVertical ? "translateX(-50%)" : "translateY(-50%)",
           }}
         ></div>
       )}
@@ -120,7 +143,9 @@ function Divider({ orientation = "vertical" }: DividerProps) {
                 width: "2px",
               }
             : {
-                left: circleHeight - 1,
+                left: full
+                  ? `calc(50% + ${circleHeight / 2}px)`
+                  : circleHeight - 1,
                 right: arrowHeight,
                 top: "50%",
                 height: "2px",
@@ -131,6 +156,4 @@ function Divider({ orientation = "vertical" }: DividerProps) {
       ></div>
     </div>
   );
-}
-
-export default Divider;
+};

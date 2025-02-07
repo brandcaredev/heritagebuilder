@@ -1,18 +1,48 @@
 import Breadcrumbs from "@/_components/breadcrumbs";
-import Divider from "@/components/icons/divider";
-import { LocaleType } from "@/lib/constans";
+import { Divider } from "@/components/icons";
+import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getCityBySlug } from "@/lib/queries/city";
+import { getCitiesByFilter, getCityBySlug } from "@/lib/queries/city";
 import { notFound } from "next/navigation";
 import { Country, County } from "payload-types";
 import BuildingList from "@/_components/building-list";
 import SimplePage from "@/_components/simple-page";
+import { Metadata } from "next";
 
-const CityPage = async (props: {
+type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;
-}) => {
+};
+
+export const generateStaticParams = async () => {
+  const params = [];
+
+  for (const locale of Object.values(Locales)) {
+    const { cities } = await getCitiesByFilter(locale as LocaleType, {});
+    const cityParams = cities.map((city) => ({
+      locale,
+      slug: city.slug,
+    }));
+    params.push(...cityParams);
+  }
+
+  return params;
+};
+
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { locale, slug } = await params;
+  const city = await getCityBySlug(locale, slug);
+  if (!city) return {};
+  return {
+    title: city.name,
+    description: city.description,
+  };
+};
+
+const CityPage = async (props: Props) => {
   const params = await props.params;
   const { slug, locale } = params;
   const searchParams = await props.searchParams;

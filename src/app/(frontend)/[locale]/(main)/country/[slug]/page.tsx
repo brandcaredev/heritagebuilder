@@ -1,15 +1,45 @@
-import { LocaleType } from "@/lib/constans";
+import BuildingList from "@/_components/building-list";
+import { Locales, LocaleType } from "@/lib/constans";
+import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getCountryBySlug } from "@/lib/queries/country";
+import { getCountries, getCountryBySlug } from "@/lib/queries/country";
+import { getCountyBySlug } from "@/lib/queries/county";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CountryPage from "./page.client";
-import { getBuildingsByFilter } from "@/lib/queries/building";
-import BuildingList from "@/_components/building-list";
 
-const CountryMainPage = async (props: {
+type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;
-}) => {
+};
+
+export const generateStaticParams = async () => {
+  const params = [];
+
+  for (const locale of Object.values(Locales)) {
+    const countries = await getCountries(locale as LocaleType);
+    const countryParams = countries.map((country) => ({
+      locale,
+      slug: country.slug,
+    }));
+    params.push(...countryParams);
+  }
+
+  return params;
+};
+
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { locale, slug } = await params;
+  const country = await getCountryBySlug(locale, slug);
+  if (!country) return {};
+  return {
+    title: country.name,
+  };
+};
+
+const CountryMainPage = async (props: Props) => {
   const params = await props.params;
   const { slug, locale } = params;
   const searchParams = await props.searchParams;

@@ -3,7 +3,7 @@ import { CollectionBeforeChangeHook, CollectionSlug } from "payload";
 
 export const checkSlugUniqueness =
   (collection: CollectionSlug): CollectionBeforeChangeHook =>
-  async ({ data, req, operation }) => {
+  async ({ data, req, operation, originalDoc }) => {
     if (operation === "update" && data._status !== "draft") {
       const slugValue = data.slug;
       if (!slugValue) return; // Skip empty slugs
@@ -19,7 +19,7 @@ export const checkSlugUniqueness =
       });
       // Check if another document already has the same slug in this locale
       const isDuplicate = existingDocs.docs.some(
-        (doc) => doc.id !== data.id, // Ignore current document
+        (doc) => doc.id !== originalDoc.id, // Ignore current document
       );
 
       if (isDuplicate) {

@@ -2,7 +2,7 @@ import { LocaleType } from "@/lib/constans";
 import { searchBuildings } from "@/lib/queries/building";
 import { notFound } from "next/navigation";
 import Breadcrumbs from "@/_components/breadcrumbs";
-import Divider from "@/components/icons/divider";
+import { Divider } from "@/components/icons/divider";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import BuildingList from "@/_components/building-list";
 import { Building } from "payload-types";

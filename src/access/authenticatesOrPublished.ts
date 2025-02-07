@@ -9,5 +9,8 @@ export const authenticatedOrPublished: Access = ({ req: { user } }) => {
     _status: {
       equals: "published",
     },
+    name: {
+      not_equals: null,
+    },
   };
 };

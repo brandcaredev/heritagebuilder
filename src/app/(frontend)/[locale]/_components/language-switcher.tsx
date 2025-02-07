@@ -1,6 +1,5 @@
 "use client";
-import EnFlag from "@/components/icons/en-flag";
-import HunFlag from "@/components/icons/hun-flag";
+import { Icons } from "@/components/icons";
 import { usePathname } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
 import { api } from "@/trpc/react";
@@ -9,8 +8,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
 
 const languages = [
-  { label: "EN", value: "en", flag: EnFlag },
-  { label: "HU", value: "hu", flag: HunFlag },
+  { label: "EN", value: "en", flag: Icons.enFlag },
+  { label: "HU", value: "hu", flag: Icons.hunFlag },
 ] as const;
 
 type SlugPages =
@@ -22,7 +21,7 @@ type SlugPages =
   | "building";
 type Params = { slug: string; locale: LocaleType };
 
-export default function LocaleSwitcher() {
+const LocaleSwitcher = () => {
   const trpc = api.useUtils();
   const locale = useLocale();
   const router = useRouter();
@@ -96,8 +95,11 @@ export default function LocaleSwitcher() {
     <button
       onClick={onButtonClick}
       className="flex appearance-none items-center justify-center text-[20px]"
+      aria-label="Change language"
     >
       <Flag />
     </button>
   );
-}
+};
+
+export default LocaleSwitcher;
