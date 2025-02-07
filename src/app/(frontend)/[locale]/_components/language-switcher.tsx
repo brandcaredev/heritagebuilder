@@ -21,7 +21,7 @@ type SlugPages =
   | "building";
 type Params = { slug: string; locale: LocaleType };
 
-export default function LocaleSwitcher() {
+const LocaleSwitcher = () => {
   const trpc = api.useUtils();
   const locale = useLocale();
   const router = useRouter();
@@ -95,8 +95,11 @@ export default function LocaleSwitcher() {
     <button
       onClick={onButtonClick}
       className="flex appearance-none items-center justify-center text-[20px]"
+      aria-label="Change language"
     >
       <Flag />
     </button>
   );
-}
+};
+
+export default LocaleSwitcher;

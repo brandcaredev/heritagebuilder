@@ -4,16 +4,16 @@ import { Link } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
 import { getBuildings } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getCountries } from "@/lib/queries/country";
+import { getCountriesBasic } from "@/lib/queries/country";
 import { getURL } from "@/lib/utils";
 import config from "@payload-config";
+import { Metadata, ResolvingMetadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { getPayload } from "payload";
 import { City, Country, Media } from "payload-types";
 import Newsletter from "../_components/newsletter";
 import VideoCarousel from "../_components/video-carousel";
-import { Metadata, ResolvingMetadata } from "next";
 
 type Props = {
   params: Promise<{ locale: LocaleType }>;
@@ -22,11 +22,10 @@ type Props = {
 const payload = await getPayload({ config });
 
 export const generateMetadata = async (
-  { params }: Props,
+  _: Props,
   parent: ResolvingMetadata,
 ): Promise<Metadata> => {
-  const locale = await params;
-  const t = await getTranslations(locale);
+  const t = await getTranslations();
   const title = (await parent).title || "Heritage Builder";
   return {
     title,
@@ -39,7 +38,7 @@ const MainPage = async (props: Props) => {
   const { locale } = params;
   const t = await getTranslations();
 
-  const countries = await getCountries(locale);
+  const countries = await getCountriesBasic(locale);
   const buildingTypes = await getBuildingTypes(locale);
   const { docs: youtubeLinks } = await payload.find({
     collection: "youtube-links",

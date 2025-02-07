@@ -1,18 +1,48 @@
 import Breadcrumbs from "@/_components/breadcrumbs";
-import { Divider } from "@/components/icons";
-import { LocaleType } from "@/lib/constans";
-import { getBuildingsByFilter } from "@/lib/queries/building";
-import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getCountyBySlug } from "@/lib/queries/county";
-import { notFound } from "next/navigation";
-import { Country } from "payload-types";
 import BuildingList from "@/_components/building-list";
 import SimplePage from "@/_components/simple-page";
+import { Divider } from "@/components/icons";
+import { Locales, LocaleType } from "@/lib/constans";
+import { getBuildingsByFilter } from "@/lib/queries/building";
+import { getBuildingTypes } from "@/lib/queries/building-type";
+import { getCountiesByFilter, getCountyBySlug } from "@/lib/queries/county";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { Country } from "payload-types";
 
-const CountyPage = async (props: {
+type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;
-}) => {
+};
+
+export const generateStaticParams = async () => {
+  const params = [];
+
+  for (const locale of Object.values(Locales)) {
+    const { counties } = await getCountiesByFilter(locale as LocaleType, {});
+    const countyParams = counties.map((county) => ({
+      locale,
+      slug: county.slug,
+    }));
+    params.push(...countyParams);
+  }
+
+  return params;
+};
+
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { locale, slug } = await params;
+  const county = await getCountyBySlug(locale, slug);
+  if (!county) return {};
+  return {
+    title: county.name,
+    description: county.description,
+  };
+};
+
+const CountyPage = async (props: Props) => {
   const params = await props.params;
   const { slug, locale } = params;
   const searchParams = await props.searchParams;

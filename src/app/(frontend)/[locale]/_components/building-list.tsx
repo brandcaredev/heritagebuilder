@@ -57,7 +57,6 @@ const BuildingList = ({
       }
     }
     params.set("page", "1"); // Reset to first page on filter change
-    console.log(params.toString());
 
     //@ts-expect-error
     router.push(`?${params.toString()}`, { scroll: false }); // Prevent page scroll

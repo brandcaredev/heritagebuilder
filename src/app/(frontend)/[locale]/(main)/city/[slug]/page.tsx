@@ -8,6 +8,12 @@ import { notFound } from "next/navigation";
 import { Country, County } from "payload-types";
 import BuildingList from "@/_components/building-list";
 import SimplePage from "@/_components/simple-page";
+import { Metadata } from "next";
+
+type Props = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+  params: Promise<{ slug: string; locale: LocaleType }>;
+};
 
 export const generateStaticParams = async () => {
   const params = [];
@@ -24,12 +30,19 @@ export const generateStaticParams = async () => {
   return params;
 };
 
-export const revalidate = false;
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { locale, slug } = await params;
+  const city = await getCityBySlug(locale, slug);
+  if (!city) return {};
+  return {
+    title: city.name,
+    description: city.description,
+  };
+};
 
-const CityPage = async (props: {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>;
-  params: Promise<{ slug: string; locale: LocaleType }>;
-}) => {
+const CityPage = async (props: Props) => {
   const params = await props.params;
   const { slug, locale } = params;
   const searchParams = await props.searchParams;

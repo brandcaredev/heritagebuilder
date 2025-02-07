@@ -5,7 +5,7 @@ const Users: CollectionConfig = {
   auth: true,
   admin: {
     useAsTitle: "email",
-    hidden: ({ user }) => user.role !== "admin",
+    hidden: ({ user }) => user?.role !== "admin",
   },
   fields: [
     {

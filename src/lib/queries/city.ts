@@ -6,26 +6,30 @@ import { unstable_cache } from "next/cache";
 
 const payload = await getPayload({ config });
 
-export const getCityBySlug = async (locale: LocaleType, slug: string) => {
-  const { docs: city } = await payload.find({
-    collection: "cities",
-    locale: locale,
-    where: {
-      slug: {
-        equals: slug,
+export const getCityBySlug = unstable_cache(
+  async (locale: LocaleType, slug: string) => {
+    const { docs: city } = await payload.find({
+      collection: "cities",
+      locale: locale,
+      where: {
+        slug: {
+          equals: slug,
+        },
+        _status: {
+          equals: "published",
+        },
+        name: {
+          not_equals: null,
+        },
       },
-      _status: {
-        equals: "published",
-      },
-      name: {
-        not_equals: null,
-      },
-    },
-    limit: 1,
-    depth: 1,
-  });
-  return city[0] || null;
-};
+      limit: 1,
+      depth: 1,
+    });
+    return city[0] || null;
+  },
+  [],
+  { tags: ["cities"] },
+);
 
 export const getNextLanguageCitySlug = async (
   slug: string,
@@ -47,20 +51,24 @@ export const getNextLanguageCitySlug = async (
   return citySlugs[nextLang];
 };
 
-export const getCitiesByFilter = async (locale: LocaleType, filter: Where) => {
-  const { docs: cities, totalPages } = await payload.find({
-    collection: "cities",
-    locale: locale,
-    where: {
-      ...filter,
-      _status: {
-        equals: "published",
+export const getCitiesByFilter = unstable_cache(
+  async (locale: LocaleType, filter: Where) => {
+    const { docs: cities, totalPages } = await payload.find({
+      collection: "cities",
+      locale: locale,
+      where: {
+        ...filter,
+        _status: {
+          equals: "published",
+        },
+        name: {
+          not_equals: null,
+        },
       },
-      name: {
-        not_equals: null,
-      },
-    },
-    sort: "createdAt",
-  });
-  return { cities, totalPages };
-};
+      sort: "createdAt",
+    });
+    return { cities, totalPages };
+  },
+  [],
+  { tags: ["cities"] },
+);

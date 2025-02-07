@@ -64,7 +64,7 @@ export default function AccountButton() {
                 await refetch();
               }}
             >
-              <LogOut />
+              <LogOut aria-label="Log out" />
               <span>{t("account.signOut")}</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -81,13 +81,13 @@ export default function AccountButton() {
   }
   return (
     <>
-      <div
+      <button
         onClick={() => setOpenLogin(true)}
-        aria-label={t("account.login")}
+        aria-label={"Login"}
         className="hover:cursor-pointer hover:text-stone-300"
       >
         <LogInIcon className="h-5 w-5" />
-      </div>
+      </button>
       {openLogin && (
         <LoginSignupDialog open={openLogin} setOpen={setOpenLogin} />
       )}

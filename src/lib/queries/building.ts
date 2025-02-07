@@ -89,6 +89,16 @@ export const getBuildings = unstable_cache(
           not_equals: null,
         },
       },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        featuredImage: true,
+        summary: true,
+        buildingType: true,
+        position: true,
+        history: true,
+      },
       sort: "createdAt",
     });
     return buildings;
@@ -110,6 +120,16 @@ export const getBuildingsByFilter = unstable_cache(
         name: {
           not_equals: null,
         },
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        featuredImage: true,
+        summary: true,
+        buildingType: true,
+        position: true,
+        history: true,
       },
       limit,
       page,

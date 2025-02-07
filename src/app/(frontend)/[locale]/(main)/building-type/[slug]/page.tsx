@@ -1,16 +1,48 @@
-import { LocaleType } from "@/lib/constans";
+import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
-import { getBuildingTypeBySlug } from "@/lib/queries/building-type";
+import {
+  getBuildingTypeBySlug,
+  getBuildingTypes,
+} from "@/lib/queries/building-type";
 import { getCountries } from "@/lib/queries/country";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { BuildingTypeClientPage } from "./page.client";
 import { LoaderCircle } from "lucide-react";
+import { Metadata } from "next";
 
-const BuildingTypePage = async (props: {
+type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
   params: Promise<{ slug: string; locale: LocaleType }>;
-}) => {
+};
+
+export const generateStaticParams = async () => {
+  const params = [];
+
+  for (const locale of Object.values(Locales)) {
+    const buildingTypes = await getBuildingTypes(locale as LocaleType);
+    const buildingTypeParams = buildingTypes.map((buildingType) => ({
+      locale,
+      slug: buildingType.slug,
+    }));
+    params.push(...buildingTypeParams);
+  }
+
+  return params;
+};
+
+export const generateMetadata = async ({
+  params,
+}: Props): Promise<Metadata> => {
+  const { locale, slug } = await params;
+  const buildingType = await getBuildingTypeBySlug(locale, slug);
+  if (!buildingType) return {};
+  return {
+    title: buildingType.name,
+  };
+};
+
+const BuildingTypePage = async (props: Props) => {
   const params = await props.params;
   const searchParams = await props.searchParams;
 
