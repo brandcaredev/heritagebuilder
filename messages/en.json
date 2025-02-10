@@ -34,7 +34,8 @@
       "summary": "Short summary which will show up for the building",
       "source": "Enter the source of the data if you want to show on the building page"
     },
-    "summary": "Summary"
+    "summary": "Summary",
+    "missingValues": "Some fields are missing, check the form"
   },
   "common": {
     "submit": "Submit",

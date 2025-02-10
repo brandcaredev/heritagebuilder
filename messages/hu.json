@@ -34,7 +34,8 @@
       "source": "Adja meg az adatok forrását, ha szeretné, hogy megjelenjen az épületnél",
       "summary": "Rövid összefoglaló az épületről"
     },
-    "summary": "Összefoglaló"
+    "summary": "Összefoglaló",
+    "missingValues": "Néhány mező hiányzik, ellenőrizze az űrlapot"
   },
   "common": {
     "submit": "Küldés",

@@ -417,12 +417,12 @@ export default function BuildingForm({
                         <FormLabel required={isRequired}>
                           {t("form.name")}
                         </FormLabel>
-                        <FormControl>
-                          <Input placeholder="" type="text" {...field} />
-                        </FormControl>
                         <FormDescription>
                           {t("form.descriptions.name")}
                         </FormDescription>
+                        <FormControl>
+                          <Input placeholder="" type="text" {...field} />
+                        </FormControl>
                       </FormItem>
                     );
                   }}
@@ -458,6 +458,9 @@ export default function BuildingForm({
                         <FormLabel required={isRequired}>
                           {t("form.summary")}
                         </FormLabel>
+                        <FormDescription>
+                          {t("form.descriptions.summary")}
+                        </FormDescription>
                         <FormControl>
                           <Input
                             placeholder=""
@@ -466,9 +469,6 @@ export default function BuildingForm({
                             maxLength={200}
                           />
                         </FormControl>
-                        <FormDescription>
-                          {t("form.descriptions.summary")}
-                        </FormDescription>
                       </FormItem>
                     );
                   }}
@@ -534,12 +534,12 @@ export default function BuildingForm({
                         <FormLabel required={isRequired}>
                           {t("building.history")}
                         </FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
                         <FormDescription>
                           {t("form.descriptions.history")}
                         </FormDescription>
+                        <FormControl>
+                          <Textarea placeholder="" {...field} />
+                        </FormControl>
                       </FormItem>
                     );
                   }}
@@ -576,12 +576,12 @@ export default function BuildingForm({
                         <FormLabel required={isRequired}>
                           {t("building.style")}
                         </FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
                         <FormDescription>
                           {t("form.descriptions.style")}
                         </FormDescription>
+                        <FormControl>
+                          <Textarea placeholder="" {...field} />
+                        </FormControl>
                       </FormItem>
                     );
                   }}
@@ -618,12 +618,12 @@ export default function BuildingForm({
                         <FormLabel required={isRequired}>
                           {t("building.presentDay")}
                         </FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="" {...field} />
-                        </FormControl>
                         <FormDescription>
                           {t("form.descriptions.presentDay")}
                         </FormDescription>
+                        <FormControl>
+                          <Textarea placeholder="" {...field} />
+                        </FormControl>
                       </FormItem>
                     );
                   }}
@@ -652,12 +652,12 @@ export default function BuildingForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("building.renovation")}</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="" {...field} />
-                      </FormControl>
                       <FormDescription>
                         {t("form.descriptions.renovation")}
                       </FormDescription>
+                      <FormControl>
+                        <Textarea placeholder="" {...field} />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
@@ -672,7 +672,6 @@ export default function BuildingForm({
                   <FormLabel required>{t("form.position")}</FormLabel>
                   <FormControl>
                     <MapPositionSelector
-                      type={parseInt(form.getValues().type ?? "1")}
                       position={value}
                       setPosition={(value) => onChange(value)}
                       setCountry={(value: string) =>
@@ -707,12 +706,12 @@ export default function BuildingForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("form.creatoremail")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" type="text" {...field} />
-                  </FormControl>
                   <FormDescription>
                     {t("form.descriptions.creatoremail")}
                   </FormDescription>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
                 </FormItem>
               )}
             />
@@ -723,22 +722,30 @@ export default function BuildingForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("form.source")}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" type="text" {...field} />
-                  </FormControl>
                   <FormDescription>
                     {t("form.descriptions.source")}
                   </FormDescription>
+                  <FormControl>
+                    <Input placeholder="" type="text" {...field} />
+                  </FormControl>
                 </FormItem>
               )}
             />
+            {Object.values(form.formState.errors).length > 0 && (
+              <p className="ml-2 text-sm text-red-500">
+                {t("form.missingValues")}
+              </p>
+            )}
             <Button
               className="w-24"
               type="submit"
-              disabled={form.formState.isSubmitting}
+              disabled={
+                form.formState.isSubmitting ||
+                Object.values(form.formState.errors).length > 0
+              }
             >
               {form.formState.isSubmitting ? (
-                <Loader2 className="ml-2 animate-spin" />
+                <Loader2 className="animate-spin" />
               ) : (
                 t("common.submit")
               )}
