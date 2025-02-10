@@ -81,10 +81,9 @@ export default function Login({
 
   return (
     <>
-      {" "}
       <DialogHeader>
         <DialogTitle className="flex flex-col space-y-4 text-center">
-          <h1 className="text-3xl font-bold text-brown">{t("auth.signIn")}</h1>
+          <p className="text-3xl font-bold text-brown">{t("auth.signIn")}</p>
           <p className="text-muted-foreground px-8 text-center text-sm">
             {t("auth.logInUsingEmailAddress").toUpperCase()}
           </p>
@@ -160,15 +159,15 @@ export default function Login({
           {t("auth.continueWithGoogle")}
         </Button>
       </div>
-      <p className="text-muted-foreground px-8 text-center text-sm">
-        {t("auth.notAMemberYet")}{" "}
-        <div
+      <div className="text-muted-foreground px-8 text-center text-sm">
+        <p>{t("auth.notAMemberYet")} </p>
+        <p
           onClick={switchDialog}
           className="font-semibold text-green underline underline-offset-4 hover:text-green-2"
         >
           {t("auth.createAccount")}
-        </div>
-      </p>
+        </p>
+      </div>
     </>
   );
 }
