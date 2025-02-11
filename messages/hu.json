@@ -56,7 +56,9 @@
     "submitNewBuilding": "Új épület hozzáadása",
     "search": "Keresés",
     "buildings": "Épületek",
-    "filter": "Szűrés"
+    "filter": "Szűrés",
+    "cities": "Városok",
+    "counties": "Megyék"
   },
   "successDialog": {
     "title": "Köszönjük a hozzájárulását!",

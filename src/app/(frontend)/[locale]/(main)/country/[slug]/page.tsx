@@ -3,7 +3,6 @@ import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountries, getCountryBySlug } from "@/lib/queries/country";
-import { getCountyBySlug } from "@/lib/queries/county";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CountryPage from "./page.client";

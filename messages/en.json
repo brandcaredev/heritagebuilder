@@ -56,7 +56,9 @@
     "submitNewBuilding": "Submit new building",
     "search": "Search",
     "buildings": "Buildings",
-    "filter": "Filter"
+    "filter": "Filter",
+    "cities": "Cities",
+    "counties": "Counties"
   },
   "successDialog": {
     "title": "Thank you for your contribution!",
