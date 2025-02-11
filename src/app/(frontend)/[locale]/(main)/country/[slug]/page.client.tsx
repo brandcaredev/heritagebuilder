@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useRouter } from "@/i18n/routing";
-import { getURL } from "@/lib/utils";
+import { cn, getURL } from "@/lib/utils";
 import clsx from "clsx";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -61,7 +61,14 @@ export default function CountryPage({
         </div>
 
         {/* Lists Section */}
-        <div className="flex max-h-[800px] w-full justify-center gap-4">
+        <div
+          className={cn(
+            "flex w-full justify-center gap-4",
+            country.countryCode === "ro"
+              ? "lg:max-h-[440px]"
+              : "lg:max-h-[720px]",
+          )}
+        >
           {/* Counties */}
           <div className="relative w-1/2 overflow-hidden">
             <h2 className="mb-4 text-2xl font-bold text-brown">
@@ -76,7 +83,7 @@ export default function CountryPage({
                 className="rounded-xl pl-8"
               />
             </div>
-            <ScrollArea className="grid h-4/5 gap-1 overflow-x-hidden">
+            <ScrollArea className="grid h-4/5 gap-1 overflow-x-hidden pb-4">
               {countryCounties
                 .filter((county) =>
                   county.name

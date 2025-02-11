@@ -81,7 +81,7 @@ export default function BuildingComponent({
           className="h-[400px] w-full md:h-[600px]"
         />
       </div>
-      <ScrollArea className="lg:max-h-screen lg:w-1/2">
+      <ScrollArea className="lg:max-h-[1440px] lg:w-1/2">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             {editingField === "name" ? (

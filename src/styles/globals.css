@@ -71,6 +71,14 @@ html {
   z-index: 10 !important
 }
 
+.leaflet-popup {
+  z-index: 10 !important
+}
+
+.leaflet-marker-icon {
+  z-index: 10 !important
+}
+
 .embla {
   --slide-spacing: 1rem;
   --slide-size: 70%;
