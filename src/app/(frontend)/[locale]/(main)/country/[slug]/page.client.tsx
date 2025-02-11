@@ -64,7 +64,9 @@ export default function CountryPage({
         <div className="flex max-h-[800px] w-full justify-center gap-4">
           {/* Counties */}
           <div className="relative w-1/2 overflow-hidden">
-            <h2 className="mb-4 text-2xl font-bold text-brown">Counties</h2>
+            <h2 className="mb-4 text-2xl font-bold text-brown">
+              {t("common.counties")}
+            </h2>
             <div className="relative mx-1 mb-4">
               <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input
@@ -102,7 +104,9 @@ export default function CountryPage({
 
           {/* Cities */}
           <div className="relative w-1/2 overflow-hidden">
-            <h2 className="mb-4 text-2xl font-bold text-brown">Cities</h2>
+            <h2 className="mb-4 text-2xl font-bold text-brown">
+              {t("common.cities")}
+            </h2>
             <div className="relative mx-1 mb-4">
               <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent" />
               <Input

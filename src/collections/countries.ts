@@ -53,6 +53,8 @@ export const Countries: CollectionConfig = {
           not_equals: null,
         },
       },
+      // TODO: if it will be used. till then it's not needed too much data
+      // defaultLimit: 0,
     },
     {
       name: "relatedCounties",
@@ -67,6 +69,7 @@ export const Countries: CollectionConfig = {
           not_equals: null,
         },
       },
+      defaultLimit: 0,
     },
     {
       name: "relatedCities",
@@ -81,6 +84,7 @@ export const Countries: CollectionConfig = {
           not_equals: null,
         },
       },
+      defaultLimit: 0,
     },
   ],
   admin: {
