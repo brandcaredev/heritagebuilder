@@ -674,9 +674,10 @@ export default function BuildingForm({
                     <MapPositionSelector
                       position={value}
                       setPosition={(value) => onChange(value)}
-                      setCountry={(value: string) =>
-                        form.setValue(`country`, value)
-                      }
+                      setCountry={(value: string) => {
+                        form.setValue(`country`, value);
+                        form.clearErrors(`country`);
+                      }}
                     />
                   </FormControl>
                 </FormItem>
