@@ -1,23 +1,16 @@
 "use client";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Link, useRouter } from "@/i18n/routing";
 import { createClient } from "@/supabase/client";
-import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
-import {
-  LogInIcon,
-  LogOut,
-  PlusCircleIcon,
-  ShieldEllipsis,
-  User,
-} from "lucide-react";
+import { LogInIcon, LogOut, PlusCircleIcon, User } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import LoginSignupDialog from "./login-signup-dialog";
 
@@ -50,13 +43,13 @@ export default function AccountButton() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="z-10">
             <DropdownMenuLabel>{t("account.myAccount")}</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-brown-200" />
+            {/* <DropdownMenuSeparator className="bg-brown-200" />
             <Link href="admin">
               <DropdownMenuItem>
                 <ShieldEllipsis />
                 <span>{t("account.admin")}</span>
               </DropdownMenuItem>
-            </Link>
+            </Link> */}
             <DropdownMenuItem
               onClick={async () => {
                 await supabase.auth.signOut();

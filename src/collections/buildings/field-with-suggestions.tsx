@@ -1,17 +1,23 @@
 "use client";
 import {
   Collapsible,
-  TextField,
   TextareaField,
+  TextField,
   useDocumentInfo,
 } from "@payloadcms/ui";
+import {
+  TextareaField as TextareaFieldType,
+  TextField as TextFieldType,
+} from "payload";
 import { BuildingSuggestion } from "payload-types";
 import React, { useEffect, useState } from "react";
 
 const FieldWithSuggestions: React.FC<{
   path: string;
-  fieldType: "text" | "textarea";
-}> = ({ path, fieldType }) => {
+  field: TextareaFieldType | TextFieldType;
+}> = (props) => {
+  const { path, field } = props;
+  console.log(props);
   const { id } = useDocumentInfo();
   const [suggestions, setSuggestions] = useState<BuildingSuggestion[]>([]);
 
@@ -45,15 +51,15 @@ const FieldWithSuggestions: React.FC<{
     setSuggestions(data.docs);
   };
 
-  const FieldComponent = fieldType === "text" ? TextField : TextareaField;
-
+  const FieldComponent = field.type === "text" ? TextField : TextareaField;
   return (
-    <div className={`field-type ${fieldType}`} id={`field-${path}`}>
-      <label className="mb-2" htmlFor={`field-${path}`}>
+    <div className={`field-type ${field.type}`} id={`field-${path}`}>
+      <label className="field-label mb-2" htmlFor={`field-${path}`}>
         {path
           .replace(/([A-Z])/g, " $1") // Add space before capital letters
           .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
           .trim()}
+        {field.required && <span className="required">*</span>}
       </label>
 
       <FieldComponent path={path} field={{ name: path }} />

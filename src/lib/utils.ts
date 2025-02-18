@@ -85,7 +85,7 @@ export const getURL = () => {
     "http://localhost:3000/";
   // Make sure to include `https://` when not localhost.
   url = url.startsWith("http") ? url : `https://${url}`;
-  // Make sure to include a trailing `/`.
+  // Make sure to remove a trailing `/`.
   url = url.endsWith("/") ? url.slice(0, -1) : url;
   return url;
 };

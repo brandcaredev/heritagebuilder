@@ -48,7 +48,7 @@ export const BuildingSuggestions: CollectionConfig = {
         if (operation === "create") {
           const data = await req.payload.findByID({
             collection: "buildings",
-            id: doc.building,
+            id: doc.building.id ?? doc.building,
             select: {
               suggestionsCount: true,
             },
@@ -57,7 +57,7 @@ export const BuildingSuggestions: CollectionConfig = {
           if (data) {
             await req.payload.update({
               collection: "buildings",
-              id: doc.building,
+              id: doc.building.id ?? doc.building,
               data: {
                 suggestionsCount: (data.suggestionsCount ?? 0) + 1,
               },

@@ -1,9 +1,10 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { checkSlugUniqueness } from "@/hooks/slug-uniqueness";
-import { formatSlug } from "@/lib/utils";
+import { formatSlug, getURL } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
+import { sendApprovalEmail } from "./approvalEmail";
 
 export const Buildings: CollectionConfig = {
   slug: "buildings",
@@ -170,6 +171,7 @@ export const Buildings: CollectionConfig = {
       "summary",
       "_status",
       "suggestionsCount",
+      "createdAt",
     ],
   },
   versions: {
@@ -179,24 +181,46 @@ export const Buildings: CollectionConfig = {
     beforeChange: [
       async (args) => {
         await checkSlugUniqueness("buildings")(args);
-        const { data, context, operation } = args;
-        if (operation !== "create") return;
-
-        // Store the temporary image IDs in context.imageIds
-        let temporaryImageIds = [] as string[];
-        if (data.featuredImage) {
-          temporaryImageIds.push(data.featuredImage);
-        }
-        if (data.images && Array.isArray(data.images)) {
-          temporaryImageIds = temporaryImageIds.concat(data.images);
-        }
-        context.imageIds = temporaryImageIds;
-        return data;
       },
     ],
     afterChange: [
-      ({ doc, previousDoc, context }) => {
+      async (args) => {
+        const { doc, context, operation, previousDoc, req } = args;
         delete context.imageIds;
+        console.log(
+          doc.creatorEmail,
+          req.locale,
+          operation,
+          previousDoc?._status,
+          doc?._status,
+        );
+        if (
+          // only if the creator email is set
+          doc.creatorEmail &&
+          // only if the hungarian version is published
+          req.locale === "hu" &&
+          operation === "update" &&
+          previousDoc?._status !== "published" &&
+          doc?._status === "published"
+        ) {
+          console.log("ide belep");
+          const { totalDocs } = await req.payload.findVersions({
+            collection: "counties",
+            where: {
+              "version._status": { equals: "published" },
+              parent: { equals: previousDoc?.id || doc.id },
+            },
+          });
+          const previousPublish = totalDocs > 0;
+          if (!previousPublish) {
+            await sendApprovalEmail(
+              doc.name,
+              `${getURL()}/épület/${doc.slug}`,
+              doc.creatorEmail,
+            );
+            return;
+          }
+        }
         if (doc._status === "draft" && previousDoc?._status !== "published") {
           return;
         }
