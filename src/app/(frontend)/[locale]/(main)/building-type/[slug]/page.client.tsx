@@ -1,14 +1,14 @@
 "use client";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Link } from "@/i18n/routing";
+import { cn } from "@/lib/utils";
 import { Building, BuildingType, City, Country, County } from "payload-types";
-import { Suspense, useState } from "react";
+import { Suspense, useTransition } from "react";
 import BuildingCard from "./building-card";
 import FilterForm from "./filter-form";
 import Pagination from "./pagination";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Link } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
 
 export const BuildingTypeClientPage = ({
   buildings,
@@ -33,7 +33,7 @@ export const BuildingTypeClientPage = ({
   page: number;
   totalPages: number;
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   return (
     <div className="container relative mx-auto flex flex-col">
       <h1 className="text-3xl font-bold text-brown">{buildingType.name}</h1>
@@ -54,7 +54,7 @@ export const BuildingTypeClientPage = ({
           counties={counties}
           cities={cities}
           countries={countries}
-          setLoading={setIsLoading}
+          startTransition={startTransition}
         />
       </Suspense>
       <ScrollArea className="mt-4 h-[calc(100vh-312px-56px)] pb-[72px]">
@@ -70,7 +70,7 @@ export const BuildingTypeClientPage = ({
               <BuildingCard
                 key={building.id}
                 building={building}
-                loading={isLoading}
+                loading={isPending}
               />
             </Link>
           ))}

@@ -10,6 +10,7 @@ import {
 import { useRouter } from "@/i18n/routing";
 import { useSearchParams } from "next/navigation";
 import { City, Country, County } from "payload-types";
+import { TransitionStartFunction } from "react";
 
 export default function FilterForm({
   countries,
@@ -19,7 +20,7 @@ export default function FilterForm({
   county,
   city,
   buildingType,
-  setLoading,
+  startTransition,
 }: {
   buildingType: string;
   countries: Country[];
@@ -28,7 +29,7 @@ export default function FilterForm({
   country?: string;
   county?: string;
   city?: string;
-  setLoading: (isLoading: boolean) => void;
+  startTransition: TransitionStartFunction;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,27 +38,27 @@ export default function FilterForm({
     filterType: string,
     value: string | undefined,
   ) => {
-    setLoading(true);
-    const params = new URLSearchParams(searchParams.toString());
-    if (filterType === "country") {
-      params.delete("city");
-      params.delete("county");
-    }
-    if (filterType === "county") {
-      params.delete("city");
-    }
-    if (value === undefined) {
-      params.delete(filterType);
-    } else {
-      params.set(filterType, value);
-    }
-    params.set("page", "1"); // Reset to first page on filter change
-    router.push({
-      pathname: `/building-type/[slug]`,
-      params: { slug: buildingType },
-      query: Object.fromEntries(params.entries()),
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (filterType === "country") {
+        params.delete("city");
+        params.delete("county");
+      }
+      if (filterType === "county") {
+        params.delete("city");
+      }
+      if (value === undefined) {
+        params.delete(filterType);
+      } else {
+        params.set(filterType, value);
+      }
+      params.set("page", "1"); // Reset to first page on filter change
+      router.push({
+        pathname: `/building-type/[slug]`,
+        params: { slug: buildingType },
+        query: Object.fromEntries(params.entries()),
+      });
     });
-    setTimeout(() => setLoading(false), 1000);
   };
 
   return (

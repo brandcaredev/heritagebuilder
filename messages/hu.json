@@ -183,5 +183,12 @@
       "featuredImage": "Kiemelt kép",
       "images": "Képek"
     }
+  },
+  "map": {
+    "invalidCoordinates": "Kérjük, írja be az érvényes koordinátákat",
+    "invalidCountry": "Érvénytelen hely, kérjük, válasszon egy helyet Romániában vagy Szerbiában",
+    "latitude": "Szélesség",
+    "longitude": "Hosszúság",
+    "setCoordinates": "Beállit"
   }
 }

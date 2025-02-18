@@ -186,5 +186,12 @@
       "featuredImage": "Featured image",
       "images": "Images"
     }
+  },
+  "map": {
+    "invalidCoordinates": "Please enter valid coordinates",
+    "invalidCountry": "Invalid location, please select a location in Romania or Serbia",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "setCoordinates": "Set"
   }
 }

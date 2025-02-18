@@ -3,6 +3,7 @@ import { Icons } from "@/components/icons";
 import { usePathname } from "@/i18n/routing";
 import { LocaleType } from "@/lib/constans";
 import { api } from "@/trpc/react";
+import { Loader2 } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useParams, useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -25,7 +26,7 @@ const LocaleSwitcher = () => {
   const trpc = api.useUtils();
   const locale = useLocale();
   const router = useRouter();
-  const [_isPending, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
   const params = useParams();
 
@@ -90,6 +91,8 @@ const LocaleSwitcher = () => {
 
   const nextLanguage = locale === "en" ? languages[1] : languages[0];
   const Flag = nextLanguage.flag;
+
+  if (isPending) return <Loader2 size={20} className="animate-spin" />;
 
   return (
     <button

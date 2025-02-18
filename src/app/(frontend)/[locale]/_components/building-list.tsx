@@ -8,7 +8,7 @@ import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Building, BuildingType } from "payload-types";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import BuildingCard from "../(main)/building-type/[slug]/building-card";
 import Pagination from "../(main)/building-type/[slug]/pagination";
 
@@ -34,42 +34,42 @@ const BuildingList = ({
   const t = useTranslations();
   const router = useRouter();
   const [articleSearch, setArticleSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
 
   const handleFilterChange = (
     filterType: "search" | "building-type",
     value: string | undefined,
   ) => {
-    setIsLoading(true);
-    const params = new URLSearchParams(searchParams.toString());
-    if (filterType === "building-type") {
-      if (value === undefined) {
-        params.delete("buildingType");
-      } else {
-        params.set("buildingType", value);
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (filterType === "building-type") {
+        if (value === undefined) {
+          params.delete("buildingType");
+        } else {
+          params.set("buildingType", value);
+        }
+      } else if (filterType === "search") {
+        if (value === "" || value === undefined) {
+          params.delete("q");
+        } else {
+          params.set("q", value);
+        }
       }
-    } else if (filterType === "search") {
-      if (value === "" || value === undefined) {
-        params.delete("q");
-      } else {
-        params.set("q", value);
-      }
-    }
-    params.set("page", "1"); // Reset to first page on filter change
+      params.set("page", "1"); // Reset to first page on filter change
 
-    //@ts-expect-error
-    router.push(`?${params.toString()}`, { scroll: false }); // Prevent page scroll
-    setTimeout(() => setIsLoading(false), 1000);
+      //@ts-expect-error
+      router.push(`?${params.toString()}`, { scroll: false }); // Prevent page scroll
+    });
   };
 
   const handleSubmit = () => {
-    setIsLoading(true);
-    router.push({
-      pathname: "/search/[slug]",
-      params: { slug: articleSearch },
+    startTransition(() => {
+      router.push({
+        pathname: "/search/[slug]",
+        params: { slug: articleSearch },
+      });
     });
-    setTimeout(() => setIsLoading(false), 1000);
   };
 
   return (
@@ -147,7 +147,7 @@ const BuildingList = ({
             <BuildingCard
               key={building.id}
               building={building}
-              loading={isLoading}
+              loading={isPending}
             />
           </Link>
         ))}
