@@ -105,6 +105,7 @@ html {
 
 svg.map path {
   fill: #6a573a;
+  cursor: pointer;
 }
 
 svg.map path:hover {

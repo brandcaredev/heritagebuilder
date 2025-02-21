@@ -15,6 +15,8 @@ import { Building, BuildingType } from "payload-types";
 import { useState } from "react";
 import { toast } from "sonner";
 import GalleryWithDialog from "./image-gallery";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase/auth";
 
 const MapPosition = dynamic(() => import("@/components/map-position"), {
   ssr: false,
@@ -39,6 +41,12 @@ export default function BuildingComponent({
 }) {
   const t = useTranslations();
   const [editingField, setEditingField] = useState<EditableFields>(null);
+
+  const { data } = useQuery({
+    queryFn: async () => (await supabase.auth.getUser()).data,
+    queryKey: ["user"],
+    staleTime: 0,
+  });
 
   const submitSuggestion = async (formData: FormData) => {
     const field = formData.get("field") as string;
@@ -119,7 +127,7 @@ export default function BuildingComponent({
             ) : (
               <h1 className="text-4xl font-bold text-brown">{building.name}</h1>
             )}
-            {editingField !== "name" && (
+            {editingField !== "name" && data?.user && (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -142,7 +150,7 @@ export default function BuildingComponent({
               <h3 className="text-2xl font-bold text-brown">
                 {t("building.history")}
               </h3>
-              {editingField !== "history" && (
+              {editingField !== "history" && data?.user && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -198,7 +206,7 @@ export default function BuildingComponent({
               <h3 className="text-2xl font-bold text-brown">
                 {t("building.style")}
               </h3>
-              {editingField !== "style" && (
+              {editingField !== "style" && data?.user && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -255,7 +263,7 @@ export default function BuildingComponent({
                 <h3 className="text-2xl font-bold text-brown">
                   {t("building.famousResidents")}
                 </h3>
-                {editingField !== "famousResidents" && (
+                {editingField !== "famousResidents" && data?.user && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -317,7 +325,7 @@ export default function BuildingComponent({
                 <h3 className="text-2xl font-bold text-brown">
                   {t("building.renovation")}
                 </h3>
-                {editingField !== "renovation" && (
+                {editingField !== "renovation" && data?.user && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -378,7 +386,7 @@ export default function BuildingComponent({
               <h3 className="text-2xl font-bold text-brown">
                 {t("building.presentDay")}
               </h3>
-              {editingField !== "presentDay" && (
+              {editingField !== "presentDay" && data?.user && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>

@@ -18,6 +18,12 @@ const Users: CollectionConfig = {
       required: true,
       defaultValue: "moderator",
     },
+    {
+      name: "notifyOnNewBuilding",
+      type: "checkbox",
+      label: "Email when a new building is created",
+      defaultValue: false,
+    },
   ],
   access: {
     read: ({ req: { user } }) => Boolean(user),

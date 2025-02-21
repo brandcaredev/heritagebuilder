@@ -1,4 +1,7 @@
 import { env } from "@/env";
+import { getURL } from "@/lib/utils";
+import { HookOperationType, PayloadRequest } from "payload";
+import { Building } from "payload-types";
 import { Resend } from "resend";
 
 const resend = new Resend(env.RESEND_API_KEY);
@@ -75,11 +78,7 @@ const getApprovalTemplate = (name: string, url: string) =>
 </html>
 `;
 
-export const sendApprovalEmail = async (
-  name: string,
-  url: string,
-  email: string,
-) => {
+const sendApprovalEmail = async (name: string, url: string, email: string) => {
   try {
     await resend.emails.create({
       from: `Heritage Builder <${env.BASE_EMAIL}>`,
@@ -89,5 +88,44 @@ export const sendApprovalEmail = async (
     });
   } catch (e) {
     console.error("Approval email failed to send:", e);
+  }
+};
+
+export const approvalEmail = async ({
+  req,
+  doc,
+  previousDoc,
+  operation,
+}: {
+  req: PayloadRequest;
+  doc: Building;
+  previousDoc: Building;
+  operation: Extract<HookOperationType, "create" | "update">;
+}) => {
+  if (
+    // only if the creator email is set
+    doc.creatorEmail &&
+    // only if the hungarian version is published
+    req.locale === "hu" &&
+    operation === "update" &&
+    previousDoc?._status !== "published" &&
+    doc?._status === "published"
+  ) {
+    const { totalDocs } = await req.payload.findVersions({
+      collection: "counties",
+      where: {
+        "version._status": { equals: "published" },
+        parent: { equals: previousDoc?.id || doc.id },
+      },
+    });
+    const previousPublish = totalDocs > 0;
+    if (!previousPublish) {
+      await sendApprovalEmail(
+        doc.name,
+        `${getURL()}/hu/épület/${doc.slug}`,
+        doc.creatorEmail,
+      );
+      return;
+    }
   }
 };
