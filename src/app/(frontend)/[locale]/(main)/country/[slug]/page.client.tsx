@@ -27,8 +27,8 @@ export default function CountryPage({
 
   const countryCounties = (country.relatedCounties?.docs as County[]) || [];
   const countryCities = (country.relatedCities?.docs as City[]) || [];
-  const onMapCountyClick = (id: number) => {
-    const selectedCounty = countryCounties.find((c) => c.id === id);
+  const onMapCountyClick = (code: string) => {
+    const selectedCounty = countryCounties.find((c) => c.code === code);
     if (selectedCounty) {
       router.push({
         pathname: "/county/[slug]",
@@ -49,9 +49,9 @@ export default function CountryPage({
           )}
         >
           {country.countryCode === "ro" ? (
-            <Romania onClick={(id) => onMapCountyClick(id)} />
+            <Romania onClick={(code) => onMapCountyClick(code)} />
           ) : (
-            <Serbia onClick={(id) => onMapCountyClick(id)} />
+            <Serbia onClick={(code) => onMapCountyClick(code)} />
           )}
         </div>
 
