@@ -409,6 +409,7 @@ export interface Media {
 export interface User {
   id: number;
   role: 'admin' | 'moderator';
+  notifyOnNewBuilding?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -845,6 +846,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  notifyOnNewBuilding?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

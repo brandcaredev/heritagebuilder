@@ -1,10 +1,11 @@
 import { authenticatedOrPublished } from "@/access/authenticatesOrPublished";
 import { checkSlugUniqueness } from "@/hooks/slug-uniqueness";
-import { formatSlug, getURL } from "@/lib/utils";
+import { formatSlug } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
-import { sendApprovalEmail } from "./approvalEmail";
+import { approvalEmail } from "./hooks/approvalEmail";
+import { newBuildingEmail } from "./hooks/newBuildingEmail";
 
 export const Buildings: CollectionConfig = {
   slug: "buildings",
@@ -185,42 +186,10 @@ export const Buildings: CollectionConfig = {
     ],
     afterChange: [
       async (args) => {
-        const { doc, context, operation, previousDoc, req } = args;
+        const { doc, context, previousDoc } = args;
         delete context.imageIds;
-        console.log(
-          doc.creatorEmail,
-          req.locale,
-          operation,
-          previousDoc?._status,
-          doc?._status,
-        );
-        if (
-          // only if the creator email is set
-          doc.creatorEmail &&
-          // only if the hungarian version is published
-          req.locale === "hu" &&
-          operation === "update" &&
-          previousDoc?._status !== "published" &&
-          doc?._status === "published"
-        ) {
-          console.log("ide belep");
-          const { totalDocs } = await req.payload.findVersions({
-            collection: "counties",
-            where: {
-              "version._status": { equals: "published" },
-              parent: { equals: previousDoc?.id || doc.id },
-            },
-          });
-          const previousPublish = totalDocs > 0;
-          if (!previousPublish) {
-            await sendApprovalEmail(
-              doc.name,
-              `${getURL()}/épület/${doc.slug}`,
-              doc.creatorEmail,
-            );
-            return;
-          }
-        }
+        await approvalEmail(args);
+        await newBuildingEmail(args);
         if (doc._status === "draft" && previousDoc?._status !== "published") {
           return;
         }

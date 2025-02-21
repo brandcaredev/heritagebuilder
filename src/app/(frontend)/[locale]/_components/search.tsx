@@ -8,8 +8,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useDebounce } from "@/hooks/use-debounce";
 import { useRouter } from "@/i18n/routing";
-import { useDebounce } from "@/lib/hooks";
 import { api } from "@/trpc/react";
 import { Loader2, Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
