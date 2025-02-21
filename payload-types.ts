@@ -297,6 +297,77 @@ export interface County {
   position?: [number, number] | null;
   country: number | Country;
   region?: (number | null) | Region;
+  code?:
+    | (
+        | 'RO-AB'
+        | 'RO-AG'
+        | 'RO-AR'
+        | 'RO-BC'
+        | 'RO-BH'
+        | 'RO-BN'
+        | 'RO-BR'
+        | 'RO-BT'
+        | 'RO-B'
+        | 'RO-BV'
+        | 'RO-BZ'
+        | 'RO-CJ'
+        | 'RO-CL'
+        | 'RO-CS'
+        | 'RO-CT'
+        | 'RO-CV'
+        | 'RO-DB'
+        | 'RO-DJ'
+        | 'RO-GJ'
+        | 'RO-GL'
+        | 'RO-GR'
+        | 'RO-HD'
+        | 'RO-HR'
+        | 'RO-IF'
+        | 'RO-IL'
+        | 'RO-IS'
+        | 'RO-MH'
+        | 'RO-MM'
+        | 'RO-MS'
+        | 'RO-NT'
+        | 'RO-OT'
+        | 'RO-PH'
+        | 'RO-SB'
+        | 'RO-SJ'
+        | 'RO-SM'
+        | 'RO-SV'
+        | 'RO-TL'
+        | 'RO-TM'
+        | 'RO-TR'
+        | 'RO-VL'
+        | 'RO-VN'
+        | 'RO-VS'
+        | 'RS-00'
+        | 'RS-01'
+        | 'RS-02'
+        | 'RS-03'
+        | 'RS-04'
+        | 'RS-05'
+        | 'RS-06'
+        | 'RS-07'
+        | 'RS-08'
+        | 'RS-09'
+        | 'RS-10'
+        | 'RS-11'
+        | 'RS-12'
+        | 'RS-13'
+        | 'RS-14'
+        | 'RS-15'
+        | 'RS-16'
+        | 'RS-17'
+        | 'RS-18'
+        | 'RS-19'
+        | 'RS-20'
+        | 'RS-21'
+        | 'RS-22'
+        | 'RS-23'
+        | 'RS-24'
+      )
+    | null;
   relatedBuildings?: {
     docs?: (number | Building)[] | null;
     hasNextPage?: boolean | null;
@@ -409,6 +480,7 @@ export interface Media {
 export interface User {
   id: number;
   role: 'admin' | 'moderator';
+  notifyOnNewBuilding?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -761,6 +833,7 @@ export interface CountiesSelect<T extends boolean = true> {
   position?: T;
   country?: T;
   region?: T;
+  code?: T;
   relatedBuildings?: T;
   relatedCities?: T;
   updatedAt?: T;
@@ -845,6 +918,7 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   role?: T;
+  notifyOnNewBuilding?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
