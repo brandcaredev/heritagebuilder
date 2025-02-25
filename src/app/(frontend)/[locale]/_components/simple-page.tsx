@@ -1,8 +1,10 @@
 "use client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical";
 import dynamic from "next/dynamic";
 import { Building } from "payload-types";
+import RichText from "./richtext";
 
 const SimplePage = ({
   name,
@@ -11,7 +13,7 @@ const SimplePage = ({
   position,
 }: {
   name: string;
-  description?: string | null;
+  description?: SerializedEditorState | null;
   buildings: Building[];
   position?: [number, number] | null;
 }) => {
@@ -38,7 +40,11 @@ const SimplePage = ({
               position ? "w-full lg:w-1/2" : "w-full",
             )}
           >
-            <p className="mt-6 text-brown-700">{description}</p>
+            <RichText
+              className="mt-6 text-brown-700"
+              data={description}
+              enableGutter={false}
+            />
           </div>
         )}
         {position && (

@@ -27,7 +27,7 @@ export const Cities: CollectionConfig = {
     },
     {
       name: "description",
-      type: "textarea",
+      type: "richText",
       localized: true,
     },
     {

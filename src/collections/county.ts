@@ -31,7 +31,7 @@ export const Counties: CollectionConfig = {
     },
     {
       name: "description",
-      type: "textarea",
+      type: "richText",
       localized: true,
     },
     {

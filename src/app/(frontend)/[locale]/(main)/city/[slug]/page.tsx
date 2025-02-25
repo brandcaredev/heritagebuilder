@@ -38,7 +38,7 @@ export const generateMetadata = async ({
   if (!city) return {};
   return {
     title: city.name,
-    description: city.description,
+    // description: city.description,
   };
 };
 

@@ -1,2 +1,6 @@
 @tailwind components;
 @tailwind utilities;
+
+.slash-menu-popup {
+  z-index: 10000 !important;
+}
