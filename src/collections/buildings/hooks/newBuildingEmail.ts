@@ -83,7 +83,6 @@ const sendNewBuildingEmail = async (
   url: string,
   email: string,
 ) => {
-  console.log(email);
   try {
     await resend.emails.create({
       from: `Heritage Builder <${env.BASE_EMAIL}>`,
