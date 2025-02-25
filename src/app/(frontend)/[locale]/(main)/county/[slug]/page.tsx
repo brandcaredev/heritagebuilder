@@ -38,7 +38,7 @@ export const generateMetadata = async ({
   if (!county) return {};
   return {
     title: county.name,
-    description: county.description,
+    // description: county.description,
   };
 };
 

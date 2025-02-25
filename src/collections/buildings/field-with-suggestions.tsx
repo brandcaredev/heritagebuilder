@@ -17,7 +17,6 @@ const FieldWithSuggestions: React.FC<{
   field: TextareaFieldType | TextFieldType;
 }> = (props) => {
   const { path, field } = props;
-  console.log(props);
   const { id } = useDocumentInfo();
   const [suggestions, setSuggestions] = useState<BuildingSuggestion[]>([]);
 
