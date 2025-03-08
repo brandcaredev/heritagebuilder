@@ -93,7 +93,7 @@ const MainPage = async (props: Props) => {
             <h2 className="text-2xl font-bold text-brown">
               {t("page.welcomeTitle")}
             </h2>
-            <p className="px-8 pt-2">{t("description")}</p>
+            <p className="whitespace-pre-line px-8 pt-2">{t("description")}</p>
           </div>
         </div>
 
@@ -107,7 +107,7 @@ const MainPage = async (props: Props) => {
             {t("page.latestBuildings")}
           </h2>
           {/* TODO: SADLY THIS NEEDS TO SCALE WHEN ADDING NEW COUNTRIES */}
-          <ScrollArea className="mt-0 lg:h-[550px] 2xl:h-[600px]">
+          <ScrollArea className="mt-0 lg:h-[750px] 2xl:h-[800px]">
             {buildings.map((building) => {
               return (
                 <Link
@@ -170,15 +170,6 @@ const MainPage = async (props: Props) => {
       </div>
       {/* Newsletter Section */}
       <div className="flex items-center gap-8 rounded-lg bg-brown-700 p-8">
-        <div className="hidden md:block md:w-1/3">
-          <Image
-            src="/newsletter-image.jpg"
-            alt={t("page.newsletterImageAlt")}
-            width={300}
-            height={200}
-            className="h-full w-full rounded-lg object-cover"
-          />
-        </div>
         <Newsletter />
       </div>
       {/* Videos Section */}
