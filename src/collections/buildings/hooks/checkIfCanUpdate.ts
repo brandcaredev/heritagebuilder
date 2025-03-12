@@ -3,13 +3,12 @@ import { CollectionBeforeChangeHook } from "payload";
 
 export const checkIfCanUpdate: CollectionBeforeChangeHook = async ({
   req,
-  operation,
   originalDoc,
 }) => {
   if (Boolean(req.user)) return;
 
   // if trying to update the en
-  if (operation === "update" && req.locale === "en") {
+  if (req.locale === "en") {
     const hunVersion = await req.payload.find({
       collection: "buildings",
       locale: "hu",
@@ -21,12 +20,11 @@ export const checkIfCanUpdate: CollectionBeforeChangeHook = async ({
     const isoDate = new Date(hunVersion.docs[0]!.createdAt).toISOString();
     if (
       hunVersion.docs.length > 0 &&
-      Date.parse(isoDate) < Date.now() - 1 * 60 * 1000
+      Date.parse(isoDate) < Date.now() - 15 * 60 * 1000
     ) {
-      throw new CustomAdminError(
-        "You can't update this building in English",
-        403,
-      );
+      throw new CustomAdminError("You can't update this building", 403);
     }
+    return;
   }
+  throw new CustomAdminError("You can't update this building", 403);
 };
