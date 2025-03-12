@@ -24,6 +24,7 @@ export const checkIfCanUpdate: CollectionBeforeChangeHook = async ({
     ) {
       throw new CustomAdminError("You can't update this building", 403);
     }
+    return;
   }
   throw new CustomAdminError("You can't update this building", 403);
 };
