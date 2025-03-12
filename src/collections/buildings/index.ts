@@ -182,7 +182,9 @@ export const Buildings: CollectionConfig = {
   hooks: {
     beforeChange: [
       async (args) => {
-        await checkIfCanUpdate(args);
+        if (args.operation === "update") {
+          await checkIfCanUpdate(args);
+        }
         await checkSlugUniqueness("buildings")(args);
       },
     ],
