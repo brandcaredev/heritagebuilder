@@ -6,6 +6,7 @@ import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
 import { approvalEmail } from "./hooks/approvalEmail";
 import { newBuildingEmail } from "./hooks/newBuildingEmail";
+import { checkIfCanUpdate } from "./hooks/checkIfCanUpdate";
 
 export const Buildings: CollectionConfig = {
   slug: "buildings",
@@ -181,6 +182,7 @@ export const Buildings: CollectionConfig = {
   hooks: {
     beforeChange: [
       async (args) => {
+        await checkIfCanUpdate(args);
         await checkSlugUniqueness("buildings")(args);
       },
     ],
@@ -224,7 +226,7 @@ export const Buildings: CollectionConfig = {
   access: {
     read: authenticatedOrPublished,
     create: () => true,
-    update: ({ req: { user } }) => Boolean(user), // Only logged in users can update
+    update: () => true,
     delete: ({ req: { user } }) => Boolean(user), // Only logged in users can delete
   },
 };
