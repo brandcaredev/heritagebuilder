@@ -190,5 +190,11 @@
     "latitude": "Szélesség",
     "longitude": "Hosszúság",
     "setCoordinates": "Beállit"
+  },
+  "footer": {
+    "countries": "Országok",
+    "buildingTypes": "Épülettípusok",
+    "legal": "Jogi",
+    "termsOfService": "Szolgáltatási feltételek"
   }
 }

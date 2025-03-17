@@ -1,14 +1,15 @@
 import { Link } from "@/i18n/routing";
-import { LocaleType } from "@/lib/constans";
+import type { LocaleType } from "@/lib/constans";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountries } from "@/lib/queries/country";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export async function Footer() {
   const locale = await getLocale();
   const countries = await getCountries(locale as LocaleType);
   const buildingTypes = await getBuildingTypes(locale as LocaleType);
+  const t = await getTranslations();
 
   return (
     <footer className="bg-green py-12 text-stone-100">
@@ -25,7 +26,7 @@ export async function Footer() {
           </div>
           <div className="mt-5 flex flex-wrap gap-5 sm:mt-0">
             <div>
-              <h3 className="mb-2 font-bold">Countries</h3>
+              <h3 className="mb-2 font-bold">{t("footer.countries")}</h3>
               <ul className="space-y-2">
                 {countries.map((country) => (
                   <li key={country.id}>
@@ -43,7 +44,7 @@ export async function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="mb-2 font-bold">Building Types</h3>
+              <h3 className="mb-2 font-bold">{t("footer.buildingTypes")}</h3>
               <ul className="space-y-2">
                 {buildingTypes.map((type) => (
                   <li key={type.id}>
@@ -61,17 +62,17 @@ export async function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="mb-2 font-bold">Legal</h3>
+              {/* <h3 className="mb-2 font-bold">{t("footer.legal")}</h3> */}
               <ul className="space-y-2">
                 <li>
                   <Link
                     href={{ pathname: "/terms-of-service" }}
                     className="hover:text-stone-300"
                   >
-                    Terms Of Service
+                    {t("footer.termsOfService")}
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     href={{ pathname: "/privacy-policy" }}
                     className="hover:text-stone-300"
@@ -94,7 +95,7 @@ export async function Footer() {
                   >
                     About Us
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
           </div>

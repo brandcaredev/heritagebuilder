@@ -1,4 +1,4 @@
-import { LocaleType } from "@/lib/constans";
+import type { LocaleType } from "@/lib/constans";
 import { getBuildings } from "@/lib/queries/building";
 import BuildingsMap from "@/_components/buildings-map";
 

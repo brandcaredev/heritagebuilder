@@ -196,7 +196,6 @@ export default function BuildingForm({
         id: "building-creation-toast",
       });
 
-      // TODO: USE THE BUILT IN PAYLOAD COMPRESSOR
       // Compress featured image if larger than 1MB
       const featuredImageToUpload =
         featuredImage.size > 1024 * 1024
@@ -204,7 +203,11 @@ export default function BuildingForm({
           : featuredImage;
 
       const imageFormData = new FormData();
-      imageFormData.append("file", featuredImageToUpload);
+      imageFormData.append(
+        "file",
+        featuredImageToUpload,
+        `${slugify(values.hu.name)}-featured`,
+      );
       const reqFeaturedImage = await fetch(`/api/buildings-media`, {
         credentials: "include",
         method: "POST",
@@ -214,11 +217,15 @@ export default function BuildingForm({
       // Upload and compress additional images if needed
 
       const imageIDs = await Promise.all(
-        values.images.map(async (image) => {
+        values.images.map(async (image, index) => {
           const imageFormData = new FormData();
           const imageToUpload =
             image.size > 1024 * 1024 ? await compressImage(image) : image;
-          imageFormData.append(`file`, imageToUpload);
+          imageFormData.append(
+            `file`,
+            imageToUpload,
+            `${slugify(values.hu.name)}-${index + 1}`,
+          );
 
           const req = await fetch(`/api/buildings-media`, {
             credentials: "include",

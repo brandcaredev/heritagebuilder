@@ -1,4 +1,4 @@
-import { LocaleType } from "@/lib/constans";
+import type { LocaleType } from "@/lib/constans";
 import EnglishTerms from "./content/en";
 import HungarianTerms from "./content/hu";
 export const dynamic = "force-static";

@@ -1,7 +1,7 @@
 "use client";
 import { Link, useRouter } from "@/i18n/routing";
 import { ChevronLeft } from "lucide-react";
-import { ComponentProps, Fragment } from "react";
+import { type ComponentProps, Fragment } from "react";
 
 type BreadcrumbItem = {
   href?: ComponentProps<typeof Link>["href"];
@@ -21,17 +21,17 @@ export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
           {item.href ? (
             <Link
               href={item.href}
-              className="text-lg font-semibold text-brown-700"
+              className="font-semibold text-brown-700 text-lg"
             >
               {item.name}
             </Link>
           ) : (
-            <span className="text-lg font-semibold text-brown-700">
+            <span className="font-semibold text-brown-700 text-lg">
               {item.name}
             </span>
           )}
           {index < items.length - 1 && (
-            <span className="text-lg text-brown-700">/</span>
+            <span className="text-brown-700 text-lg">/</span>
           )}
         </Fragment>
       ))}

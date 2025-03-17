@@ -13,7 +13,7 @@ import { getURL } from "@/lib/utils";
 import L, { type MarkerCluster } from "leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import Image from "next/image";
-import { Building, BuildingType, Media } from "payload-types";
+import type { Building, BuildingType, Media } from "payload-types";
 import { useCallback, useEffect } from "react";
 import {
   MapContainer,
@@ -78,13 +78,12 @@ const BuildingsMap = ({
     }
   }, []);
 
-  const createClusterCustomIcon = function (cluster: MarkerCluster) {
-    return L.divIcon({
+  const createClusterCustomIcon = (cluster: MarkerCluster) =>
+    L.divIcon({
       html: `<span>${cluster.getChildCount()}</span>`,
       className: "custom-marker-cluster",
       iconSize: L.point(50, 50, true),
     });
-  };
 
   return (
     <>
@@ -125,10 +124,10 @@ const BuildingsMap = ({
                         />
                       </div>
                       <div>
-                        <h3 className="mb-1 text-xl font-semibold text-brown">
+                        <h3 className="mb-1 font-semibold text-brown text-xl">
                           {building.name}
                         </h3>
-                        <p className="text-muted-foreground line-clamp-5 text-sm text-brown-900">
+                        <p className="line-clamp-5 text-brown-900 text-muted-foreground text-sm">
                           {building.summary || building.history}
                         </p>
                       </div>

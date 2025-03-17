@@ -165,14 +165,14 @@ export const Counties: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag(`counties`);
+          revalidateTag("counties");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag(`counties`);
+          revalidateTag("counties");
         }
       },
     ],

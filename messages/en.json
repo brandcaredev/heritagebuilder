@@ -193,5 +193,11 @@
     "latitude": "Latitude",
     "longitude": "Longitude",
     "setCoordinates": "Set"
+  },
+  "footer": {
+    "countries": "Countries",
+    "buildingTypes": "Building types",
+    "legal": "Legal",
+    "termsOfService": "Terms of service"
   }
 }
