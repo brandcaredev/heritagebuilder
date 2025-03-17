@@ -1,19 +1,22 @@
 import { Divider } from "@/components/icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link } from "@/i18n/routing";
-import { LocaleType } from "@/lib/constans";
+import type { LocaleType } from "@/lib/constans";
 import { getBuildings } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountriesBasic } from "@/lib/queries/country";
 import { getURL } from "@/lib/utils";
 import config from "@payload-config";
-import { Metadata, ResolvingMetadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { getPayload } from "payload";
-import { City, Country, Media } from "payload-types";
+import type { City, Country, Media } from "payload-types";
 import Newsletter from "../_components/newsletter";
 import VideoCarousel from "../_components/video-carousel";
+import { Suspense } from "react";
+import AllBuildingsMap from "../_components/all-buildings-map";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   params: Promise<{ locale: LocaleType }>;
@@ -56,7 +59,7 @@ const MainPage = async (props: Props) => {
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* Main Content */}
         <div className="lg:w-4/6">
-          <h1 className="mb-8 text-4xl font-extrabold text-brown">
+          <h1 className="mb-8 font-extrabold text-4xl text-brown">
             {t("page.discover")}
           </h1>
 
@@ -74,7 +77,7 @@ const MainPage = async (props: Props) => {
                 >
                   <Image
                     src={`${getURL()}${(country.image as Media).url}`}
-                    alt={country.name + "country image"}
+                    alt={`${country.name}country image`}
                     width={600}
                     height={400}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -90,7 +93,7 @@ const MainPage = async (props: Props) => {
 
           {/*Description*/}
           <div>
-            <h2 className="text-2xl font-bold text-brown">
+            <h2 className="font-bold text-2xl text-brown">
               {t("page.welcomeTitle")}
             </h2>
             <p className="whitespace-pre-line px-8 pt-2">{t("description")}</p>
@@ -103,7 +106,7 @@ const MainPage = async (props: Props) => {
 
         {/* Latest Buildings Sidebar */}
         <div className="lg:w-2/6">
-          <h2 className="mb-6 text-4xl font-bold text-brown">
+          <h2 className="mb-6 font-bold text-4xl text-brown">
             {t("page.latestBuildings")}
           </h2>
           {/* TODO: SADLY THIS NEEDS TO SCALE WHEN ADDING NEW COUNTRIES */}
@@ -121,7 +124,7 @@ const MainPage = async (props: Props) => {
                   <div className="relative aspect-square h-[50px] w-[50px]">
                     <Image
                       src={`${getURL()}${(building.featuredImage as Media).thumbnailURL}`}
-                      alt={building.name + "building image"}
+                      alt={`${building.name}building image`}
                       fill
                       className="rounded object-cover"
                     />
@@ -130,7 +133,7 @@ const MainPage = async (props: Props) => {
                     <h3 className="font-bold text-brown group-hover:text-opacity-80">
                       {building.name}
                     </h3>
-                    <p className="text-brown-dark-20 font-source-sans-3 text-xs uppercase">
+                    <p className="font-source-sans-3 text-brown-dark-20 text-xs uppercase">
                       {`${building.city ? (building.city as City).name : ""} ${building.city && building.country ? ", " : ""} ${building.country ? (building.country as Country).name : ""}`}
                     </p>
                   </div>
@@ -155,7 +158,7 @@ const MainPage = async (props: Props) => {
             >
               <Image
                 src={`${getURL()}${(type.image as Media).url}`}
-                alt={type.name + "building type image"}
+                alt={`${type.name}building type image`}
                 width={200}
                 height={200}
                 className="h-full w-full object-cover transition-transform group-hover:scale-105"
@@ -168,6 +171,10 @@ const MainPage = async (props: Props) => {
           );
         })}
       </div>
+      {/* Map */}
+      <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+        <AllBuildingsMap locale={locale} />
+      </Suspense>
       {/* Newsletter Section */}
       <div className="flex items-center gap-8 rounded-lg bg-brown-700 p-8">
         <Newsletter />

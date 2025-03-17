@@ -1,7 +1,7 @@
 "server only";
-import { getPayload, Where } from "payload";
+import { getPayload, type Where } from "payload";
 import config from "@payload-config";
-import { LocaleType } from "../constans";
+import type { LocaleType } from "../constans";
 import { unstable_cache } from "next/cache";
 
 const payload = await getPayload({ config });

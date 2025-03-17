@@ -11,7 +11,7 @@ import {
 import { Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import { Building, BuildingType } from "payload-types";
+import type { Building, BuildingType } from "payload-types";
 import { useState } from "react";
 import { toast } from "sonner";
 import GalleryWithDialog from "./image-gallery";
