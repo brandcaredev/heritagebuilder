@@ -1,5 +1,6 @@
 import { Divider } from "@/components/icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/routing";
 import type { LocaleType } from "@/lib/constans";
 import { getBuildings } from "@/lib/queries/building";
@@ -12,11 +13,11 @@ import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { getPayload } from "payload";
 import type { City, Country, Media } from "payload-types";
-import Newsletter from "../_components/newsletter";
-import VideoCarousel from "../_components/video-carousel";
 import { Suspense } from "react";
-import AllBuildingsMap from "../_components/all-buildings-map";
-import { Skeleton } from "@/components/ui/skeleton";
+import AboutUs from "@/_components/about-us";
+import AllBuildingsMap from "@/_components/all-buildings-map";
+import Newsletter from "@/_components/newsletter";
+import VideoCarousel from "@/_components/video-carousel";
 
 type Props = {
   params: Promise<{ locale: LocaleType }>;
@@ -59,7 +60,7 @@ const MainPage = async (props: Props) => {
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* Main Content */}
         <div className="lg:w-4/6">
-          <h1 className="mb-8 font-extrabold text-4xl text-brown">
+          <h1 className="mb-8 text-4xl font-extrabold text-brown">
             {t("page.discover")}
           </h1>
 
@@ -91,13 +92,8 @@ const MainPage = async (props: Props) => {
             })}
           </div>
 
-          {/*Description*/}
-          <div>
-            <h2 className="font-bold text-2xl text-brown">
-              {t("page.welcomeTitle")}
-            </h2>
-            <p className="whitespace-pre-line px-8 pt-2">{t("description")}</p>
-          </div>
+          {/* About Us Section */}
+          <AboutUs locale={locale} />
         </div>
 
         <div className="hidden lg:block">
@@ -106,7 +102,7 @@ const MainPage = async (props: Props) => {
 
         {/* Latest Buildings Sidebar */}
         <div className="lg:w-2/6">
-          <h2 className="mb-6 font-bold text-4xl text-brown">
+          <h2 className="mb-6 text-4xl font-bold text-brown">
             {t("page.latestBuildings")}
           </h2>
           {/* TODO: SADLY THIS NEEDS TO SCALE WHEN ADDING NEW COUNTRIES */}
@@ -133,7 +129,7 @@ const MainPage = async (props: Props) => {
                     <h3 className="font-bold text-brown group-hover:text-opacity-80">
                       {building.name}
                     </h3>
-                    <p className="font-source-sans-3 text-brown-dark-20 text-xs uppercase">
+                    <p className="text-brown-dark-20 font-source-sans-3 text-xs uppercase">
                       {`${building.city ? (building.city as City).name : ""} ${building.city && building.country ? ", " : ""} ${building.country ? (building.country as Country).name : ""}`}
                     </p>
                   </div>

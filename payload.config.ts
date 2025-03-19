@@ -10,6 +10,7 @@ import { Media } from "@/collections/media";
 import { Regions } from "@/collections/regions";
 import { YoutubeLinks } from "@/collections/youtube-links";
 import { env } from "@/env";
+import AboutUs from "@/collections/globals/about-us";
 import { postgresAdapter } from "@payloadcms/db-postgres";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { s3Storage } from "@payloadcms/storage-s3";
@@ -47,6 +48,9 @@ export default buildConfig({
     Users,
     BuildingSuggestions,
   ],
+
+  // Add globals array with AboutUs
+  globals: [AboutUs],
 
   // Your Payload secret - should be a complex and secure string, unguessable
   secret: env.PAYLOAD_SECRET || "",
