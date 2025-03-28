@@ -96,7 +96,7 @@
     "buildingTypeImageAlt": "Building Type",
     "newsletterImageAlt": "Newsletter background",
     "notFound": "Page not found",
-    "notFoundDescription": "Oops! The page you’re looking for doesn’t exist",
+    "notFoundDescription": "Oops! The page you're looking for doesn't exist",
     "notFoundDescription2": "It may have been moved, deleted, or the URL might be incorrect.",
     "recommendedBuildings": "Recommended buildings",
     "goToHome": "Go to homepage"
@@ -115,7 +115,7 @@
     "logInUsingEmailAddress": "Log in using email address",
     "register": "Sign up",
     "signUpSuccess": "Sign up successful",
-    "checkEmail": "Sign-up successful! Please check your email for the activation code we sent. If you don’t see it right away, it might take a few minutes to arrive. Be sure to check your spam or junk folder as well. If it still doesn’t arrive, you can request a new code below in ",
+    "checkEmail": "Sign-up successful! Please check your email for the activation code we sent. If you don't see it right away, it might take a few minutes to arrive. Be sure to check your spam or junk folder as well. If it still doesn't arrive, you can request a new code below in ",
     "backToLogin": "Back to login",
     "resendCode": "Resend code"
   },
@@ -198,6 +198,12 @@
     "countries": "Countries",
     "buildingTypes": "Building types",
     "legal": "Legal",
-    "termsOfService": "Terms of service"
+    "termsOfService": "Terms of service",
+    "cookiesPolicy": "Cookies Policy"
+  },
+  "cookies": {
+    "consentMessage": "This website uses necessary cookies to ensure the site functions properly. These cookies are essential for basic website features.",
+    "policy": "Cookie Policy",
+    "accept": "Accept"
   }
 }

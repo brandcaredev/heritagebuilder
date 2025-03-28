@@ -195,6 +195,12 @@
     "countries": "Országok",
     "buildingTypes": "Épülettípusok",
     "legal": "Jogi",
-    "termsOfService": "Szolgáltatási feltételek"
+    "termsOfService": "Szolgáltatási feltételek",
+    "cookiesPolicy": "Süti szabályzat"
+  },
+  "cookies": {
+    "consentMessage": "Ez a weboldal szükséges sütiket használ az oldal megfelelő működésének biztosításához. Ezek a sütik elengedhetetlenek az alapvető weboldal funkciókhoz.",
+    "policy": "Süti szabályzat",
+    "accept": "Elfogadom"
   }
 }

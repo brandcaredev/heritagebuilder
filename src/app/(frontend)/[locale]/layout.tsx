@@ -1,17 +1,18 @@
-import "@/styles/globals.css";
-import "@/styles/embla.css";
-import "leaflet/dist/leaflet.css";
-import "leaflet-geosearch/dist/geosearch.css";
-import { type Metadata } from "next";
-import { TRPCReactProvider } from "@/trpc/react";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
-import { notFound } from "next/navigation";
+import { CookieConsentBanner } from "@/components/cookie-consent-banner";
 import { routing } from "@/i18n/routing";
-import { Playfair_Display, Source_Sans_3 } from "next/font/google";
-import { Toaster } from "sonner";
 import IconLight from "@/public/hb-white.png";
 import IconDark from "@/public/hb.png";
+import "@/styles/embla.css";
+import "@/styles/globals.css";
+import { TRPCReactProvider } from "@/trpc/react";
+import "leaflet-geosearch/dist/geosearch.css";
+import "leaflet/dist/leaflet.css";
+import { type Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { Playfair_Display, Source_Sans_3 } from "next/font/google";
+import { notFound } from "next/navigation";
+import { Toaster } from "sonner";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default async function FrontendLayout(
           <TRPCReactProvider>
             <NextIntlClientProvider messages={messages} locale={locale}>
               <main>{children}</main>
+              <CookieConsentBanner />
             </NextIntlClientProvider>
           </TRPCReactProvider>
           <Toaster richColors />

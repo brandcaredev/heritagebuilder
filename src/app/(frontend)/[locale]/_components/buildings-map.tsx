@@ -98,6 +98,8 @@ const BuildingsMap = ({
         <MarkerClusterGroup
           iconCreateFunction={createClusterCustomIcon}
           chunkedLoading
+          showCoverageOnHover={false}
+          removeOutsideVisibleBounds={false}
         >
           {buildings.map((building) => {
             return (
@@ -124,10 +126,10 @@ const BuildingsMap = ({
                         />
                       </div>
                       <div>
-                        <h3 className="mb-1 font-semibold text-brown text-xl">
+                        <h3 className="mb-1 text-xl font-semibold text-brown">
                           {building.name}
                         </h3>
-                        <p className="line-clamp-5 text-brown-900 text-muted-foreground text-sm">
+                        <p className="text-muted-foreground line-clamp-5 text-sm text-brown-900">
                           {building.summary || building.history}
                         </p>
                       </div>
