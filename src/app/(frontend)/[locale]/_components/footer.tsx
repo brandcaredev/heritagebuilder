@@ -62,7 +62,7 @@ export async function Footer() {
               </ul>
             </div>
             <div>
-              {/* <h3 className="mb-2 font-bold">{t("footer.legal")}</h3> */}
+              <h3 className="mb-2 font-bold">{t("footer.legal")}</h3>
               <ul className="space-y-2">
                 <li>
                   <Link
@@ -79,16 +79,16 @@ export async function Footer() {
                   >
                     Privacy Policy
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     href={{ pathname: "/cookies-policy" }}
                     className="hover:text-stone-300"
                   >
-                    Cookies Policy
+                    {t("footer.cookiesPolicy") || "Cookies Policy"}
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link
                     href={{ pathname: "/about-us" }}
                     className="hover:text-stone-300"
