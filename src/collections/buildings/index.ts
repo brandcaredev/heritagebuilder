@@ -7,7 +7,12 @@ import { isNextBuild } from "payload/shared";
 import { approvalEmail } from "./hooks/approvalEmail";
 import { newBuildingEmail } from "./hooks/newBuildingEmail";
 import { checkIfCanUpdate } from "./hooks/checkIfCanUpdate";
-
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+} from "@payloadcms/plugin-seo/fields";
 export const Buildings: CollectionConfig = {
   slug: "buildings",
   fields: [
@@ -162,6 +167,26 @@ export const Buildings: CollectionConfig = {
         readOnly: true,
         hidden: true,
       },
+    },
+    {
+      type: "group",
+      name: "meta",
+      label: "SEO",
+      fields: [
+        OverviewField({
+          titlePath: "meta.title",
+          descriptionPath: "meta.description",
+          imagePath: "meta.image",
+        }),
+        MetaTitleField({
+          hasGenerateFn: true,
+        }),
+        MetaImageField({
+          relationTo: "buildings-media",
+        }),
+
+        MetaDescriptionField({}),
+      ],
     },
   ],
   admin: {

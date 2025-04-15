@@ -1,4 +1,5 @@
 import { Locales, LocaleType } from "@/lib/constans";
+import { getSEOFromDoc } from "@/lib/getSEOFromDoc";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import {
   getBuildingTypeBySlug,
@@ -37,9 +38,7 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const buildingType = await getBuildingTypeBySlug(locale, slug);
   if (!buildingType) return {};
-  return {
-    title: buildingType.name,
-  };
+  return getSEOFromDoc(buildingType);
 };
 
 const BuildingTypePage = async (props: Props) => {

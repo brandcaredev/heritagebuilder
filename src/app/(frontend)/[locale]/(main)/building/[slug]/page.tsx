@@ -1,5 +1,6 @@
 import BuildingComponent from "@/_components/building";
 import { Locales, LocaleType } from "@/lib/constans";
+import { getSEOFromDoc } from "@/lib/getSEOFromDoc";
 import { getBuildingBySlug, getBuildings } from "@/lib/queries/building";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -15,10 +16,7 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const building = await getBuildingBySlug(locale, slug);
   if (!building) return {};
-  return {
-    title: building.name,
-    description: building.summary,
-  };
+  return getSEOFromDoc(building);
 };
 
 export const generateStaticParams = async () => {

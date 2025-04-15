@@ -1,5 +1,6 @@
 import BuildingList from "@/_components/building-list";
 import { Locales, LocaleType } from "@/lib/constans";
+import { getSEOFromDoc } from "@/lib/getSEOFromDoc";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountries, getCountryBySlug } from "@/lib/queries/country";
@@ -33,9 +34,7 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const country = await getCountryBySlug(locale, slug);
   if (!country) return {};
-  return {
-    title: country.name,
-  };
+  return getSEOFromDoc(country);
 };
 
 const CountryMainPage = async (props: Props) => {

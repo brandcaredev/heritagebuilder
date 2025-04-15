@@ -4,7 +4,12 @@ import { formatSlug } from "@/lib/utils";
 import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
-
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+  OverviewField,
+} from "@payloadcms/plugin-seo/fields";
 export const Regions: CollectionConfig = {
   slug: "regions",
   fields: [
@@ -40,6 +45,26 @@ export const Regions: CollectionConfig = {
       type: "join",
       collection: "counties",
       on: "region",
+    },
+    {
+      type: "group",
+      name: "meta",
+      label: "SEO",
+      fields: [
+        OverviewField({
+          titlePath: "meta.title",
+          descriptionPath: "meta.description",
+          imagePath: "meta.image",
+        }),
+        MetaTitleField({
+          hasGenerateFn: true,
+        }),
+        MetaImageField({
+          relationTo: "buildings-media",
+        }),
+
+        MetaDescriptionField({}),
+      ],
     },
   ],
   admin: {

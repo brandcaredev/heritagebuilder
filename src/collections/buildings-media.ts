@@ -17,6 +17,12 @@ export const BuildingsMedia: CollectionConfig = {
         height: 200,
         position: "centre",
       },
+      {
+        name: "og",
+        width: 1200,
+        height: 630,
+        crop: "center",
+      },
     ],
     adminThumbnail: "thumbnail",
     mimeTypes: ["image/*"],

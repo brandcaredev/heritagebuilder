@@ -6,10 +6,66 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * Supported timezones in IANA format.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "supportedTimezones".
+ */
+export type SupportedTimezones =
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
+
 export interface Config {
   auth: {
     users: UserAuthOperations;
   };
+  blocks: {};
   collections: {
     buildings: Building;
     'buildings-media': BuildingsMedia;
@@ -132,6 +188,14 @@ export interface Building {
   creatorName?: string | null;
   creatorEmail?: string | null;
   suggestionsCount?: number | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | BuildingsMedia;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -146,9 +210,18 @@ export interface BuildingType {
   slug: string;
   image: number | BuildingTypesMedia;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | BuildingsMedia;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -174,6 +247,14 @@ export interface BuildingTypesMedia {
   focalY?: number | null;
   sizes?: {
     thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -219,6 +300,14 @@ export interface BuildingsMedia {
       filesize?: number | null;
       filename?: string | null;
     };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
 }
 /**
@@ -232,17 +321,28 @@ export interface Country {
   slug: string;
   image: number | CountriesMedia;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   relatedCounties?: {
-    docs?: (number | County)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | County)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   relatedCities?: {
-    docs?: (number | City)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | City)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | BuildingsMedia;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -276,6 +376,14 @@ export interface CountriesMedia {
       filename?: string | null;
     };
     main?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -387,13 +495,23 @@ export interface County {
       )
     | null;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   relatedCities?: {
-    docs?: (number | City)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | City)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | BuildingsMedia;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -408,9 +526,18 @@ export interface Region {
   slug: string;
   country: number | Country;
   relatedCounties?: {
-    docs?: (number | County)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | County)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | BuildingsMedia;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -446,9 +573,18 @@ export interface City {
   country: number | Country;
   county: number | County;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | BuildingsMedia;
+    description?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -496,6 +632,14 @@ export interface Media {
       filename?: string | null;
     };
     card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
       url?: string | null;
       width?: number | null;
       height?: number | null;
@@ -689,6 +833,13 @@ export interface BuildingsSelect<T extends boolean = true> {
   creatorName?: T;
   creatorEmail?: T;
   suggestionsCount?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -734,6 +885,16 @@ export interface BuildingsMediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**
@@ -745,6 +906,13 @@ export interface BuildingTypesSelect<T extends boolean = true> {
   slug?: T;
   image?: T;
   relatedBuildings?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -780,6 +948,16 @@ export interface BuildingTypesMediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**
@@ -794,6 +972,13 @@ export interface CountriesSelect<T extends boolean = true> {
   relatedBuildings?: T;
   relatedCounties?: T;
   relatedCities?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -839,6 +1024,16 @@ export interface CountriesMediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**
@@ -850,6 +1045,13 @@ export interface RegionsSelect<T extends boolean = true> {
   slug?: T;
   country?: T;
   relatedCounties?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -868,6 +1070,13 @@ export interface CountiesSelect<T extends boolean = true> {
   code?: T;
   relatedBuildings?: T;
   relatedCities?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -884,6 +1093,13 @@ export interface CitiesSelect<T extends boolean = true> {
   country?: T;
   county?: T;
   relatedBuildings?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -933,6 +1149,16 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
           | T
           | {
               url?: T;

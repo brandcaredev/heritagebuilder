@@ -17,6 +17,12 @@ export const Media: CollectionConfig = {
         height: 1024,
         position: "centre",
       },
+      {
+        name: "og",
+        width: 1200,
+        height: 630,
+        crop: "center",
+      },
     ],
     adminThumbnail: "thumbnail",
     mimeTypes: ["image/*"],

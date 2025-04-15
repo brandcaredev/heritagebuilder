@@ -1,6 +1,7 @@
 import Breadcrumbs from "@/_components/breadcrumbs";
 import { Divider } from "@/components/icons";
 import { Locales, LocaleType } from "@/lib/constans";
+import { getSEOFromDoc } from "@/lib/getSEOFromDoc";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCitiesByFilter, getCityBySlug } from "@/lib/queries/city";
@@ -36,10 +37,7 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const city = await getCityBySlug(locale, slug);
   if (!city) return {};
-  return {
-    title: city.name,
-    // description: city.description,
-  };
+  return getSEOFromDoc(city);
 };
 
 const CityPage = async (props: Props) => {

@@ -24,6 +24,7 @@ import { searchFields } from "@/collections/buildings/searchFields";
 import { beforeSyncWithSearch } from "@/collections/buildings/beforeSync";
 import Users from "@/collections/users";
 import { BuildingSuggestions } from "@/collections/building-suggestions";
+import { seoPlugin } from "@payloadcms/plugin-seo";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -57,7 +58,6 @@ export default buildConfig({
   db: postgresAdapter({
     pool: { connectionString: env.DATABASE_URL || "" },
     schemaName: "payload",
-    push: false,
   }),
   i18n: {
     fallbackLanguage: "hu",
@@ -110,6 +110,12 @@ export default buildConfig({
         },
       },
       beforeSync: beforeSyncWithSearch,
+    }),
+    seoPlugin({
+      generateTitle: ({ doc }) => {
+        const docWithTitle = doc;
+        return docWithTitle?.name;
+      },
     }),
   ],
   sharp,

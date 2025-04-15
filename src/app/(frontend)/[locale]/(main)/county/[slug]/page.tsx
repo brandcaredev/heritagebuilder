@@ -3,6 +3,7 @@ import BuildingList from "@/_components/building-list";
 import SimplePage from "@/_components/simple-page";
 import { Divider } from "@/components/icons";
 import { Locales, LocaleType } from "@/lib/constans";
+import { getSEOFromDoc } from "@/lib/getSEOFromDoc";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountiesByFilter, getCountyBySlug } from "@/lib/queries/county";
@@ -36,10 +37,7 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const county = await getCountyBySlug(locale, slug);
   if (!county) return {};
-  return {
-    title: county.name,
-    // description: county.description,
-  };
+  return getSEOFromDoc(county);
 };
 
 const CountyPage = async (props: Props) => {
