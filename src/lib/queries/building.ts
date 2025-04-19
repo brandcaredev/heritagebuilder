@@ -76,7 +76,7 @@ export const getBuildingBySlug = unstable_cache(
 );
 
 export const getBuildings = unstable_cache(
-  async (locale: LocaleType, limit?: number) => {
+  async (locale: LocaleType, limit?: number, sort?: string) => {
     const { docs: buildings } = await payload.find({
       collection: "buildings",
       locale: locale,
@@ -99,7 +99,7 @@ export const getBuildings = unstable_cache(
         position: true,
         history: true,
       },
-      sort: "createdAt",
+      sort: sort || "createdAt",
     });
     return buildings;
   },

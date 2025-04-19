@@ -436,6 +436,77 @@ export default function BuildingComponent({
               <span className="font-source-sans-3">{building.presentDay}</span>
             )}
           </div>
+
+          {/* Sources Section */}
+          {Array.isArray(building.source) && building.source.length > 0 && (
+            <div className="mt-6 flex flex-col gap-2 border-t border-brown-200 pt-6">
+              <h3 className="text-2xl font-bold text-brown">
+                {t("building.sources")}
+              </h3>
+              <div className="space-y-4">
+                {building.source.map((source: any, index: number) => (
+                  <div
+                    key={index}
+                    className="bg-brown-50 rounded-md p-4 shadow-sm"
+                  >
+                    {source.sourceType === "book" && (
+                      <div className="flex flex-col">
+                        <span className="font-semibold">
+                          {source.bookTitle}
+                        </span>
+                        <div className="text-sm text-gray-600">
+                          <span className="italic">{t("building.by")}</span>{" "}
+                          {source.bookAuthor}
+                          {source.bookYear && <span> ({source.bookYear})</span>}
+                          {source.bookPublisher && (
+                            <span>, {source.bookPublisher}</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {source.sourceType === "website" && (
+                      <div className="flex flex-col">
+                        <a
+                          href={source.websiteUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline"
+                        >
+                          {source.websiteUrl}
+                        </a>
+                      </div>
+                    )}
+
+                    {source.sourceType === "other" && (
+                      <div className="flex flex-col">
+                        <span className="font-source-sans-3">
+                          {source.otherSource}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Credits Section */}
+          {building.creatorName && (
+            <div className="mt-6 flex flex-col gap-2 border-t border-brown-200 pt-6">
+              <h3 className="text-2xl font-bold text-brown">
+                {t("building.credits")}
+              </h3>
+              <div className="bg-brown-50 rounded-md p-4 shadow-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-brown-800">
+                    {t("building.contributedBy")}:
+                  </span>
+                  <span className="font-medium">{building.creatorName}</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </ScrollArea>
     </div>
