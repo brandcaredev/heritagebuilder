@@ -36,11 +36,12 @@ import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { BuildingType, Country } from "payload-types";
 import { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import Breadcrumbs from "./breadcrumbs";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const MapPositionSelector = dynamic(
   () => import("@/components/map-position-selector"),
@@ -82,6 +83,47 @@ const optionalSchema = z.object({
   famousResidents: z.string().optional(),
   renovation: z.string().optional(),
 });
+
+const sourceSchema = z
+  .object({
+    sourceType: z.enum(["book", "website", "other"]),
+    bookAuthor: z.string().optional(),
+    bookTitle: z.string().optional(),
+    bookYear: z.string().optional(),
+    bookPublisher: z.string().optional(),
+    websiteUrl: z.string().optional(),
+    otherSource: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.sourceType === "book") {
+      if (!data.bookTitle?.trim()) {
+        ctx.addIssue({
+          path: ["bookTitle"],
+          code: "custom",
+          message: "Book title is required",
+        });
+      }
+      if (!data.bookAuthor?.trim()) {
+        ctx.addIssue({
+          path: ["bookAuthor"],
+          code: "custom",
+          message: "Book author is required",
+        });
+      }
+    } else if (data.sourceType === "website" && !data.websiteUrl?.trim()) {
+      ctx.addIssue({
+        path: ["websiteUrl"],
+        code: "custom",
+        message: "Website URL is required",
+      });
+    } else if (data.sourceType === "other" && !data.otherSource?.trim()) {
+      ctx.addIssue({
+        path: ["otherSource"],
+        code: "custom",
+        message: "Source description is required",
+      });
+    }
+  });
 
 export const formSchema = z.object({
   country: z.string(),
@@ -157,7 +199,7 @@ export const formSchema = z.object({
   position: z.tuple([z.number(), z.number()]),
   creatorname: z.string().optional(),
   creatoremail: z.string().optional(),
-  source: z.string().optional(),
+  sources: z.array(sourceSchema).optional(),
 });
 
 export default function BuildingForm({
@@ -172,6 +214,18 @@ export default function BuildingForm({
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      sources: [],
+    },
+  });
+
+  const {
+    fields: sourceFields,
+    append: appendSource,
+    remove: removeSource,
+  } = useFieldArray({
+    control: form.control,
+    name: "sources",
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = async (
@@ -253,7 +307,7 @@ export default function BuildingForm({
         creatorEmail: values.creatoremail || "",
         images: imageIDs,
         featuredImage: featuredImageID,
-        source: values.source || "",
+        source: values.sources || [],
       };
 
       const hunResponse = await fetch(`/api/buildings?locale=hu`, {
@@ -723,22 +777,181 @@ export default function BuildingForm({
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name={"source"}
-              defaultValue=""
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("form.source")}</FormLabel>
-                  <FormDescription>
-                    {t("form.descriptions.source")}
-                  </FormDescription>
-                  <FormControl>
-                    <Input placeholder="" type="text" {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+
+            <div>
+              <FormLabel>{t("form.sources")}</FormLabel>
+              <FormDescription>
+                {t("form.descriptions.sources")}
+              </FormDescription>
+
+              {sourceFields.map((field, index) => (
+                <Card key={field.id} className="mt-4 bg-brown-200 p-4">
+                  <CardHeader className="flex flex-row items-center justify-between pb-2">
+                    <CardTitle className="text-sm font-medium">
+                      {t("form.sources")} #{index + 1}
+                    </CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeSource(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </CardHeader>
+                  <CardContent className="space-y-4 pt-0">
+                    <FormField
+                      control={form.control}
+                      name={`sources.${index}.sourceType`}
+                      defaultValue="book"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("form.sourceType")}</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  placeholder={t("form.selectSourceType")}
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="book">
+                                {t("form.book")}
+                              </SelectItem>
+                              <SelectItem value="website">
+                                {t("form.website")}
+                              </SelectItem>
+                              <SelectItem value="other">
+                                {t("form.other")}
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
+
+                    {form.watch(`sources.${index}.sourceType`) === "book" && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name={`sources.${index}.bookTitle`}
+                          defaultValue=""
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t("form.bookTitle")}</FormLabel>
+                              <FormControl>
+                                <Input placeholder="" type="text" {...field} />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`sources.${index}.bookAuthor`}
+                          defaultValue=""
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{t("form.bookAuthor")}</FormLabel>
+                              <FormControl>
+                                <Input placeholder="" type="text" {...field} />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <div className="grid grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name={`sources.${index}.bookYear`}
+                            defaultValue=""
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t("form.bookYear")}</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder=""
+                                    type="number"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name={`sources.${index}.bookPublisher`}
+                            defaultValue=""
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>{t("form.bookPublisher")}</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder=""
+                                    type="text"
+                                    {...field}
+                                  />
+                                </FormControl>
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {form.watch(`sources.${index}.sourceType`) ===
+                      "website" && (
+                      <FormField
+                        control={form.control}
+                        name={`sources.${index}.websiteUrl`}
+                        defaultValue=""
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("form.websiteUrl")}</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="https://..."
+                                type="text"
+                                {...field}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
+                    {form.watch(`sources.${index}.sourceType`) === "other" && (
+                      <FormField
+                        control={form.control}
+                        name={`sources.${index}.otherSource`}
+                        defaultValue=""
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("form.otherSource")}</FormLabel>
+                            <FormControl>
+                              <Textarea placeholder="" {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+
+              <Button
+                type="button"
+                variant="outline"
+                className="mt-4"
+                onClick={() => appendSource({ sourceType: "book" })}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                {t("form.addSource")}
+              </Button>
+            </div>
+
             {Object.values(form.formState.errors).length > 0 && (
               <p className="ml-2 text-sm text-red-500">
                 {t("form.missingValues")}

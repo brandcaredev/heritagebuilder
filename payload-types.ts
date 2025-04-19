@@ -6,10 +6,66 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * Supported timezones in IANA format.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "supportedTimezones".
+ */
+export type SupportedTimezones =
+  | 'Pacific/Midway'
+  | 'Pacific/Niue'
+  | 'Pacific/Honolulu'
+  | 'Pacific/Rarotonga'
+  | 'America/Anchorage'
+  | 'Pacific/Gambier'
+  | 'America/Los_Angeles'
+  | 'America/Tijuana'
+  | 'America/Denver'
+  | 'America/Phoenix'
+  | 'America/Chicago'
+  | 'America/Guatemala'
+  | 'America/New_York'
+  | 'America/Bogota'
+  | 'America/Caracas'
+  | 'America/Santiago'
+  | 'America/Buenos_Aires'
+  | 'America/Sao_Paulo'
+  | 'Atlantic/South_Georgia'
+  | 'Atlantic/Azores'
+  | 'Atlantic/Cape_Verde'
+  | 'Europe/London'
+  | 'Europe/Berlin'
+  | 'Africa/Lagos'
+  | 'Europe/Athens'
+  | 'Africa/Cairo'
+  | 'Europe/Moscow'
+  | 'Asia/Riyadh'
+  | 'Asia/Dubai'
+  | 'Asia/Baku'
+  | 'Asia/Karachi'
+  | 'Asia/Tashkent'
+  | 'Asia/Calcutta'
+  | 'Asia/Dhaka'
+  | 'Asia/Almaty'
+  | 'Asia/Jakarta'
+  | 'Asia/Bangkok'
+  | 'Asia/Shanghai'
+  | 'Asia/Singapore'
+  | 'Asia/Tokyo'
+  | 'Asia/Seoul'
+  | 'Australia/Brisbane'
+  | 'Australia/Sydney'
+  | 'Pacific/Guam'
+  | 'Pacific/Noumea'
+  | 'Pacific/Auckland'
+  | 'Pacific/Fiji';
+
 export interface Config {
   auth: {
     users: UserAuthOperations;
   };
+  blocks: {};
   collections: {
     buildings: Building;
     'buildings-media': BuildingsMedia;
@@ -131,6 +187,18 @@ export interface Building {
   city?: (number | null) | City;
   creatorName?: string | null;
   creatorEmail?: string | null;
+  source?:
+    | {
+        sourceType: 'book' | 'website' | 'other';
+        bookAuthor?: string | null;
+        bookTitle?: string | null;
+        bookYear?: number | null;
+        bookPublisher?: string | null;
+        websiteUrl?: string | null;
+        otherSource?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   suggestionsCount?: number | null;
   updatedAt: string;
   createdAt: string;
@@ -146,9 +214,10 @@ export interface BuildingType {
   slug: string;
   image: number | BuildingTypesMedia;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -232,17 +301,20 @@ export interface Country {
   slug: string;
   image: number | CountriesMedia;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   relatedCounties?: {
-    docs?: (number | County)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | County)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   relatedCities?: {
-    docs?: (number | City)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | City)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -387,13 +459,15 @@ export interface County {
       )
     | null;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   relatedCities?: {
-    docs?: (number | City)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | City)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -408,9 +482,10 @@ export interface Region {
   slug: string;
   country: number | Country;
   relatedCounties?: {
-    docs?: (number | County)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | County)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -446,9 +521,10 @@ export interface City {
   country: number | Country;
   county: number | County;
   relatedBuildings?: {
-    docs?: (number | Building)[] | null;
-    hasNextPage?: boolean | null;
-  } | null;
+    docs?: (number | Building)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -688,6 +764,18 @@ export interface BuildingsSelect<T extends boolean = true> {
   city?: T;
   creatorName?: T;
   creatorEmail?: T;
+  source?:
+    | T
+    | {
+        sourceType?: T;
+        bookAuthor?: T;
+        bookTitle?: T;
+        bookYear?: T;
+        bookPublisher?: T;
+        websiteUrl?: T;
+        otherSource?: T;
+        id?: T;
+      };
   suggestionsCount?: T;
   updatedAt?: T;
   createdAt?: T;
