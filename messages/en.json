@@ -9,7 +9,11 @@
     "preview": "Building Preview",
     "suggestEdit": "Suggest edit",
     "creatorDescription": "If you want to be featured in the editors section",
-    "creatorName": "Name"
+    "creatorName": "Name",
+    "sources": "Sources",
+    "credits": "Credits",
+    "contributedBy": "Contributed by",
+    "by": "by"
   },
   "form": {
     "country": "Country",
@@ -23,6 +27,19 @@
     "creatorname": "Creators name",
     "creatoremail": "Creator email",
     "source": "Source",
+    "sources": "Sources",
+    "sourceType": "Source Type",
+    "book": "Book",
+    "website": "Website",
+    "other": "Other",
+    "bookTitle": "Book Title",
+    "bookAuthor": "Author",
+    "bookYear": "Year of Publishing",
+    "bookPublisher": "Publisher",
+    "websiteUrl": "Website URL",
+    "otherSource": "Source Description",
+    "addSource": "Add Source",
+    "selectSourceType": "Select source type",
     "descriptions": {
       "name": "Name of the building",
       "history": "The history of the building",
@@ -32,7 +49,8 @@
       "creatorname": "Enter your name if you want to be credited for the building",
       "creatoremail": "Enter your email if you want to get notified when the building is approved",
       "summary": "Short summary which will show up for the building",
-      "source": "Enter the source of the data if you want to show on the building page"
+      "source": "Enter the source of the data if you want to show on the building page",
+      "sources": "Add the sources you used for the building information"
     },
     "summary": "Summary",
     "missingValues": "Some fields are missing, check the form"

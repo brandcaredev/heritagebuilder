@@ -155,6 +155,67 @@ export const Buildings: CollectionConfig = {
       type: "text",
     },
     {
+      name: "source",
+      type: "array",
+      fields: [
+        {
+          name: "sourceType",
+          type: "select",
+          options: [
+            { label: "Book", value: "book" },
+            { label: "Website", value: "website" },
+            { label: "Other", value: "other" },
+          ],
+          defaultValue: "book",
+          required: true,
+        },
+        {
+          name: "bookAuthor",
+          type: "text",
+          admin: {
+            condition: (data, siblingData) => siblingData.sourceType === "book",
+          },
+        },
+        {
+          name: "bookTitle",
+          type: "text",
+          admin: {
+            condition: (data, siblingData) => siblingData.sourceType === "book",
+          },
+        },
+        {
+          name: "bookYear",
+          type: "number",
+          admin: {
+            condition: (data, siblingData) => siblingData.sourceType === "book",
+          },
+        },
+        {
+          name: "bookPublisher",
+          type: "text",
+          admin: {
+            condition: (data, siblingData) => siblingData.sourceType === "book",
+          },
+        },
+        {
+          name: "websiteUrl",
+          type: "text",
+          admin: {
+            condition: (data, siblingData) =>
+              siblingData.sourceType === "website",
+          },
+        },
+        {
+          name: "otherSource",
+          type: "text",
+          admin: {
+            condition: (data, siblingData) =>
+              siblingData.sourceType === "other",
+          },
+        },
+      ],
+    },
+    {
       name: "suggestionsCount",
       type: "number",
       defaultValue: 0,

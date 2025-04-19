@@ -53,7 +53,7 @@ const MainPage = async (props: Props) => {
       },
     },
   });
-  const buildings = await getBuildings(locale, 10);
+  const buildings = await getBuildings(locale, 10, "-createdAt");
 
   return (
     <div className="flex flex-col gap-10">
