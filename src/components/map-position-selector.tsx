@@ -169,19 +169,21 @@ const MapPositionSelector = ({
           {t("map.setCoordinates")}
         </button>
       </div>
-      <MapContainer
-        center={[45.9432, 24.9668]}
-        zoom={7}
-        style={{ height: "500px", width: "100%" }}
-        attributionControl={false}
-      >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-          // attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-        />
-        <SearchControl />
-        {position && <Marker position={position} icon={MapPinIcon} />}
-      </MapContainer>
+      <div aria-disabled="true">
+        <MapContainer
+          center={[45.9432, 24.9668]}
+          zoom={7}
+          style={{ height: "500px", width: "100%" }}
+          attributionControl={false}
+        >
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+            // attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <SearchControl />
+          {position && <Marker position={position} icon={MapPinIcon} />}
+        </MapContainer>
+      </div>
     </div>
   );
 };

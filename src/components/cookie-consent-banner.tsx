@@ -32,9 +32,9 @@ export const CookieConsentBanner = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-brown-100 p-4 shadow-lg">
       <div className="container mx-auto flex flex-col items-center justify-between gap-4 md:flex-row">
-        <div className="text-center text-brown-900 md:text-left">
-          <p>{t("cookies.consentMessage")}</p>
-        </div>
+        <p className="text-center font-bold text-brown-900 md:text-left">
+          {t("cookies.consentMessage")}
+        </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Link
             href={{ pathname: "/cookies-policy" }}

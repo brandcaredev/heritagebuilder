@@ -80,67 +80,71 @@ const BuildingsMap = ({
 
   const createClusterCustomIcon = (cluster: MarkerCluster) =>
     L.divIcon({
-      html: `<span>${cluster.getChildCount()}</span>`,
+      html: `<span aria-disabled="true">${cluster.getChildCount()}</span>`,
       className: "custom-marker-cluster",
       iconSize: L.point(50, 50, true),
     });
 
   return (
     <>
-      <MapContainer
-        center={center ?? [45.9432, 24.9668]}
-        zoom={zoom ?? 7}
-        attributionControl={false}
-        className={className}
-      >
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-        <SearchControl />
-        <MarkerClusterGroup
-          iconCreateFunction={createClusterCustomIcon}
-          chunkedLoading
-          showCoverageOnHover={false}
-          removeOutsideVisibleBounds={false}
+      <div aria-disabled="true">
+        <MapContainer
+          center={center ?? [45.9432, 24.9668]}
+          zoom={zoom ?? 7}
+          attributionControl={false}
+          className={className}
         >
-          {buildings.map((building) => {
-            return (
-              <Marker
-                key={building.id}
-                position={[building.position[0], building.position[1]]}
-                icon={typeBasedIcon((building.buildingType as BuildingType).id)}
-              >
-                <Popup>
-                  <Link
-                    href={{
-                      pathname: "/building/[slug]",
-                      params: { slug: building.slug },
-                    }}
-                    className="block w-[300px] rounded-lg bg-white-2 p-5 no-underline"
-                  >
-                    <div className="overflow-hidden">
-                      <div className="relative h-[200px] w-full">
-                        <Image
-                          src={`${getURL()}${(building.featuredImage as Media).sizes?.card?.url}`}
-                          alt={building.name}
-                          fill
-                          className="object-cover"
-                        />
+          <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+          <SearchControl />
+          <MarkerClusterGroup
+            iconCreateFunction={createClusterCustomIcon}
+            chunkedLoading
+            showCoverageOnHover={false}
+            removeOutsideVisibleBounds={false}
+          >
+            {buildings.map((building) => {
+              return (
+                <Marker
+                  key={building.id}
+                  position={[building.position[0], building.position[1]]}
+                  icon={typeBasedIcon(
+                    (building.buildingType as BuildingType).id,
+                  )}
+                >
+                  <Popup>
+                    <Link
+                      href={{
+                        pathname: "/building/[slug]",
+                        params: { slug: building.slug },
+                      }}
+                      className="block w-[300px] rounded-lg bg-white-2 p-5 no-underline"
+                    >
+                      <div className="overflow-hidden">
+                        <div className="relative h-[200px] w-full">
+                          <Image
+                            src={`${getURL()}${(building.featuredImage as Media).sizes?.card?.url}`}
+                            alt={building.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <h3 className="mb-1 text-xl font-semibold text-brown">
+                            {building.name}
+                          </h3>
+                          <p className="text-muted-foreground line-clamp-5 text-sm text-brown-900">
+                            {building.summary || building.history}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="mb-1 text-xl font-semibold text-brown">
-                          {building.name}
-                        </h3>
-                        <p className="text-muted-foreground line-clamp-5 text-sm text-brown-900">
-                          {building.summary || building.history}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MarkerClusterGroup>
-      </MapContainer>
+                    </Link>
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </MarkerClusterGroup>
+        </MapContainer>
+      </div>
     </>
   );
 };

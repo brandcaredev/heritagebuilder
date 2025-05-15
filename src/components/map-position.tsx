@@ -44,31 +44,33 @@ const MapPosition = ({
   }, [type]);
 
   return (
-    <MapContainer
-      center={position}
-      zoom={zoom ?? 15}
-      className={className}
-      attributionControl={false}
-    >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        // attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
-      />
-      {position && !hidePosition && (
-        <Marker
-          position={position}
-          icon={typeBasedIcon()}
-          eventHandlers={{
-            click: () => {
-              window.open(
-                `http://maps.google.com?q=${position[0]} ,${position[1]}`,
-                "_blank",
-              );
-            },
-          }}
+    <div aria-disabled="true">
+      <MapContainer
+        center={position}
+        zoom={zoom ?? 15}
+        className={className}
+        attributionControl={false}
+      >
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          // attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
         />
-      )}
-    </MapContainer>
+        {position && !hidePosition && (
+          <Marker
+            position={position}
+            icon={typeBasedIcon()}
+            eventHandlers={{
+              click: () => {
+                window.open(
+                  `http://maps.google.com?q=${position[0]} ,${position[1]}`,
+                  "_blank",
+                );
+              },
+            }}
+          />
+        )}
+      </MapContainer>
+    </div>
   );
 };
 
