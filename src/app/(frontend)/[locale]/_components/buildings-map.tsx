@@ -86,66 +86,62 @@ const BuildingsMap = ({
     });
 
   return (
-    <>
-      <div aria-disabled="true">
-        <MapContainer
-          center={center ?? [45.9432, 24.9668]}
-          zoom={zoom ?? 7}
-          attributionControl={false}
-          className={className}
+    <div aria-disabled="true" className={className}>
+      <MapContainer
+        center={center ?? [45.9432, 24.9668]}
+        zoom={zoom ?? 7}
+        attributionControl={false}
+        className="h-full w-full"
+      >
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+        <SearchControl />
+        <MarkerClusterGroup
+          iconCreateFunction={createClusterCustomIcon}
+          chunkedLoading
+          showCoverageOnHover={false}
+          removeOutsideVisibleBounds={false}
         >
-          <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
-          <SearchControl />
-          <MarkerClusterGroup
-            iconCreateFunction={createClusterCustomIcon}
-            chunkedLoading
-            showCoverageOnHover={false}
-            removeOutsideVisibleBounds={false}
-          >
-            {buildings.map((building) => {
-              return (
-                <Marker
-                  key={building.id}
-                  position={[building.position[0], building.position[1]]}
-                  icon={typeBasedIcon(
-                    (building.buildingType as BuildingType).id,
-                  )}
-                >
-                  <Popup>
-                    <Link
-                      href={{
-                        pathname: "/building/[slug]",
-                        params: { slug: building.slug },
-                      }}
-                      className="block w-[300px] rounded-lg bg-white-2 p-5 no-underline"
-                    >
-                      <div className="overflow-hidden">
-                        <div className="relative h-[200px] w-full">
-                          <Image
-                            src={`${getURL()}${(building.featuredImage as Media).sizes?.card?.url}`}
-                            alt={building.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="mb-1 text-xl font-semibold text-brown">
-                            {building.name}
-                          </h3>
-                          <p className="text-muted-foreground line-clamp-5 text-sm text-brown-900">
-                            {building.summary || building.history}
-                          </p>
-                        </div>
+          {buildings.map((building) => {
+            return (
+              <Marker
+                key={building.id}
+                position={[building.position[0], building.position[1]]}
+                icon={typeBasedIcon((building.buildingType as BuildingType).id)}
+              >
+                <Popup>
+                  <Link
+                    href={{
+                      pathname: "/building/[slug]",
+                      params: { slug: building.slug },
+                    }}
+                    className="block w-[300px] rounded-lg bg-white-2 p-5 no-underline"
+                  >
+                    <div className="overflow-hidden">
+                      <div className="relative h-[200px] w-full">
+                        <Image
+                          src={`${getURL()}${(building.featuredImage as Media).sizes?.card?.url}`}
+                          alt={building.name}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
-                    </Link>
-                  </Popup>
-                </Marker>
-              );
-            })}
-          </MarkerClusterGroup>
-        </MapContainer>
-      </div>
-    </>
+                      <div>
+                        <h3 className="mb-1 text-xl font-semibold text-brown">
+                          {building.name}
+                        </h3>
+                        <p className="text-muted-foreground line-clamp-5 text-sm text-brown-900">
+                          {building.summary || building.history}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                </Popup>
+              </Marker>
+            );
+          })}
+        </MarkerClusterGroup>
+      </MapContainer>
+    </div>
   );
 };
 
