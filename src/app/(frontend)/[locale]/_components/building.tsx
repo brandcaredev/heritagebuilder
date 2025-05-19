@@ -197,7 +197,9 @@ export default function BuildingComponent({
                 </div>
               </form>
             ) : (
-              <span className="font-source-sans-3">{building.history}</span>
+              <span className="text-justify font-source-sans-3">
+                {building.history}
+              </span>
             )}
           </div>
 
@@ -253,7 +255,9 @@ export default function BuildingComponent({
                 </div>
               </form>
             ) : (
-              <span className="font-source-sans-3">{building.style}</span>
+              <span className="text-justify font-source-sans-3">
+                {building.style}
+              </span>
             )}
           </div>
 
@@ -312,7 +316,7 @@ export default function BuildingComponent({
                   </div>
                 </form>
               ) : (
-                <span className="font-source-sans-3">
+                <span className="text-justify font-source-sans-3">
                   {building.famousResidents}
                 </span>
               )}
@@ -374,7 +378,7 @@ export default function BuildingComponent({
                   </div>
                 </form>
               ) : (
-                <span className="font-source-sans-3">
+                <span className="text-justify font-source-sans-3">
                   {building.renovation}
                 </span>
               )}
@@ -433,7 +437,9 @@ export default function BuildingComponent({
                 </div>
               </form>
             ) : (
-              <span className="font-source-sans-3">{building.presentDay}</span>
+              <span className="text-justify font-source-sans-3">
+                {building.presentDay}
+              </span>
             )}
           </div>
 
@@ -480,7 +486,7 @@ export default function BuildingComponent({
 
                     {source.sourceType === "other" && (
                       <div className="flex flex-col">
-                        <span className="font-source-sans-3">
+                        <span className="text-justify font-source-sans-3">
                           {source.otherSource}
                         </span>
                       </div>
