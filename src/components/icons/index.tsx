@@ -125,3 +125,4 @@ export const Icons = {
 export { Divider } from "./divider";
 export { Romania } from "./romania";
 export { Serbia } from "./serbia";
+export { Ukraine } from "./Ukraine";

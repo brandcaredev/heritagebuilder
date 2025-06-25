@@ -74,7 +74,7 @@ const BuildingList = ({
 
   return (
     <div className="mt-16">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col items-center justify-between sm:flex-row">
         <h2
           className={cn("text-2xl font-bold text-brown", title && "text-4xl")}
         >

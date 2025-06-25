@@ -26,59 +26,59 @@ export const routing = defineRouting({
     },
     "/city/[slug]": {
       en: "/city/[slug]",
-      hu: "/város/[slug]",
+      hu: "/varos/[slug]",
     },
     "/region/[slug]": {
       en: "/region/[slug]",
-      hu: "/régió/[slug]",
+      hu: "/regio/[slug]",
     },
     "/building/[slug]": {
       en: "/building/[slug]",
-      hu: "/épület/[slug]",
+      hu: "/epulet/[slug]",
     },
     "/building-type/[slug]": {
       en: "/building-type/[slug]",
-      hu: "/épület-típus/[slug]",
+      hu: "/epulet-tipus/[slug]",
     },
     "/search/[slug]": {
       en: "/search/[slug]",
-      hu: "/keresés/[slug]",
+      hu: "/kereses/[slug]",
     },
     "/terms-of-service": {
       en: "/terms-of-service",
-      hu: "/szerződés",
+      hu: "/szerzodes",
     },
     "/privacy-policy": {
       en: "/privacy-policy",
-      hu: "/adatvédelmi-irányelvek",
+      hu: "/adatvedelmi-iranyelvek",
     },
     "/cookies-policy": {
       en: "/cookies-policy",
-      hu: "/süti-irányelvek",
+      hu: "/suti-iranyelvek",
     },
     "/about-us": {
       en: "/about-us",
-      hu: "/rólunk",
+      hu: "/rolunk",
     },
     "/map": {
       en: "/map",
-      hu: "/térkép",
+      hu: "/terkep",
     },
     "/new": {
       en: "/new",
-      hu: "/új",
+      hu: "/uj",
     },
     "/login": {
       en: "/login",
-      hu: "/bejelentkezés",
+      hu: "/bejelentkezes",
     },
     "/register": {
       en: "/register",
-      hu: "/regisztráció",
+      hu: "/regisztracio",
     },
     "/reset-password": {
       en: "/reset-password",
-      hu: "/jelszó-visszaállítás",
+      hu: "/jelszo-visszaallitas",
     },
 
     admin: "admin",

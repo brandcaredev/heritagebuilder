@@ -204,7 +204,7 @@
   },
   "map": {
     "invalidCoordinates": "Kérjük, írja be az érvényes koordinátákat",
-    "invalidCountry": "Érvénytelen hely, kérjük, válasszon egy helyet Romániában vagy Szerbiában",
+    "invalidCountry": "Érvénytelen hely, kérjük, válasszon egy helyet Romániában, Szerbiában vagy Ukrajnában",
     "latitude": "Szélesség",
     "longitude": "Hosszúság",
     "setCoordinates": "Beállit"

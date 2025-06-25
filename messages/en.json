@@ -207,7 +207,7 @@
   },
   "map": {
     "invalidCoordinates": "Please enter valid coordinates",
-    "invalidCountry": "Invalid location, please select a location in Romania or Serbia",
+    "invalidCountry": "Invalid location, please select a location in Romania, Serbia or Ukraine",
     "latitude": "Latitude",
     "longitude": "Longitude",
     "setCoordinates": "Set"

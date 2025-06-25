@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
+    "dev": "next dev -p 3002",
     "lint": "next lint",
     "start": "next start",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload",

@@ -105,7 +105,8 @@ const MapPositionSelector = ({
                 if (
                   data.error ||
                   (data.address.country_code !== "ro" &&
-                    data.address.country_code !== "rs")
+                    data.address.country_code !== "rs" &&
+                    data.address.country_code !== "ua")
                 ) {
                   toast.error(t("map.invalidCountry"));
                   return;

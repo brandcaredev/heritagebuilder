@@ -1,12 +1,11 @@
 "use client";
 
-import { Divider, Romania, Serbia } from "@/components/icons";
+import { Divider, Romania, Serbia, Ukraine } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useRouter } from "@/i18n/routing";
 import { cn, getURL } from "@/lib/utils";
-import clsx from "clsx";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -42,18 +41,13 @@ export default function CountryPage({
       <h1 className="text-4xl font-bold text-brown">{country.name}</h1>
       <div className="mt-16 flex flex-col gap-10 lg:flex-row">
         {/* Map Section */}
-        <div
-          className={clsx(
-            "relative",
-            country.countryCode === "ro" ? "h-[440px]" : "h-[720px]",
-          )}
-        >
-          {country.countryCode === "ro" ? (
-            <Romania onClick={(code) => onMapCountyClick(code)} />
-          ) : (
-            <Serbia onClick={(code) => onMapCountyClick(code)} />
-          )}
-        </div>
+        {country.countryCode === "ro" ? (
+          <Romania onClick={(code) => onMapCountyClick(code)} />
+        ) : country.countryCode === "ua" ? (
+          <Ukraine onClick={(code) => onMapCountyClick(code)} />
+        ) : (
+          <Serbia onClick={(code) => onMapCountyClick(code)} />
+        )}
 
         {/* Decorative Divider */}
         <div className="hidden lg:block">
