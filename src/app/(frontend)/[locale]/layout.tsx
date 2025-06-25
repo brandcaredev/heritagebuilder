@@ -13,6 +13,7 @@ import { getMessages } from "next-intl/server";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -69,6 +70,7 @@ export default async function FrontendLayout(
             </NextIntlClientProvider>
           </TRPCReactProvider>
           <Toaster richColors />
+          <Analytics />
         </div>
       </body>
     </html>
