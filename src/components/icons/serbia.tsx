@@ -2,9 +2,8 @@ export const Serbia = ({ onClick }: { onClick: (id: string) => void }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="544.1554"
-      height="712.31116"
-      className="map"
+      viewBox="0 0 544 712"
+      className="map h-auto w-full"
     >
       <path
         onClick={() => onClick("RS-00")}
