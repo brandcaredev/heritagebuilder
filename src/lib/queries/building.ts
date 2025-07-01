@@ -80,7 +80,7 @@ export const getBuildings = unstable_cache(
     const { docs: buildings } = await payload.find({
       collection: "buildings",
       locale: locale,
-      ...(limit && { limit }),
+      limit: limit ?? 0,
       where: {
         _status: {
           equals: "published",
