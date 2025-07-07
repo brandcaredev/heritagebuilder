@@ -66,7 +66,10 @@ class BuildingsAndLocationProvider extends OpenStreetMapProvider {
     const buildingResults = this.buildings
       .filter((building) => {
         const name = building.name?.toLowerCase() || "";
-        return name.includes(searchQuery);
+        return (
+          name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          searchQuery.toLowerCase().includes(name.toLowerCase())
+        );
       })
       .map((building) => ({
         x: building.position[1], // longitude
