@@ -481,6 +481,14 @@ export interface County {
         | 'dnipropetrovsk'
         | 'cherkasy'
         | 'kirovohrad'
+        | 'SKZI'
+        | 'SKPV'
+        | 'SKKI'
+        | 'SKBL'
+        | 'SKTA'
+        | 'SKTC'
+        | 'SKBC'
+        | 'SKNI'
       )
     | null;
   relatedBuildings?: {

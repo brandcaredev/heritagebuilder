@@ -24,6 +24,84 @@ import {
 } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 
+// Define the SearchResult interface based on leaflet-geosearch documentation
+type SearchResult = {
+  x: number; // longitude
+  y: number; // latitude
+  label: string; // formatted address
+  bounds: [[number, number], [number, number]] | null; // [[south, west], [north, east]]
+  raw: any; // raw provider result
+};
+
+// Custom provider that combines building search with location search
+class BuildingsAndLocationProvider extends OpenStreetMapProvider {
+  private buildings: Building[];
+  private locationProvider: OpenStreetMapProvider;
+
+  constructor(options: { buildings: Building[]; params?: any }) {
+    super({
+      params: {
+        countrycodes: "RO,RS,UA,SK",
+        ...options.params,
+      },
+    });
+    this.buildings = options.buildings;
+    this.locationProvider = new OpenStreetMapProvider({
+      params: {
+        countrycodes: "RO,RS,UA,SK",
+        ...options.params,
+      },
+    });
+  }
+
+  async search(options: { query: string }): Promise<SearchResult[]> {
+    const { query } = options;
+    const searchQuery = query.toLowerCase().trim();
+
+    if (!searchQuery) return [];
+
+    const results: SearchResult[] = [];
+    console.log(this.buildings);
+    // First, search buildings
+    const buildingResults = this.buildings
+      .filter((building) => {
+        const name = building.name?.toLowerCase() || "";
+        return name.includes(searchQuery);
+      })
+      .map((building) => ({
+        x: building.position[1], // longitude
+        y: building.position[0], // latitude
+        label: `${building.name}${
+          (building.buildingType as BuildingType).name
+            ? `, ${(building.buildingType as BuildingType).name}`
+            : ""
+        }`,
+        bounds: null,
+        raw: building,
+      }));
+
+    results.push(...buildingResults);
+
+    // Then search locations using a separate location provider
+    try {
+      const locationResults = await (this.locationProvider as any).search({
+        query,
+      });
+      const locationResultsWithIcon = locationResults.map(
+        (result: SearchResult) => ({
+          ...result,
+          label: `${result.label}`,
+        }),
+      );
+      results.push(...locationResultsWithIcon);
+    } catch (error) {
+      console.warn("Location search failed:", error);
+    }
+
+    return results;
+  }
+}
+
 const BuildingsMap = ({
   buildings,
   center,
@@ -40,14 +118,16 @@ const BuildingsMap = ({
 
     useEffect(() => {
       const searchControl = new GeoSearchControl({
-        provider: new OpenStreetMapProvider({
+        provider: new BuildingsAndLocationProvider({
+          buildings,
           params: {
-            countrycodes: "RO,RS",
+            countrycodes: "RO,RS,UA,SK",
           },
         }),
         style: "bar",
         showMarker: false,
         retainZoomLevel: false,
+        searchLabel: "Search buildings and locations...",
       });
       map.addControl(searchControl);
 

@@ -20,7 +20,7 @@ const CustomPositionMap = ({
       const searchControl = new GeoSearchControl({
         provider: new OpenStreetMapProvider({
           params: {
-            countrycodes: "RO,RS",
+            countrycodes: "RO,RS,UA,SK",
           },
         }),
         style: "bar",

@@ -150,6 +150,38 @@ export const Counties: CollectionConfig = {
         { label: "Dnipropetrovsk Oblast", value: "dnipropetrovsk" },
         { label: "Cherkasy Oblast", value: "cherkasy" },
         { label: "Kirovohrad Oblast", value: "kirovohrad" },
+        {
+          label: "Žilinský kraj",
+          value: "SKZI",
+        },
+        {
+          label: "Prešov",
+          value: "SKPV",
+        },
+        {
+          label: "Košický kraj",
+          value: "SKKI",
+        },
+        {
+          label: "Bratislavský",
+          value: "SKBL",
+        },
+        {
+          label: "Trnavský",
+          value: "SKTA",
+        },
+        {
+          label: "Trenciansky",
+          value: "SKTC",
+        },
+        {
+          label: "Banskobystrický",
+          value: "SKBC",
+        },
+        {
+          label: "Nitriansky",
+          value: "SKNI",
+        },
       ],
     },
     {

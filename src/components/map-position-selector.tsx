@@ -106,7 +106,8 @@ const MapPositionSelector = ({
                   data.error ||
                   (data.address.country_code !== "ro" &&
                     data.address.country_code !== "rs" &&
-                    data.address.country_code !== "ua")
+                    data.address.country_code !== "ua" &&
+                    data.address.country_code !== "sk")
                 ) {
                   toast.error(t("map.invalidCountry"));
                   return;
@@ -131,7 +132,7 @@ const MapPositionSelector = ({
       const searchControl = new GeoSearchControl({
         provider: new OpenStreetMapProvider({
           params: {
-            countrycodes: "RO,RS",
+            countrycodes: "RO,RS,UA,SK",
           },
         }),
         style: "bar",
