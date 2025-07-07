@@ -1,6 +1,12 @@
 "use client";
 
-import { Divider, Romania, Serbia, Ukraine } from "@/components/icons";
+import {
+  Divider,
+  Romania,
+  Serbia,
+  Slovakia,
+  Ukraine,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -45,6 +51,8 @@ export default function CountryPage({
           <Romania onClick={(code) => onMapCountyClick(code)} />
         ) : country.countryCode === "ua" ? (
           <Ukraine onClick={(code) => onMapCountyClick(code)} />
+        ) : country.countryCode === "sk" ? (
+          <Slovakia onClick={(code) => onMapCountyClick(code)} />
         ) : (
           <Serbia onClick={(code) => onMapCountyClick(code)} />
         )}
