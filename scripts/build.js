@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 // Check if we're in production environment
 const isProduction = process.env.VERCEL_ENV === 'production';
