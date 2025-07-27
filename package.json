@@ -12,7 +12,8 @@
     "start": "next start",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload",
     "migrate:create": "payload migrate:create",
-    "migrate": "payload migrate"
+    "migrate:dev": "payload migrate",
+    "migrate:prod": "payload migrate --forceAcceptWarning"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

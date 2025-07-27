@@ -1,6 +1,3 @@
 {
-  "buildCommand": "npm run build:production",
-  "preview": {
-    "buildCommand": "npm run build:preview"
-  }
+  "buildCommand": "node scripts/build.js"
 }
