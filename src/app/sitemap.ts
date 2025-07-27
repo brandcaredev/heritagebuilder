@@ -46,9 +46,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const buildings = await getBuildings(locale)
       for (const building of buildings) {
         const buildingPath = locale === 'hu' ? `/epulet/${building.slug}` : `/building/${building.slug}`
+        const lastModified = building.updatedAt ? new Date(building.updatedAt) : (building.createdAt ? new Date(building.createdAt) : new Date())
         sitemap.push({
           url: `${baseUrl}/${locale}${buildingPath}`,
-          lastModified: new Date(building.updatedAt),
+          lastModified: isNaN(lastModified.getTime()) ? new Date() : lastModified,
           changeFrequency: 'weekly',
           priority: 0.9,
           alternates: {
@@ -64,9 +65,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const countries = await getCountries(locale)
       for (const country of countries) {
         const countryPath = locale === 'hu' ? `/orszag/${country.slug}` : `/country/${country.slug}`
+        const lastModified = country.updatedAt ? new Date(country.updatedAt) : (country.createdAt ? new Date(country.createdAt) : new Date())
         sitemap.push({
           url: `${baseUrl}/${locale}${countryPath}`,
-          lastModified: new Date(country.updatedAt),
+          lastModified: isNaN(lastModified.getTime()) ? new Date() : lastModified,
           changeFrequency: 'weekly',
           priority: 0.8,
           alternates: {
@@ -82,9 +84,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const { cities } = await getCitiesByFilter(locale, {})
       for (const city of cities) {
         const cityPath = locale === 'hu' ? `/varos/${city.slug}` : `/city/${city.slug}`
+        const lastModified = city.updatedAt ? new Date(city.updatedAt) : (city.createdAt ? new Date(city.createdAt) : new Date())
         sitemap.push({
           url: `${baseUrl}/${locale}${cityPath}`,
-          lastModified: new Date(city.updatedAt),
+          lastModified: isNaN(lastModified.getTime()) ? new Date() : lastModified,
           changeFrequency: 'weekly',
           priority: 0.7,
           alternates: {
@@ -100,9 +103,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const buildingTypes = await getBuildingTypes(locale)
       for (const buildingType of buildingTypes) {
         const typePath = locale === 'hu' ? `/epulet-tipus/${buildingType.slug}` : `/building-type/${buildingType.slug}`
+        const lastModified = buildingType.updatedAt ? new Date(buildingType.updatedAt) : (buildingType.createdAt ? new Date(buildingType.createdAt) : new Date())
         sitemap.push({
           url: `${baseUrl}/${locale}${typePath}`,
-          lastModified: new Date(buildingType.updatedAt),
+          lastModified: isNaN(lastModified.getTime()) ? new Date() : lastModified,
           changeFrequency: 'monthly',
           priority: 0.6,
           alternates: {
