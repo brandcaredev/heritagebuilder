@@ -6,6 +6,7 @@ import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountiesByFilter, getCountyBySlug } from "@/lib/queries/county";
+import { createMetadata, generateMetaDescription } from "@/lib/seo-utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Country } from "payload-types";
@@ -36,10 +37,16 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const county = await getCountyBySlug(locale, slug);
   if (!county) return {};
-  return {
+  const path =
+    locale === "hu" ? `/megye/${county.slug}` : `/county/${county.slug}`;
+  const description = generateMetaDescription(county.description);
+
+  return createMetadata({
     title: county.name,
-    // description: county.description,
-  };
+    description,
+    path,
+    locale,
+  });
 };
 
 const CountyPage = async (props: Props) => {

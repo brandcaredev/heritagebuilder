@@ -8,7 +8,6 @@ export const getAboutUsContent = unstable_cache(
     const payload = await getPayload({ config });
 
     try {
-      // Using any type to bypass type checking until types are regenerated
       const aboutUs = await payload.findGlobal({
         slug: "about-us",
         locale,
