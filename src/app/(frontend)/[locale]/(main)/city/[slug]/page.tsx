@@ -4,6 +4,7 @@ import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCitiesByFilter, getCityBySlug } from "@/lib/queries/city";
+import { createMetadata, generateMetaDescription } from "@/lib/seo-utils";
 import { notFound } from "next/navigation";
 import { Country, County } from "payload-types";
 import BuildingList from "@/_components/building-list";
@@ -36,10 +37,16 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const city = await getCityBySlug(locale, slug);
   if (!city) return {};
-  return {
+
+  const path = locale === 'hu' ? `/varos/${city.slug}` : `/city/${city.slug}`;
+  const description = generateMetaDescription(city.description, `Discover heritage buildings in ${city.name}`);
+  
+  return createMetadata({
     title: city.name,
-    // description: city.description,
-  };
+    description,
+    path,
+    locale,
+  });
 };
 
 const CityPage = async (props: Props) => {
