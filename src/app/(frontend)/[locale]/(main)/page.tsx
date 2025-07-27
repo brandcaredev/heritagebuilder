@@ -1,4 +1,5 @@
 import { Divider } from "@/components/icons";
+import { WebsiteStructuredData } from "@/components/structured-data";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/routing";
@@ -6,6 +7,7 @@ import type { LocaleType } from "@/lib/constans";
 import { getBuildings } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountriesBasic } from "@/lib/queries/country";
+import { createMetadata } from "@/lib/seo-utils";
 import { getURL } from "@/lib/utils";
 import config from "@payload-config";
 import type { Metadata, ResolvingMetadata } from "next";
@@ -26,15 +28,19 @@ type Props = {
 const payload = await getPayload({ config });
 
 export const generateMetadata = async (
-  _: Props,
+  { params }: Props,
   parent: ResolvingMetadata,
 ): Promise<Metadata> => {
+  const { locale } = await params;
   const t = await getTranslations();
   const title = (await parent).title || "Heritage Builder";
-  return {
-    title,
+  
+  return createMetadata({
+    title: typeof title === 'string' ? title : 'Heritage Builder',
     description: t("description"),
-  };
+    path: "/",
+    locale,
+  });
 };
 
 const MainPage = async (props: Props) => {
@@ -56,7 +62,9 @@ const MainPage = async (props: Props) => {
   const buildings = await getBuildings(locale, 10, "-createdAt");
 
   return (
-    <div className="flex flex-col gap-10">
+    <>
+      <WebsiteStructuredData locale={locale} />
+      <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-4 lg:flex-row">
         {/* Main Content */}
         <div className="lg:w-4/6">
@@ -177,7 +185,8 @@ const MainPage = async (props: Props) => {
       </div>
       {/* Videos Section */}
       {youtubeLinks.length > 0 && <VideoCarousel videos={youtubeLinks} />}
-    </div>
+      </div>
+    </>
   );
 };
 export default MainPage;

@@ -3,6 +3,7 @@ import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountries, getCountryBySlug } from "@/lib/queries/country";
+import { createMetadata } from "@/lib/seo-utils";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CountryPage from "./page.client";
@@ -33,9 +34,17 @@ export const generateMetadata = async ({
   const { locale, slug } = await params;
   const country = await getCountryBySlug(locale, slug);
   if (!country) return {};
-  return {
+
+  const path = locale === 'hu' ? `/orszag/${country.slug}` : `/country/${country.slug}`;
+  const description = `Explore heritage buildings and historical sites in ${country.name}`;
+  
+  return createMetadata({
     title: country.name,
-  };
+    description,
+    path,
+    locale,
+    image: country.image,
+  });
 };
 
 const CountryMainPage = async (props: Props) => {

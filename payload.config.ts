@@ -20,8 +20,10 @@ import { buildConfig } from "payload";
 import sharp from "sharp";
 import { fileURLToPath } from "url";
 import { searchPlugin } from "@payloadcms/plugin-search";
+import { seoPlugin } from "@payloadcms/plugin-seo";
 import { searchFields } from "@/collections/buildings/searchFields";
 import { beforeSyncWithSearch } from "@/collections/buildings/beforeSync";
+import { extractPlainTextFromRichtext } from "@/lib/seo-utils";
 import Users from "@/collections/users";
 import { BuildingSuggestions } from "@/collections/building-suggestions";
 
@@ -109,6 +111,21 @@ export default buildConfig({
         },
       },
       beforeSync: beforeSyncWithSearch,
+    }),
+    seoPlugin({
+      collections: ["buildings", "cities", "countries", "building-types"],
+      globals: ["about-us"],
+      uploadsCollection: "media",
+      generateTitle: ({ doc }) => `Heritage Builder | ${doc?.name || doc?.title}`,
+      generateDescription: ({ doc }) => {
+        // Extract plain text from richtext fields
+        const plainText = extractPlainTextFromRichtext(doc?.summary || doc?.description);
+        return plainText || `Discover ${doc?.name || 'heritage sites'}`;
+      },
+      generateURL: ({ doc, locale }) => {
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://heritagebuilder.com";
+        return `${baseUrl}/${locale}/${doc?.slug}`;
+      },
     }),
   ],
   sharp,
