@@ -6,7 +6,7 @@ import { getBuildingTypes } from '@/lib/queries/building-type'
 import { LocaleType } from '@/lib/constans'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://heritagebuilder.com'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://heritagebuilder.eu'
   const locales: LocaleType[] = ['hu', 'en']
   
   const sitemap: MetadataRoute.Sitemap = []
