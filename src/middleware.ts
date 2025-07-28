@@ -18,8 +18,9 @@ export const config = {
     // - /_next (Next.js internals)
     // - /_vercel (Vercel internals)
     // - /static (public files)
+    // - sitemap.xml (sitemap)
     // - .*\\..*\\.* (files with extensions)
-    "/((?!api|admin|robots.txt|_next|_vercel|static|.*\\..*\\.).*)",
+    "/((?!api|admin|robots.txt|sitemap.xml|_next|_vercel|static|.*\\..*\\.).*)",
     // Match all internationalized pathnames
     "/",
     "/(en|hu)/:path*",
