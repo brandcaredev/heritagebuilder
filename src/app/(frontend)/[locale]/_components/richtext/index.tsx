@@ -26,7 +26,7 @@ import { RichText as RichTextWithoutBlocks } from "@payloadcms/richtext-lexical/
 //         className="col-span-3 col-start-1"
 //         imgClassName="m-0"
 //         {...node.fields}
-//         captionClassName="mx-auto max-w-[48rem]"
+//         captionClassName="mx-auto max-w-3xl"
 //         enableGutter={false}
 //         disableInnerContainer={true}
 //       />
