@@ -102,7 +102,7 @@ export default function CountryPage({
                   >
                     <Button
                       variant="ghost"
-                      className="w-full justify-start overflow-ellipsis font-source-sans-3 font-semibold text-green"
+                      className="w-full justify-start text-ellipsis font-source-sans-3 font-semibold text-green"
                     >
                       {county.name}
                     </Button>
@@ -170,7 +170,7 @@ export default function CountryPage({
                 height={200}
                 className="h-full w-full object-cover transition-transform group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
               <h3 className="absolute bottom-2 left-2 text-sm text-white">
                 {type.name}
               </h3>

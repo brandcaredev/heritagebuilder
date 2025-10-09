@@ -82,7 +82,7 @@ const MainPage = async (props: Props) => {
                     pathname: "/country/[slug]",
                     params: { slug: country.slug },
                   }}
-                  className="group relative aspect-[4/3] overflow-hidden rounded-lg"
+                  className="group relative aspect-4/3 overflow-hidden rounded-lg"
                 >
                   <Image
                     src={`${getURL()}${(country.image as Media).url}`}
@@ -91,7 +91,7 @@ const MainPage = async (props: Props) => {
                     height={400}
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
                   <h2 className="absolute bottom-4 left-4 text-3xl text-white">
                     {country.name}
                   </h2>
@@ -167,7 +167,7 @@ const MainPage = async (props: Props) => {
                 height={200}
                 className="h-full w-full object-cover transition-transform group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
               <h3 className="absolute bottom-2 left-2 text-sm text-white">
                 {type.name}
               </h3>

@@ -1,10 +1,12 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 import { type Config } from "tailwindcss";
-import { fontFamily } from "tailwindcss/defaultTheme";
+import defaultTheme from "tailwindcss/defaultTheme";
+import tailwindcssAnimate from "tailwindcss-animate";
+
+const { fontFamily } = defaultTheme;
 
 export default {
-  darkMode: ["class"],
-  content: ["./src/**/*.tsx"],
+  darkMode: "class",
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       fontFamily: {
@@ -40,5 +42,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;
