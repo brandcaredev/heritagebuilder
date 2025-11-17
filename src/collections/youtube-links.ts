@@ -41,14 +41,14 @@ export const YoutubeLinks: CollectionConfig = {
     afterChange: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag(`youtube-links`);
+          revalidateTag(`youtube-links`, "max");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag(`youtube-links`);
+          revalidateTag(`youtube-links`, "max");
         }
       },
     ],

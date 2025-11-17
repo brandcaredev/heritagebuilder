@@ -98,6 +98,8 @@ export const getBuildings = unstable_cache(
         buildingType: true,
         position: true,
         history: true,
+        country: true,
+        city: true,
       },
       sort: sort || "createdAt",
     });

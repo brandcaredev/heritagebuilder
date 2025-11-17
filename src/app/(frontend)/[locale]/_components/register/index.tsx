@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import { CastleIcon } from "@/components/icons/castle-icon";
 
 type SignUpValues = z.infer<typeof signUpSchema>;
 
@@ -87,13 +88,13 @@ export default function Register({
       <>
         <DialogHeader>
           <DialogTitle className="flex flex-col space-y-2 text-center">
-            <h1 className="text-3xl font-bold text-brown">
+            <h1 className="text-brown text-3xl font-bold">
               {t("auth.signUpSuccess")}
             </h1>
           </DialogTitle>
         </DialogHeader>
-        <p className="text-center text-brown-900">{t("auth.checkEmail")}</p>
-        <p className="text-center text-xl font-bold text-brown-900">
+        <p className="text-brown-900 text-center">{t("auth.checkEmail")}</p>
+        <p className="text-brown-900 text-center text-xl font-bold">
           {Math.floor(timeLeft / 60)}:
           {(timeLeft % 60).toString().padStart(2, "0")}
         </p>
@@ -129,9 +130,13 @@ export default function Register({
     <>
       <DialogHeader>
         <DialogTitle className="flex flex-col space-y-2 text-center">
-          <h1 className="text-3xl font-bold text-brown">
+          <CastleIcon className="mx-auto h-16 w-16" />
+          <h1 className="text-brown text-3xl font-bold">
             {t("auth.register")}
           </h1>
+          <p className="text-muted-foreground px-8 text-center text-xs font-medium">
+            {t("auth.logInUsingEmailAddress").toUpperCase()}
+          </p>
         </DialogTitle>
       </DialogHeader>
       <div className="grid gap-6">
@@ -190,7 +195,7 @@ export default function Register({
                 </p>
               )}
             </div>
-            <Button disabled={isLoading}>
+            <Button disabled={isLoading} className="rounded-xl">
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("auth.register")}
             </Button>
@@ -201,7 +206,7 @@ export default function Register({
         {t("auth.alreadyHaveAccount")}{" "}
         <div
           onClick={switchDialog}
-          className="font-semibold text-green underline underline-offset-4 hover:text-green-2"
+          className="text-green hover:text-green-2 font-semibold underline underline-offset-4"
         >
           {t("auth.signIn")}
         </div>

@@ -57,14 +57,14 @@ export const Regions: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag(`regions`);
+          revalidateTag(`regions`, "max");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag(`regions`);
+          revalidateTag(`regions`, "max");
         }
       },
     ],

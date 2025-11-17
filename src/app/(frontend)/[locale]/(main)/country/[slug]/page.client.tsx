@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useRouter } from "@/i18n/routing";
 import { cn, getURL } from "@/lib/utils";
+import { createClient } from "@/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
@@ -29,6 +31,12 @@ export default function CountryPage({
   const router = useRouter();
   const [countiesSearch, setCountiesSearch] = useState("");
   const [citiesSearch, setCitiesSearch] = useState("");
+  const supabase = createClient();
+  const { data } = useQuery({
+    queryFn: async () => (await supabase.auth.getUser()).data,
+    queryKey: ["user"],
+    staleTime: 0,
+  });
 
   const countryCounties = (country.relatedCounties?.docs as County[]) || [];
   const countryCities = (country.relatedCities?.docs as City[]) || [];
@@ -44,7 +52,24 @@ export default function CountryPage({
 
   return (
     <>
-      <h1 className="text-4xl font-bold text-brown">{country.name}</h1>
+      <div className="flex w-full justify-between">
+        <div className="flex w-fit flex-col">
+          <h1 className="text-brown text-4xl font-bold">{country.name}</h1>
+          <Divider orientation="horizontal" />
+        </div>
+        {data?.user && (
+          <div>
+            <Button asChild>
+              <Link
+                href={{ pathname: "/new" }}
+                aria-label={t("account.newBuilding")}
+              >
+                {t("common.submitNewBuilding")}
+              </Link>
+            </Button>
+          </div>
+        )}
+      </div>
       <div className="mt-16 flex flex-col gap-10 lg:flex-row">
         {/* Map Section */}
         {country.countryCode === "ro" ? (
@@ -73,11 +98,11 @@ export default function CountryPage({
         >
           {/* Counties */}
           <div className="relative w-1/2 overflow-hidden">
-            <h2 className="mb-4 text-2xl font-bold text-brown">
+            <h2 className="text-brown mb-4 text-2xl font-bold">
               {t("common.counties")}
             </h2>
             <div className="relative mx-1 mb-4">
-              <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent" />
+              <Search className="absolute top-3 left-3 h-4 w-4 bg-transparent" />
               <Input
                 placeholder={t("common.search")}
                 value={countiesSearch}
@@ -102,7 +127,7 @@ export default function CountryPage({
                   >
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-ellipsis font-source-sans-3 font-semibold text-green"
+                      className="font-source-sans-3 text-green w-full justify-start font-semibold text-ellipsis"
                     >
                       {county.name}
                     </Button>
@@ -113,11 +138,11 @@ export default function CountryPage({
 
           {/* Cities */}
           <div className="relative w-1/2 overflow-hidden">
-            <h2 className="mb-4 text-2xl font-bold text-brown">
+            <h2 className="text-brown mb-4 text-2xl font-bold">
               {t("common.cities")}
             </h2>
             <div className="relative mx-1 mb-4">
-              <Search className="absolute left-3 top-3 h-4 w-4 bg-transparent" />
+              <Search className="absolute top-3 left-3 h-4 w-4 bg-transparent" />
               <Input
                 placeholder={t("common.search")}
                 value={citiesSearch}
@@ -141,7 +166,7 @@ export default function CountryPage({
                     <Button
                       key={city.id}
                       variant="ghost"
-                      className="w-full justify-start font-source-sans-3 font-semibold text-green"
+                      className="font-source-sans-3 text-green w-full justify-start font-semibold"
                     >
                       {city.name}
                     </Button>

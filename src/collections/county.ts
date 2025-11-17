@@ -222,14 +222,14 @@ export const Counties: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag("counties");
+          revalidateTag("counties", "max");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag("counties");
+          revalidateTag("counties", "max");
         }
       },
     ],

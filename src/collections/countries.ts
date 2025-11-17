@@ -102,14 +102,14 @@ export const Countries: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag("countries");
+          revalidateTag("countries", "max");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag("countries");
+          revalidateTag("countries", "max");
         }
       },
     ],

@@ -29,14 +29,15 @@ export const metadata: Metadata = {
   title: "Heritage Builder",
   icons: [
     {
-      media: "(prefers-color-scheme: light)",
+      rel: "icon",
       url: IconDark.src,
-      type: "image/svg+xml",
+      type: "image/png",
     },
     {
+      rel: "icon",
       media: "(prefers-color-scheme: dark)",
       url: IconLight.src,
-      type: "image/svg+xml",
+      type: "image/png",
     },
   ],
 };

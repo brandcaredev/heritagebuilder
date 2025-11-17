@@ -61,7 +61,6 @@ class BuildingsAndLocationProvider extends OpenStreetMapProvider {
     if (!searchQuery) return [];
 
     const results: SearchResult[] = [];
-    console.log(this.buildings);
     // First, search buildings
     const buildingResults = this.buildings
       .filter((building) => {
@@ -191,15 +190,15 @@ const BuildingsMap = ({
                 position={[building.position[0], building.position[1]]}
                 icon={typeBasedIcon((building.buildingType as BuildingType).id)}
               >
-                <Popup>
+                <Popup className="rounded-lg">
                   <Link
                     href={{
                       pathname: "/building/[slug]",
                       params: { slug: building.slug },
                     }}
-                    className="block w-[300px] rounded-lg bg-white-2 p-5 no-underline"
+                    className="bg-brown-50 block w-[300px] rounded-lg no-underline"
                   >
-                    <div className="overflow-hidden">
+                    <div className="overflow-hidden rounded-xl">
                       <div className="relative h-[200px] w-full">
                         <Image
                           src={`${getURL()}${(building.featuredImage as Media).sizes?.card?.url}`}
@@ -208,11 +207,11 @@ const BuildingsMap = ({
                           className="object-cover"
                         />
                       </div>
-                      <div>
-                        <h3 className="mb-1 text-xl font-semibold text-brown">
+                      <div className="px-5">
+                        <h3 className="text-brown mt-2 mb-1 text-xl font-semibold">
                           {building.name}
                         </h3>
-                        <p className="text-muted-foreground line-clamp-5 text-sm text-brown-900">
+                        <p className="text-muted-foreground text-brown-900 line-clamp-5 py-5 text-sm">
                           {building.summary || building.history}
                         </p>
                       </div>
