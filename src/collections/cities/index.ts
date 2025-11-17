@@ -82,14 +82,14 @@ export const Cities: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag("cities");
+          revalidateTag("cities", "max");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag("cities");
+          revalidateTag("cities", "max");
         }
       },
     ],
