@@ -5,7 +5,7 @@ import { updateSession } from "./supabase/middleware";
 
 const intlMiddleware = createIntlMiddleware(routing);
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Handle i18n routing first
   const intlResponse = intlMiddleware(request);
   return await updateSession(request, intlResponse);

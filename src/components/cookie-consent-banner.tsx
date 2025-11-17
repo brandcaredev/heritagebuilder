@@ -1,31 +1,65 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { Button } from "./ui/button";
 import { Link } from "@/i18n/routing";
 import { useTranslations } from "next-intl";
 
-export const CookieConsentBanner = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const t = useTranslations();
+const COOKIE_CONSENT_KEY = "cookie-consent";
+const consentListeners = new Set<() => void>();
 
-  useEffect(() => {
-    // Check if user has already accepted cookies
-    const hasConsent = localStorage.getItem("cookie-consent");
+const readConsent = () => {
+  if (typeof window === "undefined") {
+    return false;
+  }
 
-    if (!hasConsent) {
-      // Show banner if no consent is stored
-      setIsVisible(true);
+  return localStorage.getItem(COOKIE_CONSENT_KEY) === "accepted";
+};
+
+const subscribeToConsent = (listener: () => void) => {
+  if (typeof window === "undefined") {
+    return () => void 0;
+  }
+
+  const handleStorage = (event: StorageEvent) => {
+    if (event.key === COOKIE_CONSENT_KEY) {
+      listener();
     }
-  }, []);
-
-  const acceptCookies = () => {
-    // Store consent in local storage
-    localStorage.setItem("cookie-consent", "accepted");
-    setIsVisible(false);
   };
 
-  if (!isVisible) {
+  consentListeners.add(listener);
+  window.addEventListener("storage", handleStorage);
+
+  return () => {
+    consentListeners.delete(listener);
+    window.removeEventListener("storage", handleStorage);
+  };
+};
+
+const notifyConsentListeners = () => {
+  for (const listener of consentListeners) {
+    listener();
+  }
+};
+
+export const CookieConsentBanner = () => {
+  const hasConsent = useSyncExternalStore(
+    subscribeToConsent,
+    readConsent,
+    () => false,
+  );
+  const t = useTranslations();
+
+  const acceptCookies = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    notifyConsentListeners();
+  };
+
+  if (hasConsent) {
     return null;
   }
 

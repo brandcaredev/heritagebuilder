@@ -9,7 +9,7 @@ export default async function RootLayout({
   return (
     <>
       <Header />
-      <div className="p-2 md:container sm:min-h-[calc(100vh-312px-48px)] md:mx-auto md:p-8">
+      <div className="p-2 sm:min-h-[calc(100vh-312px-48px)] md:mx-auto md:p-8 2xl:container">
         {children}
       </div>
       <Footer />

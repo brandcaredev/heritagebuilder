@@ -27,7 +27,7 @@ const AboutUs: GlobalConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag("about-us");
+          revalidateTag("about-us", "max");
         }
       },
     ],

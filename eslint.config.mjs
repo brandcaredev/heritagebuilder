@@ -1,5 +1,6 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import drizzlePlugin from "eslint-plugin-drizzle";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -15,9 +16,7 @@ export default [
   {
     ignores: ["node_modules", ".next", "dist", "build"],
   },
-  ...compat.config({
-    extends: ["next/core-web-vitals"],
-  }),
+  ...nextCoreWebVitals,
   ...compat.config({
     overrides: [
       {

@@ -13,7 +13,7 @@ export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   return (
     <div className="flex items-center gap-2 md:gap-6">
       <ChevronLeft
-        className="h-5 w-5 cursor-pointer text-brown-700"
+        className="text-brown-700 h-5 w-5 cursor-pointer"
         onClick={() => router.back()}
       />
       {items.map((item, index) => (
@@ -21,12 +21,12 @@ export default function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
           {item.href ? (
             <Link
               href={item.href}
-              className="font-semibold text-brown-700 text-lg"
+              className="text-brown-700 text-lg font-semibold"
             >
               {item.name}
             </Link>
           ) : (
-            <span className="font-semibold text-brown-700 text-lg">
+            <span className="text-brown-700 text-lg font-semibold">
               {item.name}
             </span>
           )}

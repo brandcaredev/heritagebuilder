@@ -259,14 +259,14 @@ export const Buildings: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag("buildings");
+          revalidateTag("buildings", "max");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag("buildings");
+          revalidateTag("buildings", "max");
         }
       },
     ],

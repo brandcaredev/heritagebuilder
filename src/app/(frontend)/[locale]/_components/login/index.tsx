@@ -17,6 +17,7 @@ import { loginSchema } from "./login-schema";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { signInWithEmail } from "./login-action";
 import { Loader2 } from "lucide-react";
+import { CastleIcon } from "@/components/icons/castle-icon";
 
 type LoginValues = z.infer<typeof loginSchema>;
 
@@ -83,8 +84,9 @@ export default function Login({
     <>
       <DialogHeader>
         <DialogTitle className="flex flex-col space-y-4 text-center">
-          <p className="text-3xl font-bold text-brown">{t("auth.signIn")}</p>
-          <p className="text-muted-foreground px-8 text-center text-sm">
+          <CastleIcon className="mx-auto h-16 w-16" />
+          <p className="text-brown text-3xl font-bold">{t("auth.signIn")}</p>
+          <p className="text-muted-foreground px-8 text-center text-xs font-medium">
             {t("auth.logInUsingEmailAddress").toUpperCase()}
           </p>
         </DialogTitle>
@@ -131,7 +133,7 @@ export default function Login({
                 </p>
               )}
             </div>
-            <Button disabled={isLoading}>
+            <Button disabled={isLoading} className="rounded-xl">
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t("auth.signIn")}
             </Button>
@@ -149,7 +151,7 @@ export default function Login({
           type="button"
           disabled={isLoading}
           onClick={handleGoogleLogin}
-          className="border-none bg-[#3B76D6] text-white hover:bg-[#3B76D6]/80 hover:text-white"
+          className="rounded-xl border-none bg-[#3B76D6] text-white hover:bg-[#3B76D6]/80 hover:text-white"
         >
           {isLoading ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -163,7 +165,7 @@ export default function Login({
         <p>{t("auth.notAMemberYet")} </p>
         <p
           onClick={switchDialog}
-          className="font-semibold text-green underline underline-offset-4 hover:text-green-2"
+          className="text-green hover:text-green-2 font-semibold underline underline-offset-4"
         >
           {t("auth.createAccount")}
         </p>

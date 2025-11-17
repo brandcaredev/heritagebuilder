@@ -62,14 +62,14 @@ export const BuildingTypes: CollectionConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag(`building-types`);
+          revalidateTag(`building-types`, "max");
         }
       },
     ],
     afterDelete: [
       () => {
         if (!isNextBuild()) {
-          revalidateTag(`building-types`);
+          revalidateTag(`building-types`, "max");
         }
       },
     ],

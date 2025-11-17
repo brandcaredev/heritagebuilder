@@ -99,7 +99,9 @@ function FullScreenCarousel({
   useEffect(() => {
     if (!emblaApi) return;
     emblaApi.on("select", onSelect);
-    onSelect();
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
   }, [emblaApi, onSelect]);
 
   const scrollTo = useCallback(

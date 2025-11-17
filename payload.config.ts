@@ -59,6 +59,7 @@ export default buildConfig({
   db: postgresAdapter({
     pool: { connectionString: env.DATABASE_URL || "" },
     schemaName: "payload",
+    push: false,
   }),
   i18n: {
     fallbackLanguage: "hu",
@@ -116,14 +117,18 @@ export default buildConfig({
       collections: ["buildings", "cities", "countries", "building-types"],
       globals: ["about-us"],
       uploadsCollection: "media",
-      generateTitle: ({ doc }) => `Heritage Builder | ${doc?.name || doc?.title}`,
+      generateTitle: ({ doc }) =>
+        `Heritage Builder | ${doc?.name || doc?.title}`,
       generateDescription: ({ doc }) => {
         // Extract plain text from richtext fields
-        const plainText = extractPlainTextFromRichtext(doc?.summary || doc?.description);
-        return plainText || `Discover ${doc?.name || 'heritage sites'}`;
+        const plainText = extractPlainTextFromRichtext(
+          doc?.summary || doc?.description,
+        );
+        return plainText || `Discover ${doc?.name || "heritage sites"}`;
       },
       generateURL: ({ doc, locale }) => {
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://heritagebuilder.com";
+        const baseUrl =
+          process.env.NEXT_PUBLIC_SITE_URL || "https://heritagebuilder.com";
         return `${baseUrl}/${locale}/${doc?.slug}`;
       },
     }),

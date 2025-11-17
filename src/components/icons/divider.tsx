@@ -3,9 +3,11 @@ import React from "react";
 export const Divider = ({
   orientation = "vertical",
   full, // when horizontal, the divider is full width
+  height,
 }: {
   orientation?: "vertical" | "horizontal";
   full?: boolean;
+  height?: number;
 }) => {
   const svgWidth = 14; // Fixed width/height of the SVG content
   const arrowHeight = 25.25; // Fixed height/width of the arrows
@@ -18,7 +20,12 @@ export const Divider = ({
       style={{
         position: "relative",
         width: isVertical ? `${svgWidth}px` : "100%",
-        height: isVertical ? "100%" : `${svgWidth}px`,
+        height:
+          isVertical && height
+            ? `${height}%`
+            : isVertical
+              ? "100%"
+              : `${svgWidth}px`,
       }}
     >
       {/* First Arrow */}
