@@ -17,7 +17,7 @@ const VideoCarousel = ({ videos }: { videos: YoutubeLink[] }) => {
   const tweenFactor = useRef(0);
   const tweenNodes = useRef<HTMLElement[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+  const scrollSnaps = emblaApi?.scrollSnapList() ?? [];
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -78,13 +78,7 @@ const VideoCarousel = ({ videos }: { videos: YoutubeLink[] }) => {
 
   useEffect(() => {
     if (!emblaApi) return;
-  }, [emblaApi, setScrollSnaps, onSelect]);
 
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    onSelect();
-    setScrollSnaps(emblaApi.scrollSnapList());
     setTweenNodes(emblaApi);
     setTweenFactor(emblaApi);
     tweenScale(emblaApi);
@@ -97,6 +91,16 @@ const VideoCarousel = ({ videos }: { videos: YoutubeLink[] }) => {
       .on("slideFocus", tweenScale)
       .on("select", onSelect)
       .on("reInit", onSelect);
+    return () => {
+      emblaApi
+        .off("reInit", setTweenNodes)
+        .off("reInit", setTweenFactor)
+        .off("reInit", tweenScale)
+        .off("scroll", tweenScale)
+        .off("slideFocus", tweenScale)
+        .off("select", onSelect)
+        .off("reInit", onSelect);
+    };
   }, [emblaApi, onSelect, setTweenFactor, setTweenNodes, tweenScale]);
 
   if (!videos || videos.length === 0) {

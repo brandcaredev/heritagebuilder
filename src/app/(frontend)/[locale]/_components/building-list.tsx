@@ -76,7 +76,7 @@ const BuildingList = ({
     <div className="mt-16">
       <div className="mb-6 flex flex-col items-center justify-between sm:flex-row">
         <h2
-          className={cn("text-2xl font-bold text-brown", title && "text-4xl")}
+          className={cn("text-brown text-2xl font-bold", title && "text-4xl")}
         >
           {title ? title : t("common.buildings")}
         </h2>
@@ -94,7 +94,7 @@ const BuildingList = ({
             className="mt-4"
           >
             <div className="relative w-72">
-              <Search className="text-muted-foreground absolute left-3 top-3 h-4 w-4" />
+              <Search className="text-muted-foreground absolute top-3 left-3 h-4 w-4" />
               <Input
                 placeholder={t("common.search")}
                 value={articleSearch}
@@ -107,7 +107,7 @@ const BuildingList = ({
         )}
       </div>
       {!hideFilters && (
-        <div className="mb-8 flex items-center gap-4 overflow-x-auto rounded-sm bg-brown-200 p-2">
+        <div className="bg-brown-200 mb-8 flex items-center gap-4 overflow-x-auto rounded-sm p-2">
           <span className="text-brown-dark-20 text-lg font-semibold">
             {t("common.filter")}
           </span>

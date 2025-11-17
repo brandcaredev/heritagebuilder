@@ -19,7 +19,7 @@ export default function BuildingCard({
   return (
     <Card
       className={cn(
-        "relative flex h-[300px] w-[300px] flex-col overflow-hidden",
+        "bg-brown-50 relative flex h-[300px] w-[300px] flex-col overflow-hidden shadow-2xl",
         loading &&
           "animate-pulse after:absolute after:inset-0 after:bg-white/50",
       )}
@@ -37,11 +37,11 @@ export default function BuildingCard({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <CardTitle className="line-clamp-2 text-lg text-brown">
-                  {building.name}
+                <CardTitle className="text-brown line-clamp-2 text-lg">
+                  <h1>{building.name}</h1>
                 </CardTitle>
               </TooltipTrigger>
-              <TooltipContent className="z-20 rounded-md bg-brown-100 p-1 text-brown-900">
+              <TooltipContent className="bg-brown-100 text-brown-900 z-20 rounded-md p-1">
                 {building.name}
               </TooltipContent>
             </Tooltip>
@@ -50,7 +50,7 @@ export default function BuildingCard({
         <CardContent className="overflow-hidden">
           <p
             className={cn(
-              "line-clamp-4 overflow-hidden text-xs text-brown-900",
+              "text-brown-900 line-clamp-4 overflow-hidden text-sm",
               building.name.length > 35 && "line-clamp-3",
             )}
           >
