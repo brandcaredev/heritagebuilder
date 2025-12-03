@@ -130,27 +130,24 @@ const BuildingList = ({
           ))}
         </div>
       )}
-      <div
-        className={cn(
-          "relative flex flex-wrap items-center justify-center gap-6",
-          totalPages > 1 && "pb-[72px]",
-        )}
-      >
-        {buildings.map((building) => (
-          <Link
-            key={building.id}
-            href={{
-              pathname: "/building/[slug]",
-              params: { slug: building.slug },
-            }}
-          >
-            <BuildingCard
+      <div className={cn("relative", totalPages > 1 && "pb-[72px]")}>
+        <div className="flex flex-wrap items-center justify-center gap-6 pb-6">
+          {buildings.map((building) => (
+            <Link
               key={building.id}
-              building={building}
-              loading={isPending}
-            />
-          </Link>
-        ))}
+              href={{
+                pathname: "/building/[slug]",
+                params: { slug: building.slug },
+              }}
+            >
+              <BuildingCard
+                key={building.id}
+                building={building}
+                loading={isPending}
+              />
+            </Link>
+          ))}
+        </div>
         {totalPages > 1 && (
           <Pagination currentPage={page} totalPages={totalPages} />
         )}

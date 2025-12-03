@@ -1,23 +1,23 @@
 import React from "react";
-import { getAboutUsContent } from "@/lib/queries/about-us";
 import type { LocaleType } from "@/lib/constans";
 import { getTranslations } from "next-intl/server";
 import RichText from "./richtext";
 import { Button } from "@/components/ui";
 import { createClient } from "@/supabase/server";
 import Link from "next/link";
+import { getDescriptionContent } from "@/lib/queries/description";
 
-interface AboutUsProps {
+interface DescriptionProps {
   locale: LocaleType;
 }
 
-const AboutUs: React.FC<AboutUsProps> = async ({ locale }) => {
+const Description: React.FC<DescriptionProps> = async ({ locale }) => {
   const t = await getTranslations();
-  const aboutUsContent = await getAboutUsContent(locale);
+  const descriptionContent = await getDescriptionContent(locale);
   const supabase = await createClient();
 
   const { data } = await supabase.auth.getUser();
-  if (!aboutUsContent) {
+  if (!descriptionContent) {
     return null;
   }
   return (
@@ -28,7 +28,7 @@ const AboutUs: React.FC<AboutUsProps> = async ({ locale }) => {
       <div className="lg:px-30">
         <RichText
           className="text-brown-700 mt-6"
-          data={aboutUsContent}
+          data={descriptionContent}
           enableGutter={false}
         />
       </div>
@@ -48,4 +48,4 @@ const AboutUs: React.FC<AboutUsProps> = async ({ locale }) => {
   );
 };
 
-export default AboutUs;
+export default Description;

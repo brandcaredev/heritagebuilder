@@ -26,7 +26,7 @@ export default function Pagination({
   };
 
   return (
-    <div className="absolute bottom-0 flex w-full items-center justify-between bg-white-2 pt-8">
+    <div className="bg-white-2 absolute bottom-0 flex w-full items-center justify-between pt-8">
       <div>
         <Button
           variant="outline"

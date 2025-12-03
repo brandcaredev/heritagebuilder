@@ -3,24 +3,24 @@ import { getPayload } from "payload";
 import type { LocaleType } from "../constans";
 import { unstable_cache } from "next/cache";
 
-export const getAboutUsContent = unstable_cache(
+export const getCommunityContent = unstable_cache(
   async (locale: LocaleType) => {
     const payload = await getPayload({ config });
 
     try {
-      const aboutUs = await payload.findGlobal({
-        slug: "about-us",
+      const community = await payload.findGlobal({
+        slug: "community",
         locale,
       });
 
-      return aboutUs?.content || null;
+      return community?.content || null;
     } catch (error) {
-      console.error("Error fetching AboutUs content:", error);
+      console.error("Error fetching Community content:", error);
       return null;
     }
   },
   [],
   {
-    tags: ["about-us"],
+    tags: ["community"],
   },
 );

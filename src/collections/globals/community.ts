@@ -3,8 +3,8 @@ import { revalidateTag } from "next/cache";
 import { GlobalConfig } from "payload";
 import { isNextBuild } from "payload/shared";
 
-const AboutUs: GlobalConfig = {
-  slug: "about-us",
+const Community: GlobalConfig = {
+  slug: "community",
   access: {
     read: authenticatedOrPublished,
     update: ({ req: { user } }) => Boolean(user),
@@ -16,7 +16,7 @@ const AboutUs: GlobalConfig = {
       required: true,
       localized: true,
       admin: {
-        description: "The content to be displayed in the About Us page",
+        description: "The content to be displayed in the Community section",
       },
     },
   ],
@@ -27,11 +27,11 @@ const AboutUs: GlobalConfig = {
           return;
         }
         if (!isNextBuild()) {
-          revalidateTag("about-us", "max");
+          revalidateTag("community", "max");
         }
       },
     ],
   },
 };
 
-export default AboutUs;
+export default Community;
