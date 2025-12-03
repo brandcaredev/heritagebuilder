@@ -108,6 +108,7 @@
   "description": "Welcome to HeritageBuilder – where constructed heritage meets community!\nBeauty is not just a matter of individual perception, but humanity's universal desire. We seek it, we cherish it, and when we lose it, its absence leaves a spiritual void.\nRoger Scruton's philosophy serves as inspiration for our foundation. We, Eastern and Central Europeans, have shaped and cared for our built environment in this spirit for centuries. However, modernity has brought new directions: our architecture has transformed and often brutally pushed our heritage into the background. Not only has modernity taken over alongside our traditions, but in many cases has been built right over it.\nThe storms of history – frequent border changes, regime changes – have left a lot of architectural value in Eastern and Central Europe unmanaged. And the changes of the 20th century threaten to make the architectural heritage of entire eras disappear.\nThat is why we created HeritageBuilder. Our goal is to bring to life a well-categorized, easily searchable, and accessible digital archive that preserves the built, architectural heritage of Central and Eastern Europe. We aim to act as a center for digital preservation so that our values are not forgotten.\nWhat makes us special is the active involvement of the community. HeritageBuilder allows anyone to contribute to the database – with stories, information, images – so that together we can preserve the architectural treasures of our past.\nJoin us and help save the built heritage of Central and Eastern Europe!",
   "page": {
     "discover": "Discover",
+    "aboutUs": "About us",
     "welcomeTitle": "Welcome to Heritage Builder",
     "latestBuildings": "Latest buildings",
     "countryImageAlt": "Country",
@@ -213,6 +214,7 @@
     "setCoordinates": "Set"
   },
   "footer": {
+    "aboutUs": "About Us",
     "countries": "Countries",
     "buildingTypes": "Building types",
     "legal": "Legal",

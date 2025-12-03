@@ -108,6 +108,7 @@
   "description": "Üdvözlünk a HeritageBuilder oldalán – ahol az épített örökség találkozik a közösséggel!\nA szépség nem csupán egyéni érzékelés kérdése, hanem az emberiség egyetemes szükséglete. Keressük, ápoljuk, és ha elveszítjük, annak hiánya lelki ürességet hagy maga után.\nRoger Scruton gondolata inspirációként szolgál számunkra. Mi, kelet-közép-európaiak, évszázadokon át formáltuk és gondoztuk épített környezetünket ebben a szellemben. Azonban a modernitás új irányokat hozott: építészetünk átalakult, és sokszor brutális módon háttérbe szorította örökségünket. Nem csupán mellé épült, hanem sok esetben fel is váltotta azt.\nA történelem viharai – gyakori határváltozások, rendszerváltások – rengeteg építészeti értéket hagytak gazdátlanul Kelet-Közép-Európában. A 20. század változásai pedig azzal fenyegetnek, hogy egész korszakok építészeti öröksége eltűnik.\nEzért hoztuk létre a HeritageBuilder-t. Célunk egy jól kategorizálható, könnyen kereshető, mindenki számára elérhető digitális archívum létrehozása, amely megőrzi Kelet-Közép-Európa épített örökségét. Egyfajta digitális állagmegóvásként működünk, hogy az értékeink ne vesszenek feledésbe.\nAmi különlegessé tesz minket: a közösség aktív bevonása. Lehetőséget biztosítunk arra, hogy bárki hozzájáruljon az adatbázishoz – történetekkel, információkkal, képekkel –, így együtt őrizhetjük meg múltunk építészeti kincseit.\nCsatlakozz hozzánk, és segíts megmenteni Kelet-Közép-Európa épített örökségét!",
   "page": {
     "discover": "Felfedezés",
+    "aboutUs": "Rólunk",
     "welcomeTitle": "Üdvözöljük a Heritage Builder-en",
     "latestBuildings": "Legújabb épületek",
     "countryImageAlt": "Ország",
@@ -210,6 +211,7 @@
     "setCoordinates": "Beállit"
   },
   "footer": {
+    "aboutUs": "Rólunk",
     "countries": "Országok",
     "buildingTypes": "Épülettípusok",
     "legal": "Jogi",

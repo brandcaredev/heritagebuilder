@@ -39,6 +39,11 @@ export const metadata: Metadata = {
       url: IconLight.src,
       type: "image/png",
     },
+    {
+      rel: "icon",
+      url: "/favicon.ico",
+      type: "image/x-icon",
+    },
   ],
 };
 

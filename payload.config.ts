@@ -26,6 +26,8 @@ import { beforeSyncWithSearch } from "@/collections/buildings/beforeSync";
 import { extractPlainTextFromRichtext } from "@/lib/seo-utils";
 import Users from "@/collections/users";
 import { BuildingSuggestions } from "@/collections/building-suggestions";
+import Community from "@/collections/globals/community";
+import Description from "@/collections/globals/description";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -52,7 +54,7 @@ export default buildConfig({
   ],
 
   // Add globals array with AboutUs
-  globals: [AboutUs],
+  globals: [AboutUs, Community, Description],
 
   // Your Payload secret - should be a complex and secure string, unguessable
   secret: env.PAYLOAD_SECRET || "",
