@@ -19,7 +19,7 @@ export const getCommunityContent = unstable_cache(
       return null;
     }
   },
-  ["community"],
+  [],
   {
     tags: ["community"],
   },

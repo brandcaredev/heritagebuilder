@@ -19,7 +19,7 @@ export const getDescriptionContent = unstable_cache(
       return null;
     }
   },
-  ["description"],
+  [],
   {
     tags: ["description"],
   },

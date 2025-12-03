@@ -19,7 +19,7 @@ export const getAboutUsContent = unstable_cache(
       return null;
     }
   },
-  ["about-us"],
+  [],
   {
     tags: ["about-us"],
   },
