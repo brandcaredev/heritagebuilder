@@ -4,6 +4,8 @@ import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountries } from "@/lib/queries/country";
 import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
+import Image from "next/image";
+import BGA from "@/public/NEA_ME_BGA.png";
 
 export async function Footer() {
   const locale = await getLocale();
@@ -14,7 +16,7 @@ export async function Footer() {
   return (
     <footer className="bg-green py-12 text-stone-100">
       <div className="container mx-auto px-8">
-        <div className="flex flex-col items-center sm:flex-row sm:items-start">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
           <div className="flex-1">
             <h2 className="mb-4 text-2xl">Heritage builder</h2>
             <div className="flex space-x-4">
@@ -23,10 +25,16 @@ export async function Footer() {
               <Youtube className="h-5 w-5 cursor-pointer hover:text-stone-300" />
               <Twitter className="h-5 w-5 cursor-pointer hover:text-stone-300" />
             </div>
+            <Image
+              src={BGA.src}
+              alt="Nemzeti Együttműködési Alap, Miniszterelnökség, Bethlen Gábor Alapkezelő Zrt."
+              width={500}
+              height={106}
+              className="mt-4"
+            />
           </div>
           <div className="mt-5 flex flex-wrap gap-5 sm:mt-0">
             <div>
-              <h3 className="mb-2 font-bold">{t("footer.countries")}</h3>
               <ul className="space-y-2">
                 {countries.map((country) => (
                   <li key={country.id}>
@@ -44,7 +52,6 @@ export async function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="mb-2 font-bold">{t("footer.buildingTypes")}</h3>
               <ul className="space-y-2">
                 {buildingTypes.map((type) => (
                   <li key={type.id}>
@@ -62,8 +69,15 @@ export async function Footer() {
               </ul>
             </div>
             <div>
-              <h3 className="mb-2 font-bold">{t("footer.legal")}</h3>
               <ul className="space-y-2">
+                <li>
+                  <Link
+                    href={{ pathname: "/about-us" }}
+                    className="hover:text-stone-300"
+                  >
+                    {t("footer.aboutUs")}
+                  </Link>
+                </li>
                 <li>
                   <Link
                     href={{ pathname: "/terms-of-service" }}
@@ -72,6 +86,7 @@ export async function Footer() {
                     {t("footer.termsOfService")}
                   </Link>
                 </li>
+
                 {/* <li>
                   <Link
                     href={{ pathname: "/privacy-policy" }}

@@ -16,10 +16,11 @@ import Image from "next/image";
 import { getPayload } from "payload";
 import type { City, Country, Media } from "payload-types";
 import { Suspense } from "react";
-import AboutUs from "@/_components/about-us";
+import AboutUs from "@/app/(frontend)/[locale]/_components/description";
 import AllBuildingsMap from "@/_components/all-buildings-map";
 import Newsletter from "@/_components/newsletter";
 import VideoCarousel from "@/_components/video-carousel";
+import Community from "../_components/community";
 
 type Props = {
   params: Promise<{ locale: LocaleType }>;
@@ -73,7 +74,7 @@ const MainPage = async (props: Props) => {
             </h1>
 
             {/* Country Grid */}
-            <div className="mb-8 grid gap-[10px] md:grid-cols-2">
+            <div className="mb-8 grid gap-2.5 md:grid-cols-2">
               {countries.map((country) => (
                 <Link
                   key={country.id}
@@ -81,7 +82,7 @@ const MainPage = async (props: Props) => {
                     pathname: "/country/[slug]",
                     params: { slug: country.slug },
                   }}
-                  className="group relative aspect-[426/290] overflow-hidden rounded-lg"
+                  className="group relative aspect-426/290 overflow-hidden rounded-lg"
                 >
                   <Image
                     src={`${getURL()}${(country.image as Media).url}`}
@@ -110,7 +111,7 @@ const MainPage = async (props: Props) => {
                       pathname: "/building-type/[slug]",
                       params: { slug: type.slug },
                     }}
-                    className="group relative aspect-[135/200] overflow-hidden rounded-lg"
+                    className="group relative aspect-135/200 overflow-hidden rounded-lg"
                   >
                     <Image
                       src={`${getURL()}${(type.image as Media).url}`}
@@ -180,6 +181,7 @@ const MainPage = async (props: Props) => {
         <div className="bg-brown-700 flex items-center gap-8 rounded-lg p-8">
           <Newsletter />
         </div>
+        <Community locale={locale} />
         {/* Videos Section */}
         {youtubeLinks.length > 0 && <VideoCarousel videos={youtubeLinks} />}
       </div>

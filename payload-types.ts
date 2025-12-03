@@ -131,9 +131,13 @@ export interface Config {
   };
   globals: {
     'about-us': AboutUs;
+    community: Community;
+    description: Description;
   };
   globalsSelect: {
     'about-us': AboutUsSelect<false> | AboutUsSelect<true>;
+    community: CommunitySelect<false> | CommunitySelect<true>;
+    description: DescriptionSelect<false> | DescriptionSelect<true>;
   };
   locale: 'en' | 'hu';
   user: User & {
@@ -1252,7 +1256,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface AboutUs {
   id: number;
   /**
-   * The content to be displayed in the About Us section
+   * The content to be displayed in the About Us page
    */
   content: {
     root: {
@@ -1282,6 +1286,60 @@ export interface AboutUs {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "community".
+ */
+export interface Community {
+  id: number;
+  /**
+   * The content to be displayed in the Community section
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "description".
+ */
+export interface Description {
+  id: number;
+  /**
+   * The content to be displayed in the Description section on the main page
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "about-us_select".
  */
 export interface AboutUsSelect<T extends boolean = true> {
@@ -1293,6 +1351,26 @@ export interface AboutUsSelect<T extends boolean = true> {
         description?: T;
         image?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "community_select".
+ */
+export interface CommunitySelect<T extends boolean = true> {
+  content?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "description_select".
+ */
+export interface DescriptionSelect<T extends boolean = true> {
+  content?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

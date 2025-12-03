@@ -36,6 +36,13 @@ html {
   font-family: var(--font-source-sans-3) !important;
 }
 
+@layer components {
+  .scroll-area-mobile-bounds [data-radix-scroll-area-viewport] > div {
+    min-width: 0 !important;
+    display: block !important;
+  }
+}
+
 .custom-marker-cluster {
   background-color: #4a5838;
   border-radius: 50%;

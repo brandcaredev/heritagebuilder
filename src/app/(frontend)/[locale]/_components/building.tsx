@@ -89,7 +89,7 @@ export default function BuildingComponent({
           className="h-[400px] w-full md:h-[600px]"
         />
       </div>
-      <ScrollArea className="lg:max-h-[1440px] lg:w-1/2">
+      <ScrollArea className="scroll-area-mobile-bounds px-2 lg:max-h-[1440px] lg:w-1/2 lg:px-0">
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             {editingField === "name" ? (
@@ -125,7 +125,7 @@ export default function BuildingComponent({
                 </div>
               </form>
             ) : (
-              <h1 className="text-4xl font-bold text-brown">{building.name}</h1>
+              <h1 className="text-brown text-4xl font-bold">{building.name}</h1>
             )}
             {editingField !== "name" && data?.user && (
               <TooltipProvider>
@@ -147,7 +147,7 @@ export default function BuildingComponent({
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-brown">
+              <h3 className="text-brown text-2xl font-bold">
                 {t("building.history")}
               </h3>
               {editingField !== "history" && data?.user && (
@@ -197,7 +197,7 @@ export default function BuildingComponent({
                 </div>
               </form>
             ) : (
-              <span className="text-justify font-source-sans-3">
+              <span className="font-source-sans-3 text-justify">
                 {building.history}
               </span>
             )}
@@ -205,7 +205,7 @@ export default function BuildingComponent({
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-brown">
+              <h3 className="text-brown text-2xl font-bold">
                 {t("building.style")}
               </h3>
               {editingField !== "style" && data?.user && (
@@ -255,7 +255,7 @@ export default function BuildingComponent({
                 </div>
               </form>
             ) : (
-              <span className="text-justify font-source-sans-3">
+              <span className="font-source-sans-3 text-justify">
                 {building.style}
               </span>
             )}
@@ -264,7 +264,7 @@ export default function BuildingComponent({
           {building.famousResidents && (
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <h3 className="text-2xl font-bold text-brown">
+                <h3 className="text-brown text-2xl font-bold">
                   {t("building.famousResidents")}
                 </h3>
                 {editingField !== "famousResidents" && data?.user && (
@@ -316,7 +316,7 @@ export default function BuildingComponent({
                   </div>
                 </form>
               ) : (
-                <span className="text-justify font-source-sans-3">
+                <span className="font-source-sans-3 text-justify">
                   {building.famousResidents}
                 </span>
               )}
@@ -326,7 +326,7 @@ export default function BuildingComponent({
           {building.renovation && (
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
-                <h3 className="text-2xl font-bold text-brown">
+                <h3 className="text-brown text-2xl font-bold">
                   {t("building.renovation")}
                 </h3>
                 {editingField !== "renovation" && data?.user && (
@@ -378,7 +378,7 @@ export default function BuildingComponent({
                   </div>
                 </form>
               ) : (
-                <span className="text-justify font-source-sans-3">
+                <span className="font-source-sans-3 text-justify">
                   {building.renovation}
                 </span>
               )}
@@ -387,7 +387,7 @@ export default function BuildingComponent({
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <h3 className="text-2xl font-bold text-brown">
+              <h3 className="text-brown text-2xl font-bold">
                 {t("building.presentDay")}
               </h3>
               {editingField !== "presentDay" && data?.user && (
@@ -437,7 +437,7 @@ export default function BuildingComponent({
                 </div>
               </form>
             ) : (
-              <span className="text-justify font-source-sans-3">
+              <span className="font-source-sans-3 text-justify">
                 {building.presentDay}
               </span>
             )}
@@ -445,8 +445,8 @@ export default function BuildingComponent({
 
           {/* Sources Section */}
           {Array.isArray(building.source) && building.source.length > 0 && (
-            <div className="mt-6 flex flex-col gap-2 border-t border-brown-200 pt-6">
-              <h3 className="text-2xl font-bold text-brown">
+            <div className="border-brown-200 mt-6 flex flex-col gap-2 border-t pt-6">
+              <h3 className="text-brown text-2xl font-bold">
                 {t("building.sources")}
               </h3>
               <div className="space-y-4">
@@ -486,7 +486,7 @@ export default function BuildingComponent({
 
                     {source.sourceType === "other" && (
                       <div className="flex flex-col">
-                        <span className="text-justify font-source-sans-3">
+                        <span className="font-source-sans-3 text-justify">
                           {source.otherSource}
                         </span>
                       </div>
@@ -499,8 +499,8 @@ export default function BuildingComponent({
 
           {/* Credits Section */}
           {building.creatorName && (
-            <div className="mt-6 flex flex-col gap-2 border-t border-brown-200 pt-6">
-              <h3 className="text-2xl font-bold text-brown">
+            <div className="border-brown-200 mt-6 flex flex-col gap-2 border-t pt-6">
+              <h3 className="text-brown text-2xl font-bold">
                 {t("building.credits")}
               </h3>
               <div className="bg-brown-50 rounded-md p-4 shadow-sm">
