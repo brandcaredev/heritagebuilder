@@ -19,6 +19,11 @@ const AboutUs: GlobalConfig = {
         description: "The content to be displayed in the About Us page",
       },
     },
+    {
+      name: "featuredImage",
+      type: "upload",
+      relationTo: "media",
+    },
   ],
   hooks: {
     afterChange: [

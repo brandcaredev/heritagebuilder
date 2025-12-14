@@ -1273,6 +1273,7 @@ export interface AboutUs {
     };
     [k: string]: unknown;
   };
+  featuredImage?: (number | null) | Media;
   meta?: {
     title?: string | null;
     description?: string | null;
@@ -1291,7 +1292,7 @@ export interface AboutUs {
 export interface Community {
   id: number;
   /**
-   * The content to be displayed in the Community section
+   * The content to be displayed in the Contribution Guidelines section
    */
   content: {
     root: {
@@ -1308,6 +1309,7 @@ export interface Community {
     };
     [k: string]: unknown;
   };
+  featuredImage?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1344,6 +1346,7 @@ export interface Description {
  */
 export interface AboutUsSelect<T extends boolean = true> {
   content?: T;
+  featuredImage?: T;
   meta?:
     | T
     | {
@@ -1361,6 +1364,7 @@ export interface AboutUsSelect<T extends boolean = true> {
  */
 export interface CommunitySelect<T extends boolean = true> {
   content?: T;
+  featuredImage?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
