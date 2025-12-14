@@ -16,8 +16,14 @@ const Community: GlobalConfig = {
       required: true,
       localized: true,
       admin: {
-        description: "The content to be displayed in the Community section",
+        description:
+          "The content to be displayed in the Contribution Guidelines section",
       },
+    },
+    {
+      name: "featuredImage",
+      type: "upload",
+      relationTo: "media",
     },
   ],
   hooks: {
