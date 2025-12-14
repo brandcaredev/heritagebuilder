@@ -109,6 +109,7 @@
   "page": {
     "discover": "Felfedezés",
     "aboutUs": "Rólunk",
+    "contributionGuidelines": "Közreműködési útmutató",
     "welcomeTitle": "Üdvözöljük a Heritage Builder-en",
     "latestBuildings": "Legújabb épületek",
     "countryImageAlt": "Ország",
@@ -118,7 +119,12 @@
     "notFoundDescription": "Hoppá! Az oldal, amit keresel, nem létezik",
     "notFoundDescription2": "Lehet, hogy törölve, mozgatva lett vagy az URL helytelen.",
     "recommendedBuildings": "Ajánlott épületek",
-    "goToHome": "Ugrás a kezdőlapra"
+    "goToHome": "Ugrás a kezdőlapra",
+    "simplePage": {
+      "contents": "Tartalom",
+      "summary": "Összefoglaló",
+      "map": "Térkép"
+    }
   },
   "newsletter": {
     "title": "Hírlevélre feliratkozás",

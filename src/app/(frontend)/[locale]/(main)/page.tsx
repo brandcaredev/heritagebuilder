@@ -16,11 +16,10 @@ import Image from "next/image";
 import { getPayload } from "payload";
 import type { City, Country, Media } from "payload-types";
 import { Suspense } from "react";
-import AboutUs from "@/app/(frontend)/[locale]/_components/description";
+import Description from "@/app/(frontend)/[locale]/_components/description";
 import AllBuildingsMap from "@/_components/all-buildings-map";
 import Newsletter from "@/_components/newsletter";
 import VideoCarousel from "@/_components/video-carousel";
-import Community from "../_components/community";
 
 type Props = {
   params: Promise<{ locale: LocaleType }>;
@@ -62,6 +61,16 @@ const MainPage = async (props: Props) => {
   });
   const buildings = await getBuildings(locale, 10, "-createdAt");
 
+  const community = await payload.findGlobal({
+    slug: "community",
+    locale,
+  });
+
+  const aboutUs = await payload.findGlobal({
+    slug: "about-us",
+    locale,
+  });
+
   return (
     <>
       <WebsiteStructuredData locale={locale} />
@@ -100,7 +109,7 @@ const MainPage = async (props: Props) => {
             </div>
 
             {/* About Us Section */}
-            <AboutUs locale={locale} />
+            <Description locale={locale} />
             {/* Building Types Grid */}
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
               {buildingTypes.map((type) => {
@@ -181,7 +190,38 @@ const MainPage = async (props: Props) => {
         <div className="bg-brown-700 flex items-center gap-8 rounded-lg p-8">
           <Newsletter />
         </div>
-        <Community locale={locale} />
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <Link
+            href="/contribution-guidelines"
+            className="group relative h-[300px] overflow-hidden rounded-[20px]"
+          >
+            <Image
+              src={`${getURL()}${(community.featuredImage as Media)?.url}`}
+              alt="Contribution guidelines"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
+            <h3 className="absolute bottom-8 left-8 font-serif text-3xl font-bold text-white md:text-4xl">
+              {t("page.contributionGuidelines")}
+            </h3>
+          </Link>
+          <Link
+            href="/about-us"
+            className="group relative h-[300px] overflow-hidden rounded-[20px]"
+          >
+            <Image
+              src={`${getURL()}${(aboutUs.featuredImage as Media)?.url}`}
+              alt="About us"
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
+            <h3 className="absolute bottom-8 left-1/2 -translate-x-1/2 font-serif text-3xl font-bold text-white md:text-4xl">
+              {t("page.aboutUs")}
+            </h3>
+          </Link>
+        </div>
         {/* Videos Section */}
         {youtubeLinks.length > 0 && <VideoCarousel videos={youtubeLinks} />}
       </div>

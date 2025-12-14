@@ -60,6 +60,10 @@ export const routing = defineRouting({
       en: "/about-us",
       hu: "/rolunk",
     },
+    "/contribution-guidelines": {
+      en: "/contribution-guidelines",
+      hu: "/kozremukodesi-utmutato",
+    },
     "/map": {
       en: "/map",
       hu: "/terkep",

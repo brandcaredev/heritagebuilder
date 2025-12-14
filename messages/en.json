@@ -109,6 +109,7 @@
   "page": {
     "discover": "Discover",
     "aboutUs": "About us",
+    "contributionGuidelines": "Contribution guidelines",
     "welcomeTitle": "Welcome to Heritage Builder",
     "latestBuildings": "Latest buildings",
     "countryImageAlt": "Country",
@@ -118,7 +119,12 @@
     "notFoundDescription": "Oops! The page you're looking for doesn't exist",
     "notFoundDescription2": "It may have been moved, deleted, or the URL might be incorrect.",
     "recommendedBuildings": "Recommended buildings",
-    "goToHome": "Go to homepage"
+    "goToHome": "Go to homepage",
+    "simplePage": {
+      "contents": "Contents",
+      "summary": "Summary",
+      "map": "Map"
+    }
   },
   "auth": {
     "email": "Email",
