@@ -76,7 +76,8 @@
     "buildings": "Épületek",
     "filter": "Szűrés",
     "cities": "Városok",
-    "counties": "Megyék"
+    "counties": "Megyék",
+    "readMore": "Bővebben"
   },
   "successDialog": {
     "title": "Köszönjük a hozzájárulását!",

@@ -76,7 +76,8 @@
     "buildings": "Buildings",
     "filter": "Filter",
     "cities": "Cities",
-    "counties": "Counties"
+    "counties": "Counties",
+    "readMore": "Read more"
   },
   "successDialog": {
     "title": "Thank you for your contribution!",
