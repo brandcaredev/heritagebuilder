@@ -156,7 +156,10 @@ const extractPlainTextFromReactNode = (
 
       visit(props.children);
 
-      if (typeof elementType === "string" && REACT_BLOCK_ELEMENT_TYPES.has(elementType)) {
+      if (
+        typeof elementType === "string" &&
+        REACT_BLOCK_ELEMENT_TYPES.has(elementType)
+      ) {
         parts.push("\n");
       }
 
@@ -336,7 +339,7 @@ const SectionTree = <T,>({
                 value={section.id}
                 data-section={section.id}
                 className={cn(
-                  "px-4",
+                  // "px-4",
                   index === currentAccordionItems.length - 1 && "border-b-0",
                 )}
               >
