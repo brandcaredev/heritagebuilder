@@ -187,7 +187,7 @@ const SimplePage = ({
       <h1 className="text-brown text-4xl font-bold">{name}</h1>
       <div className="mt-6 flex h-fit flex-col gap-8">
         {description && (
-          <div className={cn("w-full px-4 sm:px-6")}>
+          <div className={cn("w-full px-0 sm:px-6")}>
             <div className="flex flex-col gap-8 lg:flex-row">
               {hasTableOfContents && (
                 <aside className="hidden w-60 shrink-0 lg:block">
@@ -237,7 +237,7 @@ const SimplePage = ({
                   </div>
                 </aside>
               )}
-              <div className="flex-1 space-y-6 px-1 sm:px-0" ref={containerRef}>
+              <div className="flex-1 space-y-6 sm:px-0" ref={containerRef}>
                 {introNodes.length > 0 && (
                   <div
                     data-section="summary"
