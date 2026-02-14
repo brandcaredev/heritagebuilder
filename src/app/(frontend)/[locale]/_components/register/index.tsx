@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -28,6 +29,7 @@ export default function Register({
   switchDialog: () => void;
 }) {
   const t = useTranslations();
+  const locale = useLocale();
   const [isLoading, setIsLoading] = useState(false);
   const [confirmActive, setConfirmActive] = useState(false);
   const [resendActive, setResendActive] = useState(false);
@@ -68,7 +70,7 @@ export default function Register({
       formData.append("password", data.password);
       formData.append("email", data.email);
       formData.append("confirmPassword", data.confirmPassword);
-      const { message, isSuccess } = await signUpWithEmail(formData);
+      const { message, isSuccess } = await signUpWithEmail(formData, locale);
 
       if (!isSuccess) {
         toast.error(message);
@@ -108,7 +110,7 @@ export default function Register({
           </Button>
           <Button
             onClick={async () => {
-              const { message, isSuccess } = await resend(email);
+              const { message, isSuccess } = await resend(email, locale);
               if (isSuccess) {
                 toast.success(message);
                 setResendActive(false);

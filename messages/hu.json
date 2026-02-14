@@ -147,10 +147,20 @@
     "signIn": "Bejelentkezés",
     "logInUsingEmailAddress": "Bejelentkezés email címmel",
     "register": "Regisztráció",
+    "forgotPassword": "Elfelejtett jelszó?",
+    "resetPassword": "Jelszó visszaállítása",
+    "sendResetLink": "Visszaállító link küldése",
+    "resetEmailSent": "Ha létezik fiók ezzel az e-mail címmel, elküldtük a jelszó-visszaállító linket.",
+    "newPassword": "Új jelszó",
+    "confirmNewPassword": "Új jelszó megerősítése",
+    "passwordUpdated": "A jelszó frissítve. Most már be tud jelentkezni.",
+    "resetLinkInvalid": "A link érvénytelen vagy lejárt. Kérjen új jelszó-visszaállító e-mailt.",
+    "authLinkInvalidTitle": "Hitelesítési hiba",
+    "authLinkInvalidDescription": "A hitelesítési link érvénytelen vagy lejárt. Kérjük, próbálja újra.",
     "signUpSuccess": "Regisztráció sikeres",
-    "checkEmail": "Sikeres regisztráció! Kérjük, ellenőrizze e-mailjében az általunk küldött aktiváló kódot. Ha nem látja azonnal, néhány percbe telhet, amíg megérkezik. Ügyeljen arra, hogy ellenőrizze a spam vagy levélszemét mappáját is. Ha még mindig nem érkezik meg, kérhetsz új kódot lent",
+    "checkEmail": "Sikeres regisztráció! Kérjük, ellenőrizze az e-mailjeit, és kattintson a megerősítő linkre a fiók aktiválásához. Ha nem látja azonnal, néhány percbe telhet, amíg megérkezik. Ügyeljen arra, hogy ellenőrizze a spam vagy levélszemét mappáját is. Ha még mindig nem érkezik meg, a visszaszámláló lejárta után újra elküldheti az e-mailt.",
     "backToLogin": "Vissza a bejelentkezésre",
-    "resendCode": "Kód ujraküldése"
+    "resendCode": "E-mail újraküldése"
   },
   "admin": {
     "dashboard": "Admin Vezérlőpult",
