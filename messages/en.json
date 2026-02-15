@@ -140,10 +140,20 @@
     "signIn": "Log in",
     "logInUsingEmailAddress": "Log in using email address",
     "register": "Sign up",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset password",
+    "sendResetLink": "Send reset link",
+    "resetEmailSent": "If an account exists for that email, we sent a password reset link.",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "passwordUpdated": "Password updated. You can log in now.",
+    "resetLinkInvalid": "This link is invalid or has expired. Please request a new reset email.",
+    "authLinkInvalidTitle": "Authentication error",
+    "authLinkInvalidDescription": "The authentication link is invalid or has expired. Please try again.",
     "signUpSuccess": "Sign up successful",
-    "checkEmail": "Sign-up successful! Please check your email for the activation code we sent. If you don't see it right away, it might take a few minutes to arrive. Be sure to check your spam or junk folder as well. If it still doesn't arrive, you can request a new code below in ",
+    "checkEmail": "Sign-up successful! Please check your email and click the confirmation link to activate your account. If you don't see it right away, it might take a few minutes to arrive. Be sure to check your spam or junk folder as well. If it still doesn't arrive, you can resend the email after the timer expires.",
     "backToLogin": "Back to login",
-    "resendCode": "Resend code"
+    "resendCode": "Resend email"
   },
   "admin": {
     "dashboard": "Admin Dashboard",

@@ -24,9 +24,11 @@ type LoginValues = z.infer<typeof loginSchema>;
 export default function Login({
   switchDialog,
   closeDialog,
+  goToForgotPassword,
 }: {
   switchDialog: () => void;
   closeDialog: () => void;
+  goToForgotPassword: () => void;
 }) {
   const t = useTranslations();
   const router = useRouter();
@@ -132,6 +134,13 @@ export default function Login({
                   {errors.password.message}
                 </p>
               )}
+              <button
+                type="button"
+                onClick={goToForgotPassword}
+                className="text-green hover:text-green-2 mt-1 self-end text-xs font-semibold underline underline-offset-4"
+              >
+                {t("auth.forgotPassword")}
+              </button>
             </div>
             <Button disabled={isLoading} className="rounded-xl">
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
