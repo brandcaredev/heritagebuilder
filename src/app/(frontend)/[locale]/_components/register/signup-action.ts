@@ -2,8 +2,13 @@
 import { createClient } from "@/supabase/server";
 import { signUpSchema } from "./signup-schema";
 import { getURL } from "@/lib/utils";
+import { Locales } from "@/lib/constans";
 
-export async function signUpWithEmail(data: FormData) {
+function getSafeLocale(locale: string) {
+  return Object.keys(Locales).includes(locale) ? locale : "hu";
+}
+
+export async function signUpWithEmail(data: FormData, locale: string) {
   const formData = Object.fromEntries(data);
   const { success, data: parsedData } = signUpSchema.safeParse(formData);
 
@@ -14,12 +19,13 @@ export async function signUpWithEmail(data: FormData) {
     };
   }
   const supabase = await createClient();
+  const safeLocale = getSafeLocale(locale);
 
   const { error } = await supabase.auth.signUp({
     email: parsedData.email,
     password: parsedData.password,
     options: {
-      emailRedirectTo: `${getURL()}/`,
+      emailRedirectTo: `${getURL()}/api/auth/confirm?next=/${safeLocale}`,
     },
   });
 
@@ -36,18 +42,19 @@ export async function signUpWithEmail(data: FormData) {
   };
 }
 
-export async function resend(email: string) {
+export async function resend(email: string, locale: string) {
   if (!email)
     return {
       message: "Resend failed!",
       isSuccess: false,
     };
   const supabase = await createClient();
+  const safeLocale = getSafeLocale(locale);
   const { error } = await supabase.auth.resend({
     type: "signup",
     email,
     options: {
-      emailRedirectTo: `${getURL()}/`,
+      emailRedirectTo: `${getURL()}/api/auth/confirm?next=/${safeLocale}`,
     },
   });
 
