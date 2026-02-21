@@ -21,7 +21,13 @@ export async function Footer() {
             <h2 className="mb-4 text-2xl">Heritage builder</h2>
             <div className="flex space-x-4">
               <Instagram className="h-5 w-5 cursor-pointer hover:text-stone-300" />
-              <Facebook className="h-5 w-5 cursor-pointer hover:text-stone-300" />
+              <a
+                href="https://www.facebook.com/HeritageBuilderEurope"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Facebook className="h-5 w-5 cursor-pointer hover:text-stone-300" />
+              </a>
               <Youtube className="h-5 w-5 cursor-pointer hover:text-stone-300" />
               <Twitter className="h-5 w-5 cursor-pointer hover:text-stone-300" />
             </div>
