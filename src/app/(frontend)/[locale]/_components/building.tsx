@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Pencil } from "lucide-react";
+import { Loader2, Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import type { Building, BuildingType } from "payload-types";
@@ -17,10 +17,7 @@ import GalleryWithDialog from "./image-gallery";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase/auth";
 import SectionTree, { SectionTreeItem } from "./section-tree";
-import {
-  tocButtonClasses,
-  useSectionNavigation,
-} from "./section-navigation";
+import { tocButtonClasses, useSectionNavigation } from "./section-navigation";
 import { cn } from "@/lib/utils";
 
 const MapPosition = dynamic(() => import("@/components/map-position"), {
@@ -54,6 +51,7 @@ export default function BuildingComponent({
   const t = useTranslations();
   const pageT = useTranslations("page.simplePage");
   const [editingField, setEditingField] = useState<EditableFields>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data } = useQuery({
     queryFn: async () => (await supabase.auth.getUser()).data,
@@ -65,7 +63,10 @@ export default function BuildingComponent({
   const getFieldValue = (field: EditableSectionField) =>
     building[field as keyof Building] as string | null | undefined;
 
-  const submitSuggestion = async (formData: FormData) => {
+  const submitSuggestion = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const formData = new FormData(e.currentTarget);
     const field = formData.get("field") as string;
     const buildingId = formData.get("buildingId") as string;
     const content = formData.get("content") as string;
@@ -93,6 +94,8 @@ export default function BuildingComponent({
       toast.success("Suggestion submitted successfully");
     } catch {
       toast.error("Failed to submit suggestion");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -182,36 +185,47 @@ export default function BuildingComponent({
 
     if (editingField === field) {
       return (
-        <form className="flex flex-col gap-2" action={submitSuggestion}>
+        <form className="flex flex-col gap-2" onSubmit={submitSuggestion}>
           <input type="hidden" name="field" value={field} />
           <input type="hidden" name="buildingId" value={building.id} />
           <Textarea
             name="content"
             defaultValue={value}
             className="min-h-[100px]"
+            disabled={isSubmitting}
           />
           <div className="flex flex-col gap-1">
             <Input
               placeholder={t("building.creatorName")}
               name="submitterName"
               className="w-full"
+              disabled={isSubmitting}
             />
             <small className="text-gray-500">
               {t("building.creatorDescription")}
             </small>
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setEditingField(null)}>
+            <Button
+              variant="outline"
+              onClick={() => setEditingField(null)}
+              disabled={isSubmitting}
+            >
               {t("common.cancel")}
             </Button>
-            <Button type="submit">{t("common.submit")}</Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {t("common.submit")}
+            </Button>
           </div>
         </form>
       );
     }
 
     return (
-      <span className="font-source-sans-3 whitespace-pre-line text-justify">
+      <span className="font-source-sans-3 text-justify whitespace-pre-line">
         {value}
       </span>
     );
@@ -225,10 +239,7 @@ export default function BuildingComponent({
     return (
       <div className="space-y-4">
         {building.source.map((source: any, index: number) => (
-          <div
-            key={index}
-            className="bg-brown-50 rounded-md p-4 shadow-sm"
-          >
+          <div key={index} className="bg-brown-50 rounded-md p-4 shadow-sm">
             {source.sourceType === "book" && (
               <div className="flex flex-col">
                 <span className="font-semibold">{source.bookTitle}</span>
@@ -277,9 +288,7 @@ export default function BuildingComponent({
     return (
       <div className="bg-brown-50 rounded-md p-4 shadow-sm">
         <div className="flex items-center gap-2">
-          <span className="text-brown-800">
-            {t("building.contributedBy")}:
-          </span>
+          <span className="text-brown-800">{t("building.contributedBy")}:</span>
           <span className="font-medium">{building.creatorName}</span>
         </div>
       </div>
@@ -317,13 +326,25 @@ export default function BuildingComponent({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setEditingField(section.field ?? null)}
+              <div
+                role="button"
+                tabIndex={0}
+                className="hover:bg-accent hover:text-accent-foreground inline-flex h-9 w-9 items-center justify-center rounded-md text-sm font-medium"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  setEditingField(section.field ?? null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    setEditingField(section.field ?? null);
+                  }
+                }}
               >
                 <Pencil className="h-4 w-4" />
-              </Button>
+              </div>
             </TooltipTrigger>
             <TooltipContent>{t("building.suggestEdit")}</TooltipContent>
           </Tooltip>
@@ -337,29 +358,43 @@ export default function BuildingComponent({
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           {editingField === "name" ? (
-            <form className="flex w-full flex-col gap-2" action={submitSuggestion}>
+            <form
+              className="flex w-full flex-col gap-2"
+              onSubmit={submitSuggestion}
+            >
               <input type="hidden" name="field" value="name" />
               <input type="hidden" name="buildingId" value={building.id} />
               <Input
                 defaultValue={building.name}
                 name="content"
                 className="w-full"
+                disabled={isSubmitting}
               />
               <div className="flex flex-col gap-1">
                 <Input
                   placeholder={t("building.creatorName")}
                   name="submitterName"
                   className="w-full"
+                  disabled={isSubmitting}
                 />
                 <small className="text-gray-500">
                   {t("building.creatorDescription")}
                 </small>
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setEditingField(null)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setEditingField(null)}
+                  disabled={isSubmitting}
+                >
                   {t("common.cancel")}
                 </Button>
-                <Button type="submit">{t("common.submit")}</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {t("common.submit")}
+                </Button>
               </div>
             </form>
           ) : (

@@ -4,8 +4,10 @@ import { CollectionBeforeChangeHook } from "payload";
 export const checkIfCanUpdate: CollectionBeforeChangeHook = async ({
   req,
   originalDoc,
+  context,
 }) => {
   if (Boolean(req.user)) return;
+  if (context?.skipCanUpdateCheck) return;
 
   // if trying to update the en
   if (req.locale === "en") {
