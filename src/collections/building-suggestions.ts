@@ -61,7 +61,9 @@ export const BuildingSuggestions: CollectionConfig = {
               data: {
                 suggestionsCount: (data.suggestionsCount ?? 0) + 1,
               },
+              req,
               overrideAccess: true,
+              context: { skipCanUpdateCheck: true },
             });
           }
         }
@@ -84,7 +86,9 @@ export const BuildingSuggestions: CollectionConfig = {
             data: {
               suggestionsCount: data.suggestionsCount - 1,
             },
+            req,
             overrideAccess: true,
+            context: { skipCanUpdateCheck: true },
           });
         }
       },
