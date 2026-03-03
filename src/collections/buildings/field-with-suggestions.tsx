@@ -3,7 +3,9 @@ import {
   Collapsible,
   TextareaField,
   TextField,
+  useField,
   useDocumentInfo,
+  useLocale,
 } from "@payloadcms/ui";
 import {
   TextareaField as TextareaFieldType,
@@ -11,14 +13,34 @@ import {
 } from "payload";
 import { BuildingSuggestion } from "payload-types";
 import React, { useEffect, useState } from "react";
+import { AIGenerateModal } from "@/components/payload/ai/AIGenerateModal";
+
+const AI_ENABLED_FIELD_PATHS = new Set([
+  "summary",
+  "history",
+  "style",
+  "presentDay",
+]);
 
 const FieldWithSuggestions: React.FC<{
   path: string;
   field: TextareaFieldType | TextFieldType;
 }> = (props) => {
   const { path, field } = props;
-  const { id } = useDocumentInfo();
+  const { id, collectionSlug } = useDocumentInfo();
+  const locale = useLocale();
+  const localeCode =
+    typeof locale === "string"
+      ? locale
+      : locale &&
+          typeof locale === "object" &&
+          "code" in locale &&
+          typeof (locale as { code?: unknown }).code === "string"
+        ? ((locale as { code?: unknown }).code as string)
+        : "";
+  const safeLocaleCode = localeCode || "hu";
   const [suggestions, setSuggestions] = useState<BuildingSuggestion[]>([]);
+  const { value, setValue } = useField({ path });
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -51,15 +73,35 @@ const FieldWithSuggestions: React.FC<{
   };
 
   const FieldComponent = field.type === "text" ? TextField : TextareaField;
+  const currentValue = typeof value === "string" ? value : "";
+
+  const showAI =
+    collectionSlug === "buildings" && Boolean(id) && AI_ENABLED_FIELD_PATHS.has(path);
+
   return (
     <div className={`field-type ${field.type}`} id={`field-${path}`}>
-      <label className="field-label mb-2" htmlFor={`field-${path}`}>
-        {path
-          .replace(/([A-Z])/g, " $1") // Add space before capital letters
-          .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
-          .trim()}
-        {field.required && <span className="required">*</span>}
-      </label>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <label className="field-label" htmlFor={`field-${path}`}>
+          {path
+            .replace(/([A-Z])/g, " $1") // Add space before capital letters
+            .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+            .trim()}
+          {field.required && <span className="required">*</span>}
+        </label>
+
+        {showAI && (
+          <AIGenerateModal
+            collection={collectionSlug}
+            docId={id!}
+            locale={safeLocaleCode}
+            fieldPath={path}
+            onReplace={(text) => setValue(text)}
+            onAppend={(text) =>
+              setValue(currentValue ? `${currentValue}\n\n${text}` : text)
+            }
+          />
+        )}
+      </div>
 
       <FieldComponent path={path} field={{ name: path }} />
 

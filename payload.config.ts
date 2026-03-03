@@ -28,6 +28,7 @@ import Users from "@/collections/users";
 import { BuildingSuggestions } from "@/collections/building-suggestions";
 import Community from "@/collections/globals/community";
 import Description from "@/collections/globals/description";
+import { aiGenerateEndpoint } from "@/endpoints/ai/generate";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -61,7 +62,7 @@ export default buildConfig({
   db: postgresAdapter({
     pool: { connectionString: env.DATABASE_URL || "" },
     schemaName: "payload",
-    push: false,
+    push: env.NODE_ENV === "development",
   }),
   i18n: {
     fallbackLanguage: "hu",
@@ -135,5 +136,6 @@ export default buildConfig({
       },
     }),
   ],
+  endpoints: [aiGenerateEndpoint],
   sharp,
 });

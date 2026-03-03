@@ -33,6 +33,11 @@ export const Cities: CollectionConfig = {
       name: "description",
       type: "richText",
       localized: true,
+      admin: {
+        components: {
+          afterInput: ["@/collections/shared/richtext-ai-actions#default"],
+        },
+      },
     },
     {
       name: "position",
