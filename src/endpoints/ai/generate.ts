@@ -3,8 +3,8 @@ import {
   type AIDocContext,
   buildSafeDocContext,
 } from "@/lib/ai/context/buildContext";
-import { SHARED_SYSTEM_PROMPT } from "@/lib/ai/safety";
 import { callProvider } from "@/lib/ai/providers/callProvider";
+import { SHARED_SYSTEM_PROMPT } from "@/lib/ai/safety";
 import { aiGenerateRequestSchema } from "@/lib/ai/validate";
 import type { Endpoint, PayloadRequest } from "payload";
 
@@ -62,9 +62,9 @@ const LOCALE_TO_LANGUAGE: Record<string, string> = {
   en: "English",
 };
 
-const DEFAULT_OPENROUTER_MODEL = "openrouter/free";
+const DEFAULT_OPENAI_MODEL = "gpt-5.4-nano";
 const MIN_AI_TIMEOUT_MS = 45_000;
-const DEFAULT_MAX_OUTPUT_TOKENS = 1_200;
+const DEFAULT_MAX_OUTPUT_TOKENS = 4800;
 
 const getLanguageName = (locale: string): string =>
   LOCALE_TO_LANGUAGE[locale] ?? locale;
@@ -126,7 +126,10 @@ const buildUserPrompt = (args: {
       : "";
 
   return [
-    buildTaskInstruction({ collection: args.collection, fieldPath: args.fieldPath }),
+    buildTaskInstruction({
+      collection: args.collection,
+      fieldPath: args.fieldPath,
+    }),
     "",
     `Target field: ${args.collection}.${args.fieldPath}`,
     `Output language: ${getLanguageName(args.locale)} (${args.locale})`,
@@ -147,7 +150,9 @@ const buildUserPrompt = (args: {
     .join("\n");
 };
 
-export const aiGenerateHandler = async (req: PayloadRequest): Promise<Response> => {
+export const aiGenerateHandler = async (
+  req: PayloadRequest,
+): Promise<Response> => {
   if (!env.AI_ENABLED) {
     return jsonResponse(
       { error: "AI is disabled on this environment." },
@@ -163,9 +168,9 @@ export const aiGenerateHandler = async (req: PayloadRequest): Promise<Response> 
     return jsonResponse({ error: "Forbidden." }, { status: 403 });
   }
 
-  if (!env.OPENROUTER_AI_KEY) {
+  if (!env.OPENAI_API_KEY) {
     return jsonResponse(
-      { error: "OPENROUTER_AI_KEY is not configured." },
+      { error: "OPENAI_API_KEY is not configured." },
       { status: 503 },
     );
   }
@@ -229,21 +234,20 @@ export const aiGenerateHandler = async (req: PayloadRequest): Promise<Response> 
 
   try {
     const timeoutMs = Math.max(env.AI_TIMEOUT_MS, MIN_AI_TIMEOUT_MS);
-    const providerResult = await callProvider("openrouter", {
-      apiKey: env.OPENROUTER_AI_KEY,
-      model: DEFAULT_OPENROUTER_MODEL,
+    const providerResult = await callProvider("openai", {
+      apiKey: env.OPENAI_API_KEY,
+      model: DEFAULT_OPENAI_MODEL,
       messages: [
         { role: "system", content: SHARED_SYSTEM_PROMPT },
         { role: "user", content: userPrompt },
       ],
-      temperature: 0.4,
       maxOutputTokens: DEFAULT_MAX_OUTPUT_TOKENS,
       timeoutMs,
     });
 
     return jsonResponse({
-      provider: "openrouter",
-      model: DEFAULT_OPENROUTER_MODEL,
+      provider: "openai",
+      model: DEFAULT_OPENAI_MODEL,
       text: providerResult.text,
       citations: providerResult.citations,
       usage: providerResult.usage,

@@ -70,6 +70,14 @@ export const Cities: CollectionConfig = {
           equals: "published",
         },
       },
+      defaultLimit: 0,
+      admin: {
+        components: {
+          beforeInput: [
+            "@/components/payload/ai/GenerateMissingLocationsModal#default",
+          ],
+        },
+      },
     },
   ],
   admin: {

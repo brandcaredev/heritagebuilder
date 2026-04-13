@@ -29,6 +29,11 @@ import { BuildingSuggestions } from "@/collections/building-suggestions";
 import Community from "@/collections/globals/community";
 import Description from "@/collections/globals/description";
 import { aiGenerateEndpoint } from "@/endpoints/ai/generate";
+import {
+  aiGenerateMissingBuildingsEndpoint,
+  aiGenerateMissingCitiesEndpoint,
+  aiGenerateMissingCountiesEndpoint,
+} from "@/endpoints/ai/generate-missing-locations";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -136,6 +141,11 @@ export default buildConfig({
       },
     }),
   ],
-  endpoints: [aiGenerateEndpoint],
+  endpoints: [
+    aiGenerateEndpoint,
+    aiGenerateMissingCountiesEndpoint,
+    aiGenerateMissingCitiesEndpoint,
+    aiGenerateMissingBuildingsEndpoint,
+  ],
   sharp,
 });

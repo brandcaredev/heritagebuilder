@@ -25,7 +25,6 @@ export const env = createEnv({
     AI_RATE_LIMIT_PER_MIN: z.coerce.number().int().positive().default(10),
     AI_TIMEOUT_MS: z.coerce.number().int().positive().default(25000),
     OPENAI_API_KEY: z.string().optional(),
-    OPENROUTER_AI_KEY: z.string().optional(),
   },
 
   /**
@@ -60,7 +59,6 @@ export const env = createEnv({
     AI_RATE_LIMIT_PER_MIN: process.env.AI_RATE_LIMIT_PER_MIN,
     AI_TIMEOUT_MS: process.env.AI_TIMEOUT_MS,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    OPENROUTER_AI_KEY: process.env.OPENROUTER_AI_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

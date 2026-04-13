@@ -26,7 +26,6 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.2.2",
-    "@openrouter/ai-sdk-provider": "^2.2.3",
     "@payloadcms/db-postgres": "^3.63.0",
     "@payloadcms/next": "^3.63.0",
     "@payloadcms/plugin-search": "^3.63.0",
