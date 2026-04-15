@@ -4,6 +4,7 @@ import { callProvider } from "@/lib/ai/providers/callProvider";
 import { SHARED_SYSTEM_PROMPT } from "@/lib/ai/safety";
 import type {
   LocalizedAIText,
+  LocationPoint,
   MissingBuildingProposal,
   MissingCityProposal,
   MissingCountyProposal,
@@ -101,6 +102,14 @@ type CitiesModelOutput = ReturnType<
 type BuildingsModelOutput = ReturnType<
   typeof aiMissingBuildingsModelOutputSchema.parse
 >;
+type GeocodingResult = {
+  lat?: string;
+  lon?: string;
+};
+type ModelPosition = {
+  lat: number;
+  lng: number;
+};
 
 const checkRateLimit = (args: {
   userId: string;
@@ -186,6 +195,74 @@ const trimLocalized = (value: LocalizedAIText): LocalizedAIText => ({
   hu: value.hu.trim(),
   en: value.en.trim(),
 });
+
+const isValidLocationPoint = (value: unknown): value is LocationPoint =>
+  Array.isArray(value) &&
+  value.length === 2 &&
+  typeof value[0] === "number" &&
+  Number.isFinite(value[0]) &&
+  value[0] >= -90 &&
+  value[0] <= 90 &&
+  typeof value[1] === "number" &&
+  Number.isFinite(value[1]) &&
+  value[1] >= -180 &&
+  value[1] <= 180;
+
+const toLocationPoint = (result: GeocodingResult): LocationPoint | undefined => {
+  const lat = Number(result.lat);
+  const lng = Number(result.lon);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    return undefined;
+  }
+
+  const point: LocationPoint = [lat, lng];
+  return isValidLocationPoint(point) ? point : undefined;
+};
+
+const toLocationPointFromModelPosition = (
+  position: ModelPosition | null | undefined,
+): LocationPoint | undefined => {
+  if (!position) return undefined;
+
+  const point: LocationPoint = [position.lat, position.lng];
+  return isValidLocationPoint(point) ? point : undefined;
+};
+
+const geocodeLocation = async (query: string): Promise<LocationPoint | undefined> => {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) return undefined;
+
+  try {
+    const url = new URL("https://nominatim.openstreetmap.org/search");
+    url.searchParams.set("q", trimmedQuery);
+    url.searchParams.set("format", "jsonv2");
+    url.searchParams.set("limit", "1");
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "heritagebuilder/1.0",
+      },
+    });
+
+    if (!response.ok) {
+      return undefined;
+    }
+
+    const json = (await response.json()) as GeocodingResult[] | unknown;
+    if (!Array.isArray(json) || json.length === 0) {
+      return undefined;
+    }
+
+    const firstResult = json[0];
+    return firstResult && typeof firstResult === "object"
+      ? toLocationPoint(firstResult as GeocodingResult)
+      : undefined;
+  } catch {
+    return undefined;
+  }
+};
 
 const adminAffixesByTarget: Record<
   MissingLocationTarget,
@@ -1258,10 +1335,12 @@ const buildCountyDescriptionPrompt = (args: {
       "2. Set each `name.en` to the exact selected name at the same index.",
       "3. Generate records only for these exact selected names. Do not add, remove, replace, merge, split, translate into a different entity, or reorder entity names.",
       "4. The output entities must correspond exactly to the provided selected names.",
-      "5. Return valid JSON only.",
+      "5. Set `capitalName` to the current administrative capital or seat of each county when known.",
+      "6. If you cannot verify the county capital confidently, set `capitalName` to an empty string.",
+      "7. Return valid JSON only.",
     ],
     outputSchema:
-      '{"counties":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."}}]}',
+      '{"counties":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."},"capitalName":"..."}]}',
     writingGuidance: [
       "Write factual current descriptions only.",
       "Write longer descriptions with about 10-15 informative sentences when reliable details exist.",
@@ -1335,10 +1414,12 @@ const buildCityDescriptionPrompt = (args: {
       "3. Generate records only for these exact selected names. Do not add, remove, replace, merge, split, translate into a different entity, or reorder entity names.",
       "4. The output entities must correspond exactly to the provided selected names.",
       "5. The selected names may be cities, towns, villages, or other small settlements. Keep the same entity type as implied by each selected name.",
-      "6. Return valid JSON only.",
+      "6. If reliable coordinates are available, set `position` as `{ \"lat\": latitude, \"lng\": longitude }`.",
+      "7. If reliable coordinates are not available, set `position` to `null`.",
+      "8. Return valid JSON only.",
     ],
     outputSchema:
-      '{"cities":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."}}]}',
+      '{"cities":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."},"position":{"lat":0,"lng":0}}]} or {"cities":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."},"position":null}]}',
     writingGuidance: [
       "Write factual current descriptions only.",
       "Write longer descriptions with about 10-15 informative sentences when reliable details exist.",
@@ -1419,10 +1500,12 @@ const buildBuildingDescriptionPrompt = (args: {
       "4. The output entities must correspond exactly to the provided selected names.",
       "5. Choose the most appropriate existing building type for each building and set `buildingTypeId` to that exact id from `building_types`.",
       "6. Do not invent new building types or ids.",
-      "7. Return valid JSON only.",
+      "7. If reliable coordinates are available, set `position` as `{ \"lat\": latitude, \"lng\": longitude }`.",
+      "8. If reliable coordinates are not available, set `position` to `null`.",
+      "9. Return valid JSON only.",
     ],
     outputSchema:
-      '{"buildings":[{"name":{"hu":"...","en":"..."},"buildingTypeId":"...","summary":{"hu":"...","en":"..."},"history":{"hu":"...","en":"..."},"style":{"hu":"...","en":"..."},"presentDay":{"hu":"...","en":"..."}}]}',
+      '{"buildings":[{"name":{"hu":"...","en":"..."},"buildingTypeId":"...","summary":{"hu":"...","en":"..."},"history":{"hu":"...","en":"..."},"style":{"hu":"...","en":"..."},"presentDay":{"hu":"...","en":"..."},"position":{"lat":0,"lng":0}}]} or {"buildings":[{"name":{"hu":"...","en":"..."},"buildingTypeId":"...","summary":{"hu":"...","en":"..."},"history":{"hu":"...","en":"..."},"style":{"hu":"...","en":"..."},"presentDay":{"hu":"...","en":"..."},"position":null}]}',
     writingGuidance: [
       "`summary` should be a fuller overview, around 4-6 informative sentences when reliable details exist.",
       "Write `history`, `style`, and `presentDay` with about 10-15 informative sentences each when reliable details exist.",
@@ -1912,20 +1995,28 @@ const runDescriptionAIRequest = async <
   };
 };
 
-const previewCountiesFromModelOutput = (args: {
+const previewCountiesFromModelOutput = async (args: {
   context: CountryContext;
   count: number;
   modelOutput: CountiesModelOutput;
-}): { proposals: MissingCountyProposal[]; skipped: SkipItem[] } => {
+}): Promise<{ proposals: MissingCountyProposal[]; skipped: SkipItem[] }> => {
   const skipped: SkipItem[] = [];
   const proposals: MissingCountyProposal[] = [];
   const seen = new Set<string>();
 
   for (const county of args.modelOutput.counties) {
+    const capitalQuery = [
+      county.capitalName,
+      county.name.en,
+      args.context.countryName.en || args.context.countryName.hu,
+    ]
+      .filter(Boolean)
+      .join(", ");
     const proposal: MissingCountyProposal = {
       kind: "county",
       name: trimLocalized(county.name),
       description: trimLocalized(county.description),
+      position: capitalQuery ? await geocodeLocation(capitalQuery) : undefined,
     };
 
     if (!proposal.description.hu || !proposal.description.en) {
@@ -1957,20 +2048,31 @@ const previewCountiesFromModelOutput = (args: {
   return { proposals: proposals.slice(0, args.count), skipped };
 };
 
-const previewCitiesFromModelOutput = (args: {
+const previewCitiesFromModelOutput = async (args: {
   context: CountyContext;
   count: number;
   modelOutput: CitiesModelOutput;
-}): { proposals: MissingCityProposal[]; skipped: SkipItem[] } => {
+}): Promise<{ proposals: MissingCityProposal[]; skipped: SkipItem[] }> => {
   const skipped: SkipItem[] = [];
   const proposals: MissingCityProposal[] = [];
   const seen = new Set<string>();
 
   for (const city of args.modelOutput.cities) {
+    const geocodedPosition = await geocodeLocation(
+      [
+        city.name.en,
+        args.context.countyName.en || args.context.countyName.hu,
+        args.context.countryName.en || args.context.countryName.hu,
+      ]
+        .filter(Boolean)
+        .join(", "),
+    );
+    const modelPosition = toLocationPointFromModelPosition(city.position);
     const proposal: MissingCityProposal = {
       kind: "city",
       name: trimLocalized(city.name),
       description: trimLocalized(city.description),
+      position: modelPosition ?? geocodedPosition,
     };
 
     if (!proposal.description.hu || !proposal.description.en) {
@@ -2000,16 +2102,27 @@ const previewCitiesFromModelOutput = (args: {
   return { proposals: proposals.slice(0, args.count), skipped };
 };
 
-const previewBuildingsFromModelOutput = (args: {
+const previewBuildingsFromModelOutput = async (args: {
   context: CityContext;
   count: number;
   modelOutput: BuildingsModelOutput;
-}): { proposals: MissingBuildingProposal[]; skipped: SkipItem[] } => {
+}): Promise<{ proposals: MissingBuildingProposal[]; skipped: SkipItem[] }> => {
   const skipped: SkipItem[] = [];
   const proposals: MissingBuildingProposal[] = [];
   const seen = new Set<string>();
 
   for (const building of args.modelOutput.buildings) {
+    const geocodedPosition = await geocodeLocation(
+      [
+        building.name.en,
+        args.context.cityName.en || args.context.cityName.hu,
+        args.context.countyName.en || args.context.countyName.hu,
+        args.context.countryName.en || args.context.countryName.hu,
+      ]
+        .filter(Boolean)
+        .join(", "),
+    );
+    const modelPosition = toLocationPointFromModelPosition(building.position);
     const proposal: MissingBuildingProposal = {
       kind: "building",
       name: trimLocalized(building.name),
@@ -2018,6 +2131,7 @@ const previewBuildingsFromModelOutput = (args: {
       history: trimLocalized(building.history),
       style: trimLocalized(building.style),
       presentDay: trimLocalized(building.presentDay),
+      position: modelPosition ?? geocodedPosition,
     };
 
     const hasAllText =
@@ -2088,6 +2202,7 @@ const createCountyDraft = async (args: {
 
   const huDescription = buildLexicalStateFromText(args.proposal.description.hu);
   if (huDescription) huData.description = huDescription;
+  if (args.proposal.position) huData.position = args.proposal.position;
 
   const created = await args.req.payload.create({
     collection: "counties",
@@ -2134,6 +2249,7 @@ const createCityDraft = async (args: {
 
   const huDescription = buildLexicalStateFromText(args.proposal.description.hu);
   if (huDescription) huData.description = huDescription;
+  if (args.proposal.position) huData.position = args.proposal.position;
 
   const created = await args.req.payload.create({
     collection: "cities",
@@ -2184,6 +2300,7 @@ const createBuildingDraft = async (args: {
     county: args.countyId,
     city: args.cityId,
   };
+  if (args.proposal.position) huData.position = args.proposal.position;
 
   const created = await args.req.payload.create({
     collection: "buildings",
@@ -2373,7 +2490,7 @@ export const aiGenerateMissingCountiesHandler = async (
         });
       }
 
-      const { proposals, skipped } = previewCountiesFromModelOutput({
+      const { proposals, skipped } = await previewCountiesFromModelOutput({
         context,
         count: Math.min(parsed.data.count, MAX_PROPOSALS_PER_RUN),
         modelOutput: descriptionModelOutput.data,
@@ -2590,7 +2707,7 @@ export const aiGenerateMissingCitiesHandler = async (
         });
       }
 
-      const { proposals, skipped } = previewCitiesFromModelOutput({
+      const { proposals, skipped } = await previewCitiesFromModelOutput({
         context,
         count: Math.min(parsed.data.count, MAX_PROPOSALS_PER_RUN),
         modelOutput: descriptionModelOutput.data,
@@ -2816,7 +2933,7 @@ export const aiGenerateMissingBuildingsHandler = async (
         });
       }
 
-      const { proposals, skipped } = previewBuildingsFromModelOutput({
+      const { proposals, skipped } = await previewBuildingsFromModelOutput({
         context,
         count: Math.min(parsed.data.count, MAX_PROPOSALS_PER_RUN),
         modelOutput: descriptionModelOutput.data,

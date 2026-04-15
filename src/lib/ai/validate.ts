@@ -30,6 +30,18 @@ const localizedNameModelSchema = z.object({
   en: z.string().max(180).default(""),
 });
 
+const locationPointSchema = z.tuple([
+  z.number().finite().min(-90).max(90),
+  z.number().finite().min(-180).max(180),
+]);
+
+const modelPositionSchema = z
+  .object({
+    lat: z.number().finite().min(-90).max(90),
+    lng: z.number().finite().min(-180).max(180),
+  })
+  .strict();
+
 const selectedNamesModelSchema = z
   .array(z.string().trim().min(1).max(180))
   .default([]);
@@ -38,12 +50,14 @@ export const missingCountyProposalSchema = z.object({
   kind: z.literal("county"),
   name: localizedNameSchema,
   description: localizedDescriptionSchema,
+  position: locationPointSchema.optional(),
 });
 
 export const missingCityProposalSchema = z.object({
   kind: z.literal("city"),
   name: localizedNameSchema,
   description: localizedDescriptionSchema,
+  position: locationPointSchema.optional(),
 });
 
 export const missingBuildingProposalSchema = z.object({
@@ -54,6 +68,7 @@ export const missingBuildingProposalSchema = z.object({
   history: localizedDescriptionSchema,
   style: localizedDescriptionSchema,
   presentDay: localizedDescriptionSchema,
+  position: locationPointSchema.optional(),
 });
 
 export const missingLocationProposalSchema = z.discriminatedUnion("kind", [
@@ -138,6 +153,7 @@ export const aiMissingCountiesModelOutputSchema = z
         z.object({
           name: localizedNameModelSchema,
           description: localizedDescriptionModelSchema,
+          capitalName: z.string().trim().max(180).default(""),
         }),
       )
       .default([]),
@@ -151,6 +167,7 @@ export const aiMissingCitiesModelOutputSchema = z
         z.object({
           name: localizedNameModelSchema,
           description: localizedDescriptionModelSchema,
+          position: modelPositionSchema.nullable().default(null),
         }),
       )
       .default([]),
@@ -168,6 +185,7 @@ export const aiMissingBuildingsModelOutputSchema = z
           history: localizedDescriptionModelSchema,
           style: localizedDescriptionModelSchema,
           presentDay: localizedDescriptionModelSchema,
+          position: modelPositionSchema.nullable().default(null),
         }),
       )
       .default([]),
@@ -206,6 +224,21 @@ const selectedNamesJSONSchema = {
   },
 } as const;
 
+const locationPointJSONSchema = {
+  anyOf: [
+    {
+      type: "object",
+      additionalProperties: false,
+      required: ["lat", "lng"],
+      properties: {
+        lat: { type: "number", minimum: -90, maximum: 90 },
+        lng: { type: "number", minimum: -180, maximum: 180 },
+      },
+    },
+    { type: "null" },
+  ],
+} as const;
+
 export const aiMissingCountiesSelectionResponseJsonSchema =
   selectedNamesJSONSchema;
 
@@ -225,10 +258,11 @@ export const aiMissingCountiesResponseJsonSchema = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["name", "description"],
+        required: ["name", "description", "capitalName"],
         properties: {
           name: localizedNameJSONSchema,
           description: localizedDescriptionJSONSchema,
+          capitalName: { type: "string", maxLength: 180 },
         },
       },
     },
@@ -245,10 +279,11 @@ export const aiMissingCitiesResponseJsonSchema = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["name", "description"],
+        required: ["name", "description", "position"],
         properties: {
           name: localizedNameJSONSchema,
           description: localizedDescriptionJSONSchema,
+          position: locationPointJSONSchema,
         },
       },
     },
@@ -272,6 +307,7 @@ export const aiMissingBuildingsResponseJsonSchema = {
           "history",
           "style",
           "presentDay",
+          "position",
         ],
         properties: {
           name: localizedNameJSONSchema,
@@ -280,6 +316,7 @@ export const aiMissingBuildingsResponseJsonSchema = {
           history: localizedDescriptionJSONSchema,
           style: localizedDescriptionJSONSchema,
           presentDay: localizedDescriptionJSONSchema,
+          position: locationPointJSONSchema,
         },
       },
     },

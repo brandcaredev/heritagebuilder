@@ -81,6 +81,15 @@ const proposalKey = (
   return `${proposal.kind}-${nameKey}-${index}`;
 };
 
+const formatPosition = (position?: [number, number]): string | null => {
+  if (position?.length !== 2) return null;
+
+  const [lat, lng] = position;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+  return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+};
+
 const targetConfigByCollectionAndPath: Record<
   string,
   | {
@@ -612,6 +621,15 @@ const GenerateMissingLocationsModal: React.FC<
                                   {item.proposal.buildingTypeId}
                                 </p>
                               </div>
+                              <div className="md:col-span-2">
+                                <p className="mb-1 font-semibold">
+                                  Coordinates
+                                </p>
+                                <p className="text-neutral-300">
+                                  {formatPosition(item.proposal.position) ??
+                                    "Not available"}
+                                </p>
+                              </div>
                               <div>
                                 <p className="mb-1 font-semibold">HU summary</p>
                                 <p className="text-neutral-300">
@@ -667,6 +685,15 @@ const GenerateMissingLocationsModal: React.FC<
                             </div>
                           ) : (
                             <div className="grid grid-cols-1 gap-2 text-xs md:grid-cols-2">
+                              <div className="md:col-span-2">
+                                <p className="mb-1 font-semibold">
+                                  Coordinates
+                                </p>
+                                <p className="text-neutral-300">
+                                  {formatPosition(item.proposal.position) ??
+                                    "Not available"}
+                                </p>
+                              </div>
                               <div>
                                 <p className="mb-1 font-semibold">
                                   HU description

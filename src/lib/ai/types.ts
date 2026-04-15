@@ -13,18 +13,22 @@ export type LocalizedAIText = {
   en: string;
 };
 
+export type LocationPoint = [number, number];
+
 export type MissingLocationTarget = "counties" | "cities" | "buildings";
 
 export type MissingCountyProposal = {
   kind: "county";
   name: LocalizedAIText;
   description: LocalizedAIText;
+  position?: LocationPoint;
 };
 
 export type MissingCityProposal = {
   kind: "city";
   name: LocalizedAIText;
   description: LocalizedAIText;
+  position?: LocationPoint;
 };
 
 export type MissingBuildingProposal = {
@@ -35,6 +39,7 @@ export type MissingBuildingProposal = {
   history: LocalizedAIText;
   style: LocalizedAIText;
   presentDay: LocalizedAIText;
+  position?: LocationPoint;
 };
 
 export type MissingLocationProposal =
