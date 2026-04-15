@@ -19,6 +19,12 @@ export const env = createEnv({
     S3_REGION: z.string(),
     S3_ENDPOINT: z.string(),
     BASE_EMAIL: z.string(),
+
+    // AI (Payload admin content generation)
+    AI_ENABLED: z.coerce.boolean().default(false),
+    AI_RATE_LIMIT_PER_MIN: z.coerce.number().int().positive().default(10),
+    AI_TIMEOUT_MS: z.coerce.number().int().positive().default(25000),
+    OPENAI_API_KEY: z.string().optional(),
   },
 
   /**
@@ -48,6 +54,11 @@ export const env = createEnv({
     S3_REGION: process.env.S3_REGION,
     S3_ENDPOINT: process.env.S3_ENDPOINT,
     BASE_EMAIL: process.env.BASE_EMAIL,
+
+    AI_ENABLED: process.env.AI_ENABLED,
+    AI_RATE_LIMIT_PER_MIN: process.env.AI_RATE_LIMIT_PER_MIN,
+    AI_TIMEOUT_MS: process.env.AI_TIMEOUT_MS,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

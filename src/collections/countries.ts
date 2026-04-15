@@ -70,6 +70,13 @@ export const Countries: CollectionConfig = {
         },
       },
       defaultLimit: 0,
+      admin: {
+        components: {
+          beforeInput: [
+            "@/components/payload/ai/GenerateMissingLocationsModal#default",
+          ],
+        },
+      },
     },
     {
       name: "relatedCities",

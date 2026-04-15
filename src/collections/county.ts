@@ -33,6 +33,11 @@ export const Counties: CollectionConfig = {
       name: "description",
       type: "richText",
       localized: true,
+      admin: {
+        components: {
+          afterInput: ["@/collections/shared/richtext-ai-actions#default"],
+        },
+      },
     },
     {
       name: "position",
@@ -203,6 +208,14 @@ export const Counties: CollectionConfig = {
       where: {
         _status: {
           equals: "published",
+        },
+      },
+      defaultLimit: 0,
+      admin: {
+        components: {
+          beforeInput: [
+            "@/components/payload/ai/GenerateMissingLocationsModal#default",
+          ],
         },
       },
     },
