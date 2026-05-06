@@ -74,6 +74,13 @@ const FieldWithSuggestions: React.FC<{
 
   const FieldComponent = field.type === "text" ? TextField : TextareaField;
   const currentValue = typeof value === "string" ? value : "";
+  const fieldLabel =
+    typeof field.label === "string"
+      ? field.label
+      : path
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase())
+          .trim();
 
   const showAI =
     collectionSlug === "buildings" && Boolean(id) && AI_ENABLED_FIELD_PATHS.has(path);
@@ -82,10 +89,7 @@ const FieldWithSuggestions: React.FC<{
     <div className={`field-type ${field.type}`} id={`field-${path}`}>
       <div className="mb-2 flex items-center justify-between gap-2">
         <label className="field-label" htmlFor={`field-${path}`}>
-          {path
-            .replace(/([A-Z])/g, " $1") // Add space before capital letters
-            .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
-            .trim()}
+          {fieldLabel}
           {field.required && <span className="required">*</span>}
         </label>
 

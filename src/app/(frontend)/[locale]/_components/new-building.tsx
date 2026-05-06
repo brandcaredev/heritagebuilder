@@ -376,7 +376,7 @@ export default function BuildingForm({
           router.replace("/");
         }}
       >
-        <DialogContent className="z-10 sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle className="flex justify-center text-2xl font-semibold text-brown">
               {t("successDialog.title")}
