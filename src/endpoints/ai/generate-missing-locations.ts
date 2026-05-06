@@ -42,11 +42,11 @@ const jsonResponse = (body: unknown, init?: ResponseInit): Response =>
 type RateLimitState = { windowStartMs: number; count: number };
 const rateLimitsByUser = new Map<string, RateLimitState>();
 
-const DEFAULT_OPENAI_MODEL = "gpt-5.4-mini";
+const DEFAULT_OPENAI_MODEL = "gpt-5.4";
 const MIN_AI_TIMEOUT_MS = 180_000;
 const MAX_PROPOSALS_PER_RUN = 5;
 const SELECTION_MAX_OUTPUT_TOKENS = 1_500;
-const DESCRIPTION_MAX_OUTPUT_TOKENS = 8_000;
+const DESCRIPTION_MAX_OUTPUT_TOKENS = 16_000;
 const REPAIR_MAX_OUTPUT_TOKENS = 4_000;
 const SHOULD_EXPOSE_AI_DEBUG = env.NODE_ENV === "development";
 
@@ -250,7 +250,7 @@ const geocodeLocation = async (query: string): Promise<LocationPoint | undefined
       return undefined;
     }
 
-    const json = (await response.json()) as GeocodingResult[] | unknown;
+    const json: unknown = await response.json();
     if (!Array.isArray(json) || json.length === 0) {
       return undefined;
     }
@@ -1343,9 +1343,10 @@ const buildCountyDescriptionPrompt = (args: {
       '{"counties":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."},"capitalName":"..."}]}',
     writingGuidance: [
       "Write factual current descriptions only.",
-      "Write longer descriptions with about 10-15 informative sentences when reliable details exist.",
-      "If the available facts do not support that length, stay factual and use fewer sentences.",
-      "Prefer concrete current details over generic filler.",
+      "Write longer descriptions with about 12-18 informative sentences when reliable details exist.",
+      "Do not return empty, placeholder, repetitive, or generic filler text.",
+      "If the available facts do not support that length, stay factual and use fewer substantive sentences instead of padding.",
+      "Prefer concrete current details over broad boilerplate.",
     ],
   });
 
@@ -1422,9 +1423,10 @@ const buildCityDescriptionPrompt = (args: {
       '{"cities":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."},"position":{"lat":0,"lng":0}}]} or {"cities":[{"name":{"hu":"...","en":"..."},"description":{"hu":"...","en":"..."},"position":null}]}',
     writingGuidance: [
       "Write factual current descriptions only.",
-      "Write longer descriptions with about 10-15 informative sentences when reliable details exist.",
-      "If the available facts do not support that length, stay factual and use fewer sentences.",
-      "Prefer concrete current details over generic filler.",
+      "Write longer descriptions with about 12-18 informative sentences when reliable details exist.",
+      "Do not return empty, placeholder, repetitive, or generic filler text.",
+      "If the available facts do not support that length, stay factual and use fewer substantive sentences instead of padding.",
+      "Prefer concrete current details over broad boilerplate.",
     ],
   });
 
@@ -1505,12 +1507,15 @@ const buildBuildingDescriptionPrompt = (args: {
       "9. Return valid JSON only.",
     ],
     outputSchema:
-      '{"buildings":[{"name":{"hu":"...","en":"..."},"buildingTypeId":"...","summary":{"hu":"...","en":"..."},"history":{"hu":"...","en":"..."},"style":{"hu":"...","en":"..."},"presentDay":{"hu":"...","en":"..."},"position":{"lat":0,"lng":0}}]} or {"buildings":[{"name":{"hu":"...","en":"..."},"buildingTypeId":"...","summary":{"hu":"...","en":"..."},"history":{"hu":"...","en":"..."},"style":{"hu":"...","en":"..."},"presentDay":{"hu":"...","en":"..."},"position":null}]}',
+      '{"buildings":[{"name":{"hu":"...","en":"..."},"buildingTypeId":"...","summary":{"hu":"...","en":"..."},"history":{"hu":"...","en":"..."},"style":{"hu":"...","en":"..."},"presentDay":{"hu":"...","en":"..."},"famousResidents":{"hu":"...","en":"..."},"renovation":{"hu":"...","en":"..."},"position":{"lat":0,"lng":0}}]} or {"buildings":[{"name":{"hu":"...","en":"..."},"buildingTypeId":"...","summary":{"hu":"...","en":"..."},"history":{"hu":"...","en":"..."},"style":{"hu":"...","en":"..."},"presentDay":{"hu":"...","en":"..."},"famousResidents":{"hu":"...","en":"..."},"renovation":{"hu":"...","en":"..."},"position":null}]}',
     writingGuidance: [
-      "`summary` should be a fuller overview, around 4-6 informative sentences when reliable details exist.",
-      "Write `history`, `style`, and `presentDay` with about 10-15 informative sentences each when reliable details exist.",
-      "If the available facts do not support that length, stay factual and use fewer sentences.",
-      "Prefer concrete current details over generic filler.",
+      "`summary` should be a fuller overview, around 5-8 informative sentences when reliable details exist.",
+      "Write `history`, `style`, and `presentDay` with about 12-18 informative sentences each when reliable details exist.",
+      "Write `famousResidents` about documented connected people and events. If there are no reliable famous residents, summarize the best documented connected people, institutions, or events without inventing claims.",
+      "Write `renovation` about known renovation, restoration, condition, adaptive reuse, or conservation history. If details are sparse, state only reliable high-level facts.",
+      "Do not return empty, placeholder, repetitive, or generic filler text in any localized field.",
+      "If the available facts do not support that length, stay factual and use fewer substantive sentences instead of padding.",
+      "Prefer concrete current details over broad boilerplate.",
     ],
   });
 
@@ -1576,7 +1581,9 @@ const hasMissingLocalizedBuildingFields = (
       hasMissingLocalizedText(building.summary) ||
       hasMissingLocalizedText(building.history) ||
       hasMissingLocalizedText(building.style) ||
-      hasMissingLocalizedText(building.presentDay),
+      hasMissingLocalizedText(building.presentDay) ||
+      hasMissingLocalizedText(building.famousResidents) ||
+      hasMissingLocalizedText(building.renovation),
   );
 
 const validateSelectionModelOutput = (args: {
@@ -2131,6 +2138,8 @@ const previewBuildingsFromModelOutput = async (args: {
       history: trimLocalized(building.history),
       style: trimLocalized(building.style),
       presentDay: trimLocalized(building.presentDay),
+      famousResidents: trimLocalized(building.famousResidents),
+      renovation: trimLocalized(building.renovation),
       position: modelPosition ?? geocodedPosition,
     };
 
@@ -2142,7 +2151,11 @@ const previewBuildingsFromModelOutput = async (args: {
       proposal.style.hu &&
       proposal.style.en &&
       proposal.presentDay.hu &&
-      proposal.presentDay.en;
+      proposal.presentDay.en &&
+      proposal.famousResidents.hu &&
+      proposal.famousResidents.en &&
+      proposal.renovation.hu &&
+      proposal.renovation.en;
 
     if (!proposal.name.hu || !proposal.name.en) {
       skipped.push({ reason: "building_invalid_name", proposal: building });
@@ -2295,6 +2308,8 @@ const createBuildingDraft = async (args: {
     history: args.proposal.history.hu,
     style: args.proposal.style.hu,
     presentDay: args.proposal.presentDay.hu,
+    famousResidents: args.proposal.famousResidents.hu,
+    renovation: args.proposal.renovation.hu,
     buildingType: args.proposal.buildingTypeId,
     country: args.countryId,
     county: args.countyId,
@@ -2326,6 +2341,8 @@ const createBuildingDraft = async (args: {
       history: args.proposal.history.en,
       style: args.proposal.style.en,
       presentDay: args.proposal.presentDay.en,
+      famousResidents: args.proposal.famousResidents.en,
+      renovation: args.proposal.renovation.en,
     },
     req: args.req,
   });

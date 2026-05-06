@@ -3,7 +3,12 @@
 import { AIGenerateModal } from "@/components/payload/ai/AIGenerateModal";
 import { buildEditorState } from "@payloadcms/richtext-lexical/client";
 import type { SerializedLexicalNode } from "@payloadcms/richtext-lexical/lexical";
-import { useDocumentInfo, useField, useFormFields, useLocale } from "@payloadcms/ui";
+import {
+  useDocumentInfo,
+  useField,
+  useFormFields,
+  useLocale,
+} from "@payloadcms/ui";
 import React from "react";
 
 type LexicalEditorStateLike = {
@@ -43,7 +48,9 @@ const getLexicalNodes = (value: unknown): SerializedLexicalNode[] => {
   return Array.isArray(root.children) ? root.children : [];
 };
 
-const cloneNodes = (nodes: SerializedLexicalNode[]): SerializedLexicalNode[] => {
+const cloneNodes = (
+  nodes: SerializedLexicalNode[],
+): SerializedLexicalNode[] => {
   if (nodes.length === 0) return [];
 
   try {
@@ -69,7 +76,9 @@ const appendGeneratedText = (
 
   if (!trimmed) return buildEditorState({ nodes: existingNodes });
 
-  const generatedNodes = cloneNodes(getLexicalNodes(buildEditorState({ text: trimmed })));
+  const generatedNodes = cloneNodes(
+    getLexicalNodes(buildEditorState({ text: trimmed })),
+  );
   return buildEditorState({ nodes: [...existingNodes, ...generatedNodes] });
 };
 
@@ -116,6 +125,7 @@ const RichTextAIActions: React.FC<RichTextAIActionsProps> = (props) => {
         docId={id!}
         locale={localeCode}
         fieldPath={baseFieldPath}
+        fieldFormat="richtext"
         onReplace={(text) => applyEditorState(buildStateFromText(text))}
         onAppend={(text) => applyEditorState(appendGeneratedText(value, text))}
       />

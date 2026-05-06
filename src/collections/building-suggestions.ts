@@ -22,7 +22,7 @@ export const BuildingSuggestions: CollectionConfig = {
         { label: "History", value: "history" },
         { label: "Style", value: "style" },
         { label: "Present Day", value: "presentDay" },
-        { label: "Famous Residents", value: "famousResidents" },
+        { label: "Connected Persons and Events", value: "famousResidents" },
         { label: "Renovation", value: "renovation" },
       ],
     },

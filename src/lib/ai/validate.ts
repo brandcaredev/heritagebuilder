@@ -16,13 +16,13 @@ const localizedNameSchema = z.object({
 });
 
 const localizedDescriptionSchema = z.object({
-  hu: z.string().trim().min(1).max(4000),
-  en: z.string().trim().min(1).max(4000),
+  hu: z.string().trim().min(1).max(8000),
+  en: z.string().trim().min(1).max(8000),
 });
 
 const localizedDescriptionModelSchema = z.object({
-  hu: z.string().max(4000).default(""),
-  en: z.string().max(4000).default(""),
+  hu: z.string().max(8000).default(""),
+  en: z.string().max(8000).default(""),
 });
 
 const localizedNameModelSchema = z.object({
@@ -68,6 +68,8 @@ export const missingBuildingProposalSchema = z.object({
   history: localizedDescriptionSchema,
   style: localizedDescriptionSchema,
   presentDay: localizedDescriptionSchema,
+  famousResidents: localizedDescriptionSchema,
+  renovation: localizedDescriptionSchema,
   position: locationPointSchema.optional(),
 });
 
@@ -185,6 +187,8 @@ export const aiMissingBuildingsModelOutputSchema = z
           history: localizedDescriptionModelSchema,
           style: localizedDescriptionModelSchema,
           presentDay: localizedDescriptionModelSchema,
+          famousResidents: localizedDescriptionModelSchema,
+          renovation: localizedDescriptionModelSchema,
           position: modelPositionSchema.nullable().default(null),
         }),
       )
@@ -207,8 +211,8 @@ const localizedDescriptionJSONSchema = {
   additionalProperties: false,
   required: ["hu", "en"],
   properties: {
-    hu: { type: "string", maxLength: 4000 },
-    en: { type: "string", maxLength: 4000 },
+    hu: { type: "string", maxLength: 8000 },
+    en: { type: "string", maxLength: 8000 },
   },
 } as const;
 
@@ -307,6 +311,8 @@ export const aiMissingBuildingsResponseJsonSchema = {
           "history",
           "style",
           "presentDay",
+          "famousResidents",
+          "renovation",
           "position",
         ],
         properties: {
@@ -316,6 +322,8 @@ export const aiMissingBuildingsResponseJsonSchema = {
           history: localizedDescriptionJSONSchema,
           style: localizedDescriptionJSONSchema,
           presentDay: localizedDescriptionJSONSchema,
+          famousResidents: localizedDescriptionJSONSchema,
+          renovation: localizedDescriptionJSONSchema,
           position: locationPointJSONSchema,
         },
       },

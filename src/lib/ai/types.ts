@@ -39,6 +39,8 @@ export type MissingBuildingProposal = {
   history: LocalizedAIText;
   style: LocalizedAIText;
   presentDay: LocalizedAIText;
+  famousResidents: LocalizedAIText;
+  renovation: LocalizedAIText;
   position?: LocationPoint;
 };
 
@@ -113,6 +115,7 @@ export type AIGenerateResponse = {
   provider: AIProviderName;
   model: string;
   text?: string;
+  localizedText?: LocalizedAIText;
   citations?: Array<{ url: string; title?: string }>;
   usage?: Record<string, unknown>;
   warnings?: string[];

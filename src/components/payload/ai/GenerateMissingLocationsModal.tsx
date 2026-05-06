@@ -90,6 +90,21 @@ const formatPosition = (position?: [number, number]): string | null => {
   return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
 };
 
+const buildPreviewAdditionalInstructions = (args: {
+  target: MissingLocationTarget;
+  userInstructions: string;
+}): string | undefined => {
+  const instructions = args.userInstructions.trim();
+  if (args.target !== "buildings") return instructions || undefined;
+
+  return [
+    "For generic/common building proposals that should use the GENERAL building type, include the parent city name directly in both localized names using ` - City` format, for example `City Hall - Huedin`. The selected English name and returned `name.en` must both include this suffix.",
+    instructions,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+};
+
 const targetConfigByCollectionAndPath: Record<
   string,
   | {
@@ -118,6 +133,27 @@ const targetConfigByCollectionAndPath: Record<
     endpointPath: "/api/ai/generate-missing-buildings",
     parentIdKey: "cityId",
   },
+};
+
+const getAdminCollectionListPath = (targetCollectionSlug: string): string => {
+  if (typeof window === "undefined") {
+    return `/admin/collections/${targetCollectionSlug}`;
+  }
+
+  const currentUrl = new URL(window.location.href);
+  const pathSegments = currentUrl.pathname.split("/").filter(Boolean);
+  const collectionsIndex = pathSegments.indexOf("collections");
+
+  if (collectionsIndex >= 0) {
+    const adminListSegments = [
+      ...pathSegments.slice(0, collectionsIndex + 1),
+      targetCollectionSlug,
+    ];
+
+    return `/${adminListSegments.join("/")}`;
+  }
+
+  return `/admin/collections/${targetCollectionSlug}`;
 };
 
 const GenerateMissingLocationsModal: React.FC<
@@ -185,6 +221,10 @@ const GenerateMissingLocationsModal: React.FC<
   if (!canShow || !targetConfig || !target || !hasMounted) return null;
 
   const resolvedTargetConfig = targetConfig;
+
+  const goToCreatedDraftsList = () => {
+    window.location.assign(getAdminCollectionListPath(target));
+  };
 
   if (parentIsDraft) {
     return (
@@ -254,7 +294,10 @@ const GenerateMissingLocationsModal: React.FC<
           mode: "preview",
           [resolvedTargetConfig.parentIdKey]: id,
           count: parsedCount,
-          additionalInstructions: additionalInstructions.trim() || undefined,
+          additionalInstructions: buildPreviewAdditionalInstructions({
+            target,
+            userInstructions: additionalInstructions,
+          }),
         }),
       });
 
@@ -682,6 +725,38 @@ const GenerateMissingLocationsModal: React.FC<
                                   {item.proposal.presentDay.en}
                                 </p>
                               </div>
+                              <div>
+                                <p className="mb-1 font-semibold">
+                                  HU connected persons and events
+                                </p>
+                                <p className="text-neutral-300">
+                                  {item.proposal.famousResidents.hu}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="mb-1 font-semibold">
+                                  EN connected persons and events
+                                </p>
+                                <p className="text-neutral-300">
+                                  {item.proposal.famousResidents.en}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="mb-1 font-semibold">
+                                  HU renovation
+                                </p>
+                                <p className="text-neutral-300">
+                                  {item.proposal.renovation.hu}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="mb-1 font-semibold">
+                                  EN renovation
+                                </p>
+                                <p className="text-neutral-300">
+                                  {item.proposal.renovation.en}
+                                </p>
+                              </div>
                             </div>
                           ) : (
                             <div className="grid grid-cols-1 gap-2 text-xs md:grid-cols-2">
@@ -749,7 +824,7 @@ const GenerateMissingLocationsModal: React.FC<
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => window.location.reload()}
+                        onClick={goToCreatedDraftsList}
                         className="inline-flex items-center gap-2"
                       >
                         <RefreshCcw className="h-4 w-4" />

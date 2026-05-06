@@ -3,10 +3,79 @@
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import React, { useEffect, useState } from "react";
+import { buildEditorState } from "@payloadcms/richtext-lexical/client";
+import type { SerializedLexicalNode } from "@payloadcms/richtext-lexical/lexical";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+
+type SupportedLocale = "hu" | "en";
+type FieldFormat = "text" | "richtext";
+type WriteMode = "append" | "replace";
+
+type LexicalEditorStateLike = {
+  root?: {
+    children?: SerializedLexicalNode[];
+  };
+};
+
+const SUPPORTED_LOCALES: SupportedLocale[] = ["hu", "en"];
+const LOCALE_LABELS: Record<SupportedLocale, string> = {
+  hu: "Hungarian",
+  en: "English",
+};
+
+const getSafeLocale = (locale: string): SupportedLocale =>
+  SUPPORTED_LOCALES.includes(locale as SupportedLocale)
+    ? (locale as SupportedLocale)
+    : "hu";
+
+const getLexicalNodes = (value: unknown): SerializedLexicalNode[] => {
+  if (!value || typeof value !== "object") return [];
+
+  const root = (value as LexicalEditorStateLike).root;
+  if (!root || typeof root !== "object") return [];
+
+  return Array.isArray(root.children) ? root.children : [];
+};
+
+const cloneNodes = (
+  nodes: SerializedLexicalNode[],
+): SerializedLexicalNode[] => {
+  if (nodes.length === 0) return [];
+
+  try {
+    if (typeof structuredClone === "function") return structuredClone(nodes);
+    return JSON.parse(JSON.stringify(nodes)) as SerializedLexicalNode[];
+  } catch {
+    return [...nodes];
+  }
+};
+
+const buildRichTextStateFromText = (text: string): LexicalEditorStateLike => {
+  const trimmed = text.trim();
+  if (!trimmed) return buildEditorState({ nodes: [] });
+
+  return buildEditorState({ text: trimmed });
+};
+
+const appendRichText = (
+  existingValue: unknown,
+  text: string,
+): LexicalEditorStateLike => {
+  const trimmed = text.trim();
+  const existingNodes = cloneNodes(getLexicalNodes(existingValue));
+
+  if (!trimmed) return buildEditorState({ nodes: existingNodes });
+
+  const generatedNodes = cloneNodes(
+    getLexicalNodes(buildEditorState({ text: trimmed })),
+  );
+
+  return buildEditorState({ nodes: [...existingNodes, ...generatedNodes] });
+};
 
 type GenerateResponse = {
   text?: string;
+  localizedText?: Partial<Record<SupportedLocale, string>>;
   provider?: string;
   model?: string;
   citations?: Array<{ url: string; title?: string }>;
@@ -19,6 +88,7 @@ export const AIGenerateModal: React.FC<{
   docId: string | number;
   locale: string;
   fieldPath: string;
+  fieldFormat?: FieldFormat;
   disabled?: boolean;
   onReplace: (value: string) => void;
   onAppend: (value: string) => void;
@@ -27,6 +97,7 @@ export const AIGenerateModal: React.FC<{
   docId,
   locale,
   fieldPath,
+  fieldFormat = "text",
   disabled,
   onReplace,
   onAppend,
@@ -37,22 +108,183 @@ export const AIGenerateModal: React.FC<{
   );
   const [additionalInstructions, setAdditionalInstructions] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
   const [resultText, setResultText] = useState<string | null>(null);
+  const [localizedText, setLocalizedText] = useState<Record<
+    SupportedLocale,
+    string
+  > | null>(null);
+  const [activeResultLocale, setActiveResultLocale] = useState<SupportedLocale>(
+    () => getSafeLocale(locale),
+  );
   const [citations, setCitations] = useState<Array<{
     url: string;
     title?: string;
   }> | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const operationVersionRef = useRef(0);
+  const editorLocale = getSafeLocale(locale);
+
+  const resetDialogState = useCallback(() => {
+    setAdditionalInstructions("");
+    setIsGenerating(false);
+    setIsApplying(false);
+    setResultText(null);
+    setLocalizedText(null);
+    setActiveResultLocale(getSafeLocale(locale));
+    setCitations(null);
+    setError(null);
+  }, [locale]);
+
+  const handleOpenChange = useCallback(
+    (nextOpen: boolean) => {
+      if (!nextOpen) {
+        operationVersionRef.current += 1;
+        resetDialogState();
+      }
+
+      setOpen(nextOpen);
+    },
+    [resetDialogState],
+  );
+
   useEffect(() => {
     setPortalContainer(document.body);
   }, []);
 
+  const activeResultText = localizedText?.[activeResultLocale] ?? resultText;
+  const editorLocaleText = localizedText?.[editorLocale] ?? resultText;
+  const hasLocalizedText = Boolean(localizedText?.hu && localizedText.en);
+
+  const buildFieldValue = (
+    mode: WriteMode,
+    text: string,
+    existingValue?: unknown,
+  ): unknown => {
+    if (fieldFormat === "richtext") {
+      return mode === "append"
+        ? appendRichText(existingValue, text)
+        : buildRichTextStateFromText(text);
+    }
+
+    if (mode === "append") {
+      const currentValue =
+        typeof existingValue === "string" ? existingValue : "";
+      return currentValue ? `${currentValue}\n\n${text}` : text;
+    }
+
+    return text;
+  };
+
+  const fetchLocaleFieldValue = async (
+    targetLocale: SupportedLocale,
+  ): Promise<unknown> => {
+    const res = await fetch(
+      `/api/${collection}/${docId}?locale=${targetLocale}&depth=0`,
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+    const json = (await res.json().catch(() => ({}))) as Record<
+      string,
+      unknown
+    > & {
+      error?: string;
+      details?: string;
+    };
+
+    if (!res.ok) {
+      throw new Error(
+        json.error ||
+          json.details ||
+          `Failed to read ${targetLocale} value (${res.status})`,
+      );
+    }
+
+    return json[fieldPath];
+  };
+
+  const patchLocaleFieldValue = async (
+    targetLocale: SupportedLocale,
+    value: unknown,
+  ): Promise<void> => {
+    const res = await fetch(
+      `/api/${collection}/${docId}?locale=${targetLocale}`,
+      {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [fieldPath]: value }),
+      },
+    );
+    const json = (await res.json().catch(() => ({}))) as {
+      error?: string;
+      details?: string;
+    };
+
+    if (!res.ok) {
+      throw new Error(
+        json.error ||
+          json.details ||
+          `Failed to update ${targetLocale} value (${res.status})`,
+      );
+    }
+  };
+
+  const applyToAllLocales = async (mode: WriteMode) => {
+    if (!localizedText || !editorLocaleText) return;
+
+    const operationVersion = operationVersionRef.current;
+    setIsApplying(true);
+    setError(null);
+
+    try {
+      const otherLocales = SUPPORTED_LOCALES.filter(
+        (supportedLocale) => supportedLocale !== editorLocale,
+      );
+
+      for (const targetLocale of otherLocales) {
+        const targetText = localizedText[targetLocale];
+        if (!targetText) continue;
+
+        const existingValue =
+          mode === "append"
+            ? await fetchLocaleFieldValue(targetLocale)
+            : undefined;
+        const nextValue = buildFieldValue(mode, targetText, existingValue);
+        await patchLocaleFieldValue(targetLocale, nextValue);
+      }
+
+      if (mode === "append") {
+        onAppend(editorLocaleText);
+      } else {
+        onReplace(editorLocaleText);
+      }
+
+      if (operationVersion === operationVersionRef.current) {
+        handleOpenChange(false);
+      }
+    } catch (e) {
+      if (operationVersion === operationVersionRef.current) {
+        setError(e instanceof Error ? e.message : "Failed to apply AI output");
+      }
+    } finally {
+      if (operationVersion === operationVersionRef.current) {
+        setIsApplying(false);
+      }
+    }
+  };
+
   const run = async () => {
+    const operationVersion = operationVersionRef.current;
     setIsGenerating(true);
     setError(null);
     setResultText(null);
+    setLocalizedText(null);
     setCitations(null);
+    setActiveResultLocale(editorLocale);
 
     try {
       const res = await fetch("/api/ai/generate", {
@@ -75,17 +307,36 @@ export const AIGenerateModal: React.FC<{
         );
       }
 
-      setResultText(json.text ?? null);
+      const nextLocalizedText = json.localizedText
+        ? {
+            hu: json.localizedText.hu ?? "",
+            en: json.localizedText.en ?? "",
+          }
+        : json.text
+          ? {
+              hu: editorLocale === "hu" ? json.text : "",
+              en: editorLocale === "en" ? json.text : "",
+            }
+          : null;
+
+      if (operationVersion !== operationVersionRef.current) return;
+
+      setResultText(json.text ?? nextLocalizedText?.[editorLocale] ?? null);
+      setLocalizedText(nextLocalizedText);
       setCitations(json.citations ?? null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "AI request failed");
+      if (operationVersion === operationVersionRef.current) {
+        setError(e instanceof Error ? e.message : "AI request failed");
+      }
     } finally {
-      setIsGenerating(false);
+      if (operationVersion === operationVersionRef.current) {
+        setIsGenerating(false);
+      }
     }
   };
 
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
+    <DialogPrimitive.Root open={open} onOpenChange={handleOpenChange}>
       <DialogPrimitive.Trigger asChild>
         <Button
           type="button"
@@ -144,7 +395,8 @@ export const AIGenerateModal: React.FC<{
                 <span className="rounded-sm bg-neutral-100 px-1 py-0.5 font-mono text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
                   {fieldPath}
                 </span>{" "}
-                ({locale})
+                in Hungarian and English. Append/replace updates the current
+                form locale ({editorLocale}) and saves the other locale.
               </DialogPrimitive.Description>
             </div>
             <DialogPrimitive.Close
@@ -203,7 +455,7 @@ export const AIGenerateModal: React.FC<{
             <div>
               <Button
                 type="button"
-                disabled={isGenerating}
+                disabled={isGenerating || isApplying}
                 onClick={() => void run()}
               >
                 {isGenerating ? "Generating..." : "Generate Content"}
@@ -220,7 +472,7 @@ export const AIGenerateModal: React.FC<{
               </div>
             ) : null}
 
-            {resultText ? (
+            {activeResultText ? (
               <div
                 style={{
                   display: "flex",
@@ -240,9 +492,64 @@ export const AIGenerateModal: React.FC<{
                 >
                   Generated output
                   <span className="text-xs font-normal text-neutral-500">
-                    {resultText.length} characters
+                    {activeResultText.length} characters
                   </span>
                 </label>
+                {localizedText ? (
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                      gap: "0.5rem",
+                    }}
+                  >
+                    {SUPPORTED_LOCALES.map((resultLocale) => {
+                      const isActive = activeResultLocale === resultLocale;
+                      const isEditorLocale = editorLocale === resultLocale;
+                      const text = localizedText[resultLocale] ?? "";
+
+                      return (
+                        <button
+                          key={resultLocale}
+                          type="button"
+                          onClick={() => setActiveResultLocale(resultLocale)}
+                          className="rounded-lg border text-left transition-colors"
+                          style={{
+                            padding: "0.75rem",
+                            borderColor: isActive
+                              ? "var(--theme-success-500, #2fb344)"
+                              : "var(--theme-elevation-300, #2c2d31)",
+                            backgroundColor: isActive
+                              ? "var(--theme-elevation-200, #2b2c31)"
+                              : "var(--theme-elevation-50, #0f1012)",
+                            color: "var(--theme-text, #f4f4f5)",
+                            cursor: "pointer",
+                          }}
+                        >
+                          <span
+                            className="text-sm font-medium"
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "space-between",
+                              gap: "0.5rem",
+                            }}
+                          >
+                            {LOCALE_LABELS[resultLocale]}
+                            {isEditorLocale ? (
+                              <span className="rounded-sm bg-neutral-800 px-1.5 py-0.5 text-[11px] font-normal text-neutral-300">
+                                Current
+                              </span>
+                            ) : null}
+                          </span>
+                          <span className="mt-1 block text-xs text-neutral-500">
+                            {text.length} characters
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
                 <textarea
                   className="w-full resize-y rounded-lg border border-neutral-300 bg-white p-4 text-[15px] leading-relaxed transition-colors focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900"
                   style={{
@@ -252,8 +559,23 @@ export const AIGenerateModal: React.FC<{
                     borderColor: "var(--theme-elevation-300, #2c2d31)",
                     color: "var(--theme-text, #f4f4f5)",
                   }}
-                  value={resultText}
-                  onChange={(e) => setResultText(e.target.value)}
+                  value={activeResultText}
+                  onChange={(e) => {
+                    const nextValue = e.target.value;
+                    setResultText(
+                      activeResultLocale === editorLocale
+                        ? nextValue
+                        : (editorLocaleText ?? ""),
+                    );
+                    setLocalizedText((current) =>
+                      current
+                        ? {
+                            ...current,
+                            [activeResultLocale]: nextValue,
+                          }
+                        : current,
+                    );
+                  }}
                 />
               </div>
             ) : null}
@@ -319,38 +641,30 @@ export const AIGenerateModal: React.FC<{
               <Button
                 type="button"
                 variant="outline"
-                disabled={!resultText}
+                disabled={!activeResultText || isApplying}
                 onClick={() => {
-                  if (!resultText) return;
+                  if (!activeResultText) return;
                   void navigator.clipboard
-                    ?.writeText(resultText)
+                    ?.writeText(activeResultText)
                     .catch(() => null);
                 }}
               >
-                Copy
+                Copy selected
               </Button>
               <Button
                 type="button"
                 variant="outline"
-                disabled={!resultText}
-                onClick={() => {
-                  if (!resultText) return;
-                  onAppend(resultText);
-                  setOpen(false);
-                }}
+                disabled={!hasLocalizedText || !editorLocaleText || isApplying}
+                onClick={() => void applyToAllLocales("append")}
               >
-                Append
+                {isApplying ? "Applying..." : "Append both"}
               </Button>
               <Button
                 type="button"
-                disabled={!resultText}
-                onClick={() => {
-                  if (!resultText) return;
-                  onReplace(resultText);
-                  setOpen(false);
-                }}
+                disabled={!hasLocalizedText || !editorLocaleText || isApplying}
+                onClick={() => void applyToAllLocales("replace")}
               >
-                Replace
+                {isApplying ? "Applying..." : "Replace both"}
               </Button>
             </div>
           </div>

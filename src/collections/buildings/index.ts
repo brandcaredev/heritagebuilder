@@ -91,6 +91,7 @@ export const Buildings: CollectionConfig = {
       name: "famousResidents",
       type: "textarea",
       localized: true,
+      label: "Connected Persons and Events",
       admin: {
         components: {
           Field: "@/collections/buildings/field-with-suggestions#default",
