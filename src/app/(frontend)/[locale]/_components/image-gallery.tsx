@@ -51,7 +51,7 @@ export default function GalleryWithDialog({ images }: { images: string[] }) {
 
         <DialogContent
           closeButtonClassName={"text-white"}
-          className="container z-10 h-screen max-w-none border-0 bg-transparent p-0"
+          className="container h-screen max-w-none border-0 bg-transparent p-0"
         >
           <DialogTitle hidden>Images</DialogTitle>
           <FullScreenCarousel initialIndex={activeIndex} images={images} />
