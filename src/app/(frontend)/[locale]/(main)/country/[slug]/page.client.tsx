@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Link, useRouter } from "@/i18n/routing";
-import { cn, getURL } from "@/lib/utils";
+import { getMediaUrl } from "@/lib/media";
+import { cn } from "@/lib/utils";
 import { createClient } from "@/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Search } from "lucide-react";
@@ -189,10 +190,11 @@ export default function CountryPage({
               className="group relative aspect-square overflow-hidden rounded-lg"
             >
               <Image
-                src={`${getURL()}${(type.image as Media).url}`}
+                src={getMediaUrl(type.image as Media, "thumbnail")}
                 alt={type.name ?? t("page.buildingTypeImageAlt")}
                 width={200}
                 height={200}
+                sizes="(min-width: 1024px) 11vw, (min-width: 768px) 33vw, 50vw"
                 className="h-full w-full object-cover transition-transform group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />

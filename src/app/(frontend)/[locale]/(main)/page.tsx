@@ -4,11 +4,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/routing";
 import type { LocaleType } from "@/lib/constans";
+import { getMediaUrl } from "@/lib/media";
 import { getBuildings } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
 import { getCountriesBasic } from "@/lib/queries/country";
 import { createMetadata } from "@/lib/seo-utils";
-import { getURL } from "@/lib/utils";
 import config from "@payload-config";
 import type { Metadata, ResolvingMetadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -94,10 +94,11 @@ const MainPage = async (props: Props) => {
                   className="group relative aspect-426/290 overflow-hidden rounded-lg"
                 >
                   <Image
-                    src={`${getURL()}${(country.image as Media).url}`}
+                    src={getMediaUrl(country.image as Media, "main")}
                     alt={`${country.name}country image`}
                     width={600}
                     height={400}
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                     className="h-full w-full object-cover transition-transform group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
@@ -123,10 +124,11 @@ const MainPage = async (props: Props) => {
                     className="group relative aspect-135/200 overflow-hidden rounded-lg"
                   >
                     <Image
-                      src={`${getURL()}${(type.image as Media).url}`}
+                      src={getMediaUrl(type.image as Media, "thumbnail")}
                       alt={`${type.name}building type image`}
                       width={135}
                       height={200}
+                      sizes="(min-width: 1024px) 11vw, (min-width: 768px) 33vw, 50vw"
                       className="h-full w-full object-cover transition-transform group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
@@ -162,9 +164,13 @@ const MainPage = async (props: Props) => {
                   >
                     <div className="relative aspect-square h-[50px] w-[50px]">
                       <Image
-                        src={`${getURL()}${(building.featuredImage as Media).thumbnailURL}`}
+                        src={getMediaUrl(
+                          building.featuredImage as Media,
+                          "thumbnail",
+                        )}
                         alt={`${building.name}building image`}
                         fill
+                        sizes="50px"
                         className="rounded object-cover"
                       />
                     </div>
@@ -196,9 +202,10 @@ const MainPage = async (props: Props) => {
             className="group relative h-[300px] overflow-hidden rounded-[20px]"
           >
             <Image
-              src={`${getURL()}${(community.featuredImage as Media)?.url}`}
+              src={getMediaUrl(community.featuredImage as Media, "card")}
               alt="Contribution guidelines"
               fill
+              sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover transition-transform duration-500 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />
@@ -211,9 +218,10 @@ const MainPage = async (props: Props) => {
             className="group relative h-[300px] overflow-hidden rounded-[20px]"
           >
             <Image
-              src={`${getURL()}${(aboutUs.featuredImage as Media)?.url}`}
+              src={getMediaUrl(aboutUs.featuredImage as Media, "card")}
               alt="About us"
               fill
+              sizes="(min-width: 768px) 50vw, 100vw"
               className="object-cover transition-transform duration-500 group-hover:scale-110"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent" />

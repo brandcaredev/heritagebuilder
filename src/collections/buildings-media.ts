@@ -1,8 +1,10 @@
 import type { CollectionConfig } from "payload";
+import { cacheableImageUploadConfig } from "./shared/upload-config";
 
 export const BuildingsMedia: CollectionConfig = {
   slug: "buildings-media",
   upload: {
+    ...cacheableImageUploadConfig,
     imageSizes: [
       // list and main page
       {
@@ -16,6 +18,18 @@ export const BuildingsMedia: CollectionConfig = {
         width: 300,
         height: 200,
         position: "centre",
+      },
+      {
+        name: "gallery",
+        width: 1600,
+        position: "centre",
+        withoutEnlargement: true,
+        formatOptions: {
+          format: "webp",
+          options: {
+            quality: 82,
+          },
+        },
       },
     ],
     adminThumbnail: "thumbnail",

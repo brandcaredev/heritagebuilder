@@ -9,7 +9,7 @@ import {
   ResidentalBuildingIcon,
 } from "@/components/icons/leaflet-icons";
 import { Link } from "@/i18n/routing";
-import { getURL } from "@/lib/utils";
+import { getMediaUrl } from "@/lib/media";
 import L, { type MarkerCluster } from "leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import Image from "next/image";
@@ -201,9 +201,13 @@ const BuildingsMap = ({
                     <div className="overflow-hidden rounded-xl">
                       <div className="relative h-[200px] w-full">
                         <Image
-                          src={`${getURL()}${(building.featuredImage as Media).sizes?.card?.url}`}
+                          src={getMediaUrl(
+                            building.featuredImage as Media,
+                            "card",
+                          )}
                           alt={building.name}
                           fill
+                          sizes="300px"
                           className="object-cover"
                         />
                       </div>

@@ -3,6 +3,7 @@ import BuildingComponent from "@/_components/building";
 import { Divider } from "@/components/icons";
 import { BuildingStructuredData } from "@/components/structured-data";
 import { Locales, LocaleType } from "@/lib/constans";
+import { getMediaUrl } from "@/lib/media";
 import { getBuildingBySlug, getBuildings } from "@/lib/queries/building";
 import { createMetadata, generateMetaDescription } from "@/lib/seo-utils";
 import { Metadata } from "next";
@@ -106,8 +107,8 @@ export default async function BuildingPage(props: Props) {
   ];
 
   const buildingImages = [
-    (building.featuredImage as Media).url,
-    ...(building.images as Media[]).map((img) => img.url),
+    getMediaUrl(building.featuredImage as Media, "gallery"),
+    ...(building.images as Media[]).map((img) => getMediaUrl(img, "gallery")),
   ].filter((img) => typeof img === "string");
   return (
     <>

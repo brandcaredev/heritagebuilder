@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Building, Media } from "payload-types";
-import { cn, getURL } from "@/lib/utils";
+import { getMediaUrl } from "@/lib/media";
+import { cn } from "@/lib/utils";
 import {
   TooltipProvider,
   TooltipTrigger,
@@ -26,9 +27,10 @@ export default function BuildingCard({
     >
       <div className="relative h-[180px]">
         <Image
-          src={`${getURL()}${(building.featuredImage as Media).url}`}
+          src={getMediaUrl(building.featuredImage as Media, "card")}
           alt={building.name}
           fill
+          sizes="300px"
           style={{ objectFit: "cover" }}
         />
       </div>
