@@ -1,8 +1,10 @@
 import type { CollectionConfig } from "payload";
+import { cacheableImageUploadConfig } from "./shared/upload-config";
 
 export const CountriesMedia: CollectionConfig = {
   slug: "countries-media",
   upload: {
+    ...cacheableImageUploadConfig,
     imageSizes: [
       {
         name: "thumbnail",
@@ -15,6 +17,12 @@ export const CountriesMedia: CollectionConfig = {
         width: 600,
         height: 400,
         position: "centre",
+        formatOptions: {
+          format: "webp",
+          options: {
+            quality: 82,
+          },
+        },
       },
     ],
     adminThumbnail: "thumbnail",

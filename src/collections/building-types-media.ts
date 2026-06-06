@@ -1,8 +1,10 @@
 import type { CollectionConfig } from "payload";
+import { cacheableImageUploadConfig } from "./shared/upload-config";
 
 export const BuildingTypesMedia: CollectionConfig = {
   slug: "building-types-media",
   upload: {
+    ...cacheableImageUploadConfig,
     imageSizes: [
       {
         name: "thumbnail",

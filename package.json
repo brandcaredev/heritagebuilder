@@ -18,7 +18,8 @@
     "payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload",
     "migrate:create": "payload migrate:create",
     "migrate:dev": "payload migrate",
-    "migrate:prod": "payload migrate --forceAcceptWarning"
+    "migrate:prod": "payload migrate --forceAcceptWarning",
+    "media:optimize": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload run scripts/optimize-existing-media.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.2",

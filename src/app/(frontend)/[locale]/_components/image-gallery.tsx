@@ -42,6 +42,7 @@ export default function GalleryWithDialog({ images }: { images: string[] }) {
                   className="object-cover"
                   fill
                   priority={index === 0}
+                  sizes="(min-width: 768px) 1200px, 100vw"
                   onClick={() => setActiveIndex(index)}
                 />
               </SliderMainItem>
@@ -69,6 +70,7 @@ export default function GalleryWithDialog({ images }: { images: string[] }) {
               src={img}
               alt={`${t("building.imageAlt")} ${index + 1}`}
               fill
+              sizes="128px"
               className="aspect-square object-cover"
             />
           </SliderThumbItem>
@@ -136,6 +138,7 @@ function FullScreenCarousel({
                 alt={`Image ${index + 1}`}
                 className="h-auto rounded-lg object-contain"
                 fill
+                sizes="100vw"
               />
             </div>
           ))}
@@ -171,6 +174,7 @@ function FullScreenCarousel({
                   alt={`Thumbnail ${index + 1}`}
                   className="rounded-lg object-cover"
                   fill
+                  sizes="96px"
                 />
               </div>
             </DefaultCarouselItem>

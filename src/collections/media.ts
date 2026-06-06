@@ -1,8 +1,10 @@
 import type { CollectionConfig } from "payload";
+import { cacheableImageUploadConfig } from "./shared/upload-config";
 
 export const Media: CollectionConfig = {
   slug: "media",
   upload: {
+    ...cacheableImageUploadConfig,
     staticDir: "media",
     imageSizes: [
       {
@@ -16,6 +18,12 @@ export const Media: CollectionConfig = {
         width: 768,
         height: 1024,
         position: "centre",
+        formatOptions: {
+          format: "webp",
+          options: {
+            quality: 82,
+          },
+        },
       },
     ],
     adminThumbnail: "thumbnail",
