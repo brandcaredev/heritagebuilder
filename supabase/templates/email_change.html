@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>HeritageBuilder - Email-cím módosítása</title>
+  <style>
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f7f6f2; color: #2c2520; margin: 0; padding: 40px 20px; }
+    .container { max-width: 500px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 8px; border: 1px solid #e0dcd3; }
+    h2 { color: #4a3e35; font-size: 24px; margin-top: 0; }
+    p { font-size: 16px; line-height: 1.5; color: #5c5043; }
+    .button { display: inline-block; padding: 12px 24px; background-color: #4a5c3e; color: #ffffff !important; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 20px; }
+    .footer { margin-top: 40px; font-size: 12px; color: #8c7e6e; border-top: 1px solid #e0dcd3; padding-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Email-cím módosítása</h2>
+    <p>Kérjük, kattintson az alábbi gombra az új email-címének megerősítéséhez:</p>
+    <p>
+      <a href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=email_change" class="button">Email-cím megerősítése</a>
+    </p>
+    <p>Ha a fenti gomb nem működik, másolja be az alábbi linket a böngészőjébe:</p>
+    <p style="word-break: break-all;"><a href="{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=email_change" style="color: #4a5c3e;">{{ .SiteURL }}/api/auth/confirm?token_hash={{ .TokenHash }}&type=email_change</a></p>
+    <div class="footer">
+      Ezt az e-mailt a HeritageBuilder küldte. Ha nem Ön kezdeményezte az email-cím módosítását, hagyja figyelmen kívül ezt a levelet.
+    </div>
+  </div>
+</body>
+</html>

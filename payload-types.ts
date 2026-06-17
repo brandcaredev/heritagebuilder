@@ -348,6 +348,14 @@ export interface BuildingsMedia {
       filesize?: number | null;
       filename?: string | null;
     };
+    gallery?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
   };
 }
 /**
@@ -557,6 +565,46 @@ export interface County {
         | 'SKTC'
         | 'SKBC'
         | 'SKNI'
+        | 'HU-BK'
+        | 'HU-BA'
+        | 'HU-BE'
+        | 'HU-BC'
+        | 'HU-BZ'
+        | 'HU-BU'
+        | 'HU-CS'
+        | 'HU-DE'
+        | 'HU-DU'
+        | 'HU-EG'
+        | 'HU-FE'
+        | 'HU-GY'
+        | 'HU-GS'
+        | 'HU-HB'
+        | 'HU-HE'
+        | 'HU-HV'
+        | 'HU-JN'
+        | 'HU-KV'
+        | 'HU-KM'
+        | 'HU-KE'
+        | 'HU-MI'
+        | 'HU-NK'
+        | 'HU-NO'
+        | 'HU-NY'
+        | 'HU-PS'
+        | 'HU-PE'
+        | 'HU-SO'
+        | 'HU-SN'
+        | 'HU-SZ'
+        | 'HU-SD'
+        | 'HU-SF'
+        | 'HU-SK'
+        | 'HU-SH'
+        | 'HU-TB'
+        | 'HU-TO'
+        | 'HU-VA'
+        | 'HU-VE'
+        | 'HU-VM'
+        | 'HU-ZA'
+        | 'HU-ZE'
       )
     | null;
   relatedBuildings?: {
@@ -915,6 +963,16 @@ export interface BuildingsMediaSelect<T extends boolean = true> {
               filename?: T;
             };
         card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        gallery?:
           | T
           | {
               url?: T;

@@ -2,6 +2,7 @@
 
 import {
   Divider,
+  Hungary,
   Romania,
   Serbia,
   Slovakia,
@@ -79,6 +80,8 @@ export default function CountryPage({
           <Ukraine onClick={(code) => onMapCountyClick(code)} />
         ) : country.countryCode === "sk" ? (
           <Slovakia onClick={(code) => onMapCountyClick(code)} />
+        ) : country.countryCode === "hu" ? (
+          <Hungary onClick={(code) => onMapCountyClick(code)} />
         ) : (
           <Serbia onClick={(code) => onMapCountyClick(code)} />
         )}
