@@ -127,3 +127,4 @@ export { Romania } from "./romania";
 export { Serbia } from "./serbia";
 export { Ukraine } from "./Ukraine";
 export { Slovakia } from "./slovakia";
+export { Hungary } from "./hungary";
