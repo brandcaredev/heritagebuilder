@@ -175,7 +175,7 @@ const BuildingsMap = ({
         attributionControl={false}
         className="h-full w-full"
       >
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+        <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <SearchControl />
         <MarkerClusterGroup
           iconCreateFunction={createClusterCustomIcon}
