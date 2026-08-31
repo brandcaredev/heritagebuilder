@@ -45,7 +45,7 @@ const CustomPositionMap = ({
         attributionControl={false}
       >
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           // attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
         />
         <SearchControl />
