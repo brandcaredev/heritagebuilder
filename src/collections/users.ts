@@ -21,7 +21,7 @@ const Users: CollectionConfig = {
     {
       name: "notifyOnNewBuilding",
       type: "checkbox",
-      label: "Email when a new building is created",
+      label: "Email when a new entity needs approval",
       defaultValue: false,
     },
   ],

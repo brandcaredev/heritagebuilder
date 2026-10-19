@@ -7,10 +7,13 @@ import type { CollectionConfig } from "payload";
  */
 export const BuildingSlugAliases: CollectionConfig = {
   slug: "building-slug-aliases",
+  admin: {
+    hidden: ({ user }) => user?.role !== "admin",
+  },
   access: {
     create: () => false,
     delete: () => false,
-    read: ({ req }) => Boolean(req.user),
+    read: ({ req: { user } }) => user?.role === "admin",
     update: () => false,
   },
   indexes: [
