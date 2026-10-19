@@ -7,10 +7,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Loader2, Pencil } from "lucide-react";
+import { BadgeCheck, ArrowRight, Loader2, Pencil } from "lucide-react";
+import { Link } from "@/i18n/routing";
+import { getMediaUrl } from "@/lib/media";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
-import type { Building, BuildingType } from "payload-types";
+import Image from "next/image";
+import type { Building, BuildingType, Guide } from "payload-types";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import GalleryWithDialog from "./image-gallery";
@@ -59,6 +62,15 @@ export default function BuildingComponent({
     staleTime: 0,
   });
   const isLoggedIn = Boolean(data?.user);
+
+  const localGuides = Array.isArray(building.localGuides)
+    ? building.localGuides.filter(
+        (guide): guide is Guide =>
+          typeof guide === "object" &&
+          guide !== null &&
+          guide._status === "published",
+      )
+    : [];
 
   const getFieldValue = (field: EditableSectionField) =>
     building[field as keyof Building] as string | null | undefined;
@@ -475,6 +487,59 @@ export default function BuildingComponent({
               className="h-[400px] w-full md:h-[600px]"
             />
           </div>
+          {localGuides.length > 0 && (
+            <section
+              data-section="local-guides"
+              className="rounded-lg bg-brown-50 p-5 shadow-sm"
+            >
+              <div className="mb-4 flex items-center gap-2">
+                <BadgeCheck className="text-green h-5 w-5" aria-hidden="true" />
+                <h2 className="text-brown font-playfair-display text-2xl">
+                  {t("building.localGuideTitle")}
+                </h2>
+              </div>
+              <div className="flex flex-col gap-4">
+                {localGuides.map((guide) => {
+                  const photo =
+                    typeof guide.profilePhoto === "object"
+                      ? guide.profilePhoto
+                      : null;
+                  const photoUrl =
+                    getMediaUrl(photo, "thumbnail") || getMediaUrl(photo);
+
+                  return (
+                    <div key={guide.id} className="flex items-center gap-3">
+                      {photoUrl && (
+                        <Image
+                          src={photoUrl}
+                          alt={guide.name}
+                          width={64}
+                          height={64}
+                          className="h-16 w-16 rounded-full object-cover"
+                        />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="text-brown-700 text-xs font-semibold uppercase">
+                          {t("building.localGuideLabel")}
+                        </p>
+                        <p className="text-brown-900 font-semibold">{guide.name}</p>
+                        <Link
+                          href={{
+                            pathname: "/guide/[slug]",
+                            params: { slug: guide.slug },
+                          }}
+                          className="text-green mt-1 inline-flex items-center gap-1 text-sm font-semibold hover:underline"
+                        >
+                          {t("building.viewGuide")}
+                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
         </div>
       </div>
     </div>

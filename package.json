@@ -15,10 +15,10 @@
     "supabase:status": "supabase status -o pretty",
     "supabase:reset": "supabase db reset",
     "supabase:seed": "sh -c 'DB_URL=\"${DATABASE_URL:-postgresql://postgres:postgres@127.0.0.1:8832/postgres}\"; psql \"$DB_URL\" -f supabase/seed.sql && psql \"$DB_URL\" -f supabase/seed.payload.sql'",
-    "payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload",
-    "migrate:create": "payload migrate:create",
-    "migrate:dev": "payload migrate",
-    "migrate:prod": "payload migrate --forceAcceptWarning",
+    "payload": "cross-env NODE_OPTIONS=--conditions=react-server PAYLOAD_CONFIG_PATH=payload.config.ts payload",
+    "migrate:create": "cross-env NODE_OPTIONS=--conditions=react-server payload migrate:create",
+    "migrate:dev": "cross-env NODE_OPTIONS=--conditions=react-server payload migrate",
+    "migrate:prod": "cross-env NODE_OPTIONS=--conditions=react-server payload migrate --forceAcceptWarning",
     "media:optimize": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload run scripts/optimize-existing-media.ts"
   },
   "dependencies": {

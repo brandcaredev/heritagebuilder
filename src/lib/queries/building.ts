@@ -67,6 +67,7 @@ export const getBuildingBySlug = unstable_cache(
           not_equals: null,
         },
       },
+      depth: 2,
       limit: 1,
     });
     return building[0] || null;
@@ -74,6 +75,36 @@ export const getBuildingBySlug = unstable_cache(
   [],
   { tags: ["buildings"] },
 );
+
+export const getBuildingByLegacySlug = async (
+  locale: LocaleType,
+  slug: string,
+) => {
+  const { docs } = await payload.find({
+    collection: "building-slug-aliases",
+    locale,
+    depth: 1,
+    where: {
+      and: [
+        { slug: { equals: slug } },
+        { locale: { equals: locale } },
+      ],
+    },
+    limit: 1,
+    select: {
+      building: true,
+    },
+    overrideAccess: true,
+  });
+
+  const building = docs[0]?.building;
+  if (!building || typeof building !== "object") return null;
+  if (building._status !== "published" || !building.name || !building.slug) {
+    return null;
+  }
+
+  return building;
+};
 
 export const getBuildings = unstable_cache(
   async (locale: LocaleType, limit?: number, sort?: string) => {

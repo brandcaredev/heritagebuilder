@@ -1,18 +1,16 @@
 import { env } from "@/env";
+import { sendEmail } from "@/lib/email";
 import { getURL } from "@/lib/utils";
 import { HookOperationType, PayloadRequest } from "payload";
 import { Building } from "payload-types";
-import { Resend } from "resend";
-
-const resend = new Resend(env.RESEND_API_KEY);
 
 const getApprovalTemplate = (name: string, url: string) =>
   `<!DOCTYPE html>
-<html lang="en">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Building Approved</title>
+    <title>Új épület érkezett</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -84,7 +82,7 @@ const sendNewBuildingEmail = async (
   email: string,
 ) => {
   try {
-    await resend.emails.create({
+    await sendEmail({
       from: `Heritage Builder <${env.BASE_EMAIL}>`,
       to: email,
       subject: "Egy új épület került hozzáadásra!",

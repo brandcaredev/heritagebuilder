@@ -4,10 +4,14 @@ import { Divider } from "@/components/icons";
 import { BuildingStructuredData } from "@/components/structured-data";
 import { Locales, LocaleType } from "@/lib/constans";
 import { getMediaUrl } from "@/lib/media";
-import { getBuildingBySlug, getBuildings } from "@/lib/queries/building";
+import {
+  getBuildingByLegacySlug,
+  getBuildingBySlug,
+  getBuildings,
+} from "@/lib/queries/building";
 import { createMetadata, generateMetaDescription } from "@/lib/seo-utils";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Media } from "payload-types";
 
 type Props = {
@@ -56,8 +60,17 @@ export default async function BuildingPage(props: Props) {
   const { slug, locale } = params;
 
   if (!slug) return notFound();
-  const building = await getBuildingBySlug(locale, slug);
-  if (!building) return notFound();
+  let building = await getBuildingBySlug(locale, slug);
+  if (!building) {
+    building = await getBuildingByLegacySlug(locale, slug);
+    if (!building) return notFound();
+
+    const currentPath =
+      locale === "hu"
+        ? `/${locale}/epulet/${building.slug}`
+        : `/${locale}/building/${building.slug}`;
+    permanentRedirect(currentPath);
+  }
 
   const buildingCountry =
     building.country && typeof building.country === "object"
