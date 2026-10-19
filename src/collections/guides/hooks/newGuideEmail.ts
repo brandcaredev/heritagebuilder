@@ -36,7 +36,10 @@ export const newGuideEmail = async ({
   try {
     const { docs: admins } = await req.payload.find({
       collection: "users",
-      where: { role: { equals: "admin" } },
+      where: {
+        role: { equals: "admin" },
+        notifyOnNewBuilding: { equals: true },
+      },
       select: { email: true },
       limit: 0,
       overrideAccess: true,

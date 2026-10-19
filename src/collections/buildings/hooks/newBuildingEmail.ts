@@ -107,8 +107,10 @@ export const newBuildingEmail = async ({
     const { docs } = await req.payload.find({
       collection: "users",
       where: {
+        role: { equals: "admin" },
         notifyOnNewBuilding: { equals: true },
       },
+      overrideAccess: true,
       select: {
         email: true,
       },
