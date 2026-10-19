@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "next build",
-    "build:production": "npm run migrate && next build",
+    "build:production": "npm run migrate:prod && next build",
     "build:preview": "next build",
     "dev": "next dev -p 3002",
     "lint": "eslint .",
@@ -65,6 +65,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "cross-env": "^10.1.0",
     "drizzle-orm": "^0.44.7",
     "drizzle-zod": "^0.8.3",
     "embla-carousel-react": "^8.6.0",
