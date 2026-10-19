@@ -19,5 +19,7 @@ export const getMediaUrl = (
 
   if (!path) return "";
 
-  return path.startsWith("http") ? path : `${getURL()}${path}`;
+  return path.startsWith("http") || path.startsWith("/")
+    ? path
+    : `${getURL()}${path}`;
 };

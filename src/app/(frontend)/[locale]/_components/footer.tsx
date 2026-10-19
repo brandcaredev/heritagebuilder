@@ -109,6 +109,14 @@ export async function Footer() {
                     {t("footer.cookiesPolicy") || "Cookies Policy"}
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href={{ pathname: "/guide/register" }}
+                    className="hover:text-stone-300"
+                  >
+                    {t("footer.becomeGuide")}
+                  </Link>
+                </li>
                 {/* <li>
                   <Link
                     href={{ pathname: "/about-us" }}

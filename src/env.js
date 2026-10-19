@@ -9,6 +9,8 @@ export const env = createEnv({
   server: {
     DATABASE_URL: z.string().url(),
     RESEND_API_KEY: z.string(),
+    INBUCKET_SMTP_HOST: z.string().default("127.0.0.1"),
+    INBUCKET_SMTP_PORT: z.coerce.number().int().positive().default(54325),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -45,6 +47,8 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    INBUCKET_SMTP_HOST: process.env.INBUCKET_SMTP_HOST,
+    INBUCKET_SMTP_PORT: process.env.INBUCKET_SMTP_PORT,
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     PAYLOAD_SECRET: process.env.PAYLOAD_SECRET,

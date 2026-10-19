@@ -43,6 +43,11 @@ export default function AccountButton() {
           </DropdownMenuTrigger>
           <DropdownMenuContent className="z-10">
             <DropdownMenuLabel>{t("account.myAccount")}</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <Link href={{ pathname: "/guide/register" }}>
+                {t("footer.becomeGuide")}
+              </Link>
+            </DropdownMenuItem>
             {/* <DropdownMenuSeparator className="bg-brown-200" />
             <Link href="admin">
               <DropdownMenuItem>

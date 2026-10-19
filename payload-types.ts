@@ -80,6 +80,9 @@ export interface Config {
     media: Media;
     users: User;
     'building-suggestions': BuildingSuggestion;
+    'building-slug-aliases': BuildingSlugAlias;
+    guides: Guide;
+    'guide-publications': GuidePublication;
     search: Search;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -120,6 +123,9 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'building-suggestions': BuildingSuggestionsSelect<false> | BuildingSuggestionsSelect<true>;
+    'building-slug-aliases': BuildingSlugAliasesSelect<false> | BuildingSlugAliasesSelect<true>;
+    guides: GuidesSelect<false> | GuidesSelect<true>;
+    'guide-publications': GuidePublicationsSelect<false> | GuidePublicationsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -191,6 +197,10 @@ export interface Building {
   country: number | Country;
   county?: (number | null) | County;
   city?: (number | null) | City;
+  /**
+   * Only explicitly assigned, approved guides appear on this building page.
+   */
+  localGuides?: (number | Guide)[] | null;
   creatorName?: string | null;
   creatorEmail?: string | null;
   source?:
@@ -688,6 +698,44 @@ export interface City {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides".
+ */
+export interface Guide {
+  id: number;
+  name: string;
+  slug: string;
+  profilePhoto: number | Media;
+  bio: string;
+  cities: (number | City)[];
+  languages: string[];
+  phone: string;
+  email: string;
+  publication?: (number | null) | GuidePublication;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guide-publications".
+ */
+export interface GuidePublication {
+  id: number;
+  prefix?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "youtube-links".
  */
 export interface YoutubeLink {
@@ -736,6 +784,18 @@ export interface BuildingSuggestion {
   field: 'name' | 'summary' | 'history' | 'style' | 'presentDay' | 'famousResidents' | 'renovation';
   suggestedContent: string;
   submitterName?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "building-slug-aliases".
+ */
+export interface BuildingSlugAlias {
+  id: number;
+  slug: string;
+  locale: 'en' | 'hu';
+  building: number | Building;
   updatedAt: string;
   createdAt: string;
 }
@@ -840,6 +900,18 @@ export interface PayloadLockedDocument {
         value: number | BuildingSuggestion;
       } | null)
     | ({
+        relationTo: 'building-slug-aliases';
+        value: number | BuildingSlugAlias;
+      } | null)
+    | ({
+        relationTo: 'guides';
+        value: number | Guide;
+      } | null)
+    | ({
+        relationTo: 'guide-publications';
+        value: number | GuidePublication;
+      } | null)
+    | ({
         relationTo: 'search';
         value: number | Search;
       } | null);
@@ -905,6 +977,7 @@ export interface BuildingsSelect<T extends boolean = true> {
   country?: T;
   county?: T;
   city?: T;
+  localGuides?: T;
   creatorName?: T;
   creatorEmail?: T;
   source?:
@@ -1248,6 +1321,53 @@ export interface BuildingSuggestionsSelect<T extends boolean = true> {
   submitterName?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "building-slug-aliases_select".
+ */
+export interface BuildingSlugAliasesSelect<T extends boolean = true> {
+  slug?: T;
+  locale?: T;
+  building?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guides_select".
+ */
+export interface GuidesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  profilePhoto?: T;
+  bio?: T;
+  cities?: T;
+  languages?: T;
+  phone?: T;
+  email?: T;
+  publication?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guide-publications_select".
+ */
+export interface GuidePublicationsSelect<T extends boolean = true> {
+  prefix?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
