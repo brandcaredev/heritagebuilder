@@ -40,6 +40,14 @@ export const routing = defineRouting({
       en: "/building-type/[slug]",
       hu: "/epulet-tipus/[slug]",
     },
+    "/guide/[slug]": {
+      en: "/guide/[slug]",
+      hu: "/idegenvezeto/[slug]",
+    },
+    "/guide/register": {
+      en: "/guide/register",
+      hu: "/idegenvezeto/regisztracio",
+    },
     "/search/[slug]": {
       en: "/search/[slug]",
       hu: "/kereses/[slug]",

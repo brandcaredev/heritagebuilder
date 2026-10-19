@@ -4,12 +4,30 @@ import { getCountries } from '@/lib/queries/country'
 import { getCitiesByFilter } from '@/lib/queries/city'
 import { getBuildingTypes } from '@/lib/queries/building-type'
 import { LocaleType } from '@/lib/constans'
+import { getGuides } from '@/lib/queries/guide'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://heritagebuilder.eu'
   const locales: LocaleType[] = ['hu', 'en']
   
   const sitemap: MetadataRoute.Sitemap = []
+
+  // Load localized building slugs once so each hreflang alternate uses the
+  // slug that actually resolves in that language.
+  const buildingsByLocale = new Map<LocaleType, Awaited<ReturnType<typeof getBuildings>>>()
+  const buildingSlugsByLocale = new Map<LocaleType, Map<string, string>>()
+  for (const locale of locales) {
+    try {
+      const buildings = await getBuildings(locale)
+      buildingsByLocale.set(locale, buildings)
+      buildingSlugsByLocale.set(
+        locale,
+        new Map(buildings.map((building) => [String(building.id), building.slug])),
+      )
+    } catch (error) {
+      console.error(`Error loading building slugs for locale ${locale}:`, error)
+    }
+  }
 
   // Static pages for each locale
   const staticPages = [
@@ -43,9 +61,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   for (const locale of locales) {
     try {
       // Buildings
-      const buildings = await getBuildings(locale)
+      const buildings = buildingsByLocale.get(locale) ?? await getBuildings(locale)
       for (const building of buildings) {
         const buildingPath = locale === 'hu' ? `/epulet/${building.slug}` : `/building/${building.slug}`
+        const huSlug = buildingSlugsByLocale.get('hu')?.get(String(building.id))
+        const enSlug = buildingSlugsByLocale.get('en')?.get(String(building.id))
         const lastModified = building.updatedAt ? new Date(building.updatedAt) : (building.createdAt ? new Date(building.createdAt) : new Date())
         sitemap.push({
           url: `${baseUrl}/${locale}${buildingPath}`,
@@ -54,8 +74,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           priority: 0.9,
           alternates: {
             languages: {
-              'hu': `${baseUrl}/hu/epulet/${building.slug}`,
-              'en': `${baseUrl}/en/building/${building.slug}`,
+              ...(huSlug ? { 'hu': `${baseUrl}/hu/epulet/${huSlug}` } : {}),
+              ...(enSlug ? { 'en': `${baseUrl}/en/building/${enSlug}` } : {}),
+            },
+          },
+        })
+      }
+
+      // Approved local guide profiles
+      const guides = await getGuides(locale)
+      for (const guide of guides) {
+        const guidePath = locale === 'hu' ? `/idegenvezeto/${guide.slug}` : `/guide/${guide.slug}`
+        const lastModified = guide.updatedAt ? new Date(guide.updatedAt) : (guide.createdAt ? new Date(guide.createdAt) : new Date())
+        sitemap.push({
+          url: `${baseUrl}/${locale}${guidePath}`,
+          lastModified: isNaN(lastModified.getTime()) ? new Date() : lastModified,
+          changeFrequency: 'monthly',
+          priority: 0.7,
+          alternates: {
+            languages: {
+              'hu': `${baseUrl}/hu/idegenvezeto/${guide.slug}`,
+              'en': `${baseUrl}/en/guide/${guide.slug}`,
             },
           },
         })

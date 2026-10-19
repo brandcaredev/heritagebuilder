@@ -7,6 +7,7 @@ import { isNextBuild } from "payload/shared";
 import { approvalEmail } from "./hooks/approvalEmail";
 import { newBuildingEmail } from "./hooks/newBuildingEmail";
 import { checkIfCanUpdate } from "./hooks/checkIfCanUpdate";
+import { recordBuildingSlugAlias } from "./hooks/recordSlugAlias";
 
 export const Buildings: CollectionConfig = {
   slug: "buildings",
@@ -148,6 +149,22 @@ export const Buildings: CollectionConfig = {
       relationTo: "cities",
     },
     {
+      name: "localGuides",
+      label: "Local guides",
+      type: "relationship",
+      relationTo: "guides",
+      hasMany: true,
+      filterOptions: {
+        _status: {
+          equals: "published",
+        },
+      },
+      admin: {
+        description:
+          "Only explicitly assigned, approved guides appear on this building page.",
+      },
+    },
+    {
       name: "creatorName",
       type: "text",
     },
@@ -259,6 +276,7 @@ export const Buildings: CollectionConfig = {
         if (doc._status === "draft" && previousDoc?._status !== "published") {
           return;
         }
+        await recordBuildingSlugAlias(args);
         if (!isNextBuild()) {
           revalidateTag("buildings", "max");
         }

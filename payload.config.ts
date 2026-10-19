@@ -26,6 +26,9 @@ import { beforeSyncWithSearch } from "@/collections/buildings/beforeSync";
 import { extractPlainTextFromRichtext } from "@/lib/seo-utils";
 import Users from "@/collections/users";
 import { BuildingSuggestions } from "@/collections/building-suggestions";
+import { BuildingSlugAliases } from "@/collections/building-slug-aliases";
+import { GuidePublications } from "@/collections/guide-publications";
+import { Guides } from "@/collections/guides";
 import Community from "@/collections/globals/community";
 import Description from "@/collections/globals/description";
 import { aiGenerateEndpoint } from "@/endpoints/ai/generate";
@@ -57,6 +60,9 @@ export default buildConfig({
     Media,
     Users,
     BuildingSuggestions,
+    BuildingSlugAliases,
+    Guides,
+    GuidePublications,
   ],
 
   // Add globals array with AboutUs
@@ -95,6 +101,9 @@ export default buildConfig({
         },
         "countries-media": {
           prefix: "country",
+        },
+        "guide-publications": {
+          prefix: "guide-publication",
         },
       },
       bucket: env.S3_BUCKET,

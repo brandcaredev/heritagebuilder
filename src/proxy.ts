@@ -17,8 +17,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Handle i18n routing first
-  const intlResponse = intlMiddleware(request);
+  // Next.js can invoke Proxy again for the internal destination of a rewrite.
+  // next-intl marks that request with this header; reprocessing its internal
+  // pathname would redirect it back to the same localized URL indefinitely.
+  const isIntlRewrite = request.headers.has("x-next-intl-locale");
+  const intlResponse = isIntlRewrite
+    ? NextResponse.next({ request })
+    : intlMiddleware(request);
   return await updateSession(request, intlResponse);
 }
 
