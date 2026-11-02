@@ -31,6 +31,34 @@ export const getCountyBySlug = unstable_cache(
   { tags: ["counties", "countries"] },
 );
 
+export const getCountyByLegacySlug = async (
+  locale: LocaleType,
+  slug: string,
+) => {
+  const { docs } = await payload.find({
+    collection: "location-slug-aliases",
+    depth: 1,
+    limit: 1,
+    overrideAccess: true,
+    where: {
+      and: [
+        { slug: { equals: slug } },
+        { locale: { equals: locale } },
+        { entityType: { equals: "county" } },
+      ],
+    },
+    select: { county: true },
+  });
+
+  const county = docs[0]?.county;
+  if (!county || typeof county !== "object") return null;
+  if (county._status !== "published" || !county.name || !county.slug) {
+    return null;
+  }
+
+  return county;
+};
+
 export const getNextLanguageCountySlug = async (
   slug: string,
   nextLang: LocaleType,

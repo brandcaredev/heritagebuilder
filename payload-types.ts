@@ -81,6 +81,7 @@ export interface Config {
     users: User;
     'building-suggestions': BuildingSuggestion;
     'building-slug-aliases': BuildingSlugAlias;
+    'location-slug-aliases': LocationSlugAlias;
     guides: Guide;
     'guide-publications': GuidePublication;
     search: Search;
@@ -124,6 +125,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     'building-suggestions': BuildingSuggestionsSelect<false> | BuildingSuggestionsSelect<true>;
     'building-slug-aliases': BuildingSlugAliasesSelect<false> | BuildingSlugAliasesSelect<true>;
+    'location-slug-aliases': LocationSlugAliasesSelect<false> | LocationSlugAliasesSelect<true>;
     guides: GuidesSelect<false> | GuidesSelect<true>;
     'guide-publications': GuidePublicationsSelect<false> | GuidePublicationsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
@@ -800,6 +802,20 @@ export interface BuildingSlugAlias {
   createdAt: string;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "location-slug-aliases".
+ */
+export interface LocationSlugAlias {
+  id: number;
+  slug: string;
+  locale: 'en' | 'hu';
+  entityType: 'city' | 'county';
+  city?: (number | null) | City;
+  county?: (number | null) | County;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -902,6 +918,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'building-slug-aliases';
         value: number | BuildingSlugAlias;
+      } | null)
+    | ({
+        relationTo: 'location-slug-aliases';
+        value: number | LocationSlugAlias;
       } | null)
     | ({
         relationTo: 'guides';
@@ -1330,6 +1350,19 @@ export interface BuildingSlugAliasesSelect<T extends boolean = true> {
   slug?: T;
   locale?: T;
   building?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "location-slug-aliases_select".
+ */
+export interface LocationSlugAliasesSelect<T extends boolean = true> {
+  slug?: T;
+  locale?: T;
+  entityType?: T;
+  city?: T;
+  county?: T;
   updatedAt?: T;
   createdAt?: T;
 }

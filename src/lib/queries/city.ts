@@ -31,6 +31,29 @@ export const getCityBySlug = unstable_cache(
   { tags: ["cities"] },
 );
 
+export const getCityByLegacySlug = async (locale: LocaleType, slug: string) => {
+  const { docs } = await payload.find({
+    collection: "location-slug-aliases",
+    depth: 1,
+    limit: 1,
+    overrideAccess: true,
+    where: {
+      and: [
+        { slug: { equals: slug } },
+        { locale: { equals: locale } },
+        { entityType: { equals: "city" } },
+      ],
+    },
+    select: { city: true },
+  });
+
+  const city = docs[0]?.city;
+  if (!city || typeof city !== "object") return null;
+  if (city._status !== "published" || !city.name || !city.slug) return null;
+
+  return city;
+};
+
 export const getNextLanguageCitySlug = async (
   slug: string,
   nextLang: LocaleType,
