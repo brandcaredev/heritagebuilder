@@ -10,7 +10,7 @@ import "leaflet-geosearch/dist/geosearch.css";
 import "leaflet/dist/leaflet.css";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, setRequestLocale } from "next-intl/server";
 import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 import { notFound } from "next/navigation";
 import { Toaster } from "sonner";
@@ -64,6 +64,10 @@ export default async function FrontendLayout(
   if (!routing.locales.includes(locale)) {
     notFound();
   }
+
+  // Make the locale available without reading request headers during static
+  // generation of locale-prefixed pages.
+  setRequestLocale(locale);
   const messages = await getMessages();
 
   return (

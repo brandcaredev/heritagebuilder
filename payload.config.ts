@@ -27,6 +27,7 @@ import { extractPlainTextFromRichtext } from "@/lib/seo-utils";
 import Users from "@/collections/users";
 import { BuildingSuggestions } from "@/collections/building-suggestions";
 import { BuildingSlugAliases } from "@/collections/building-slug-aliases";
+import { LocationSlugAliases } from "@/collections/location-slug-aliases";
 import { GuidePublications } from "@/collections/guide-publications";
 import { Guides } from "@/collections/guides";
 import Community from "@/collections/globals/community";
@@ -61,6 +62,7 @@ export default buildConfig({
     Users,
     BuildingSuggestions,
     BuildingSlugAliases,
+    LocationSlugAliases,
     Guides,
     GuidePublications,
   ],

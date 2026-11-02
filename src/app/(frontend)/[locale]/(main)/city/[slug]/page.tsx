@@ -3,9 +3,13 @@ import { Divider } from "@/components/icons";
 import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getCitiesByFilter, getCityBySlug } from "@/lib/queries/city";
+import {
+  getCitiesByFilter,
+  getCityByLegacySlug,
+  getCityBySlug,
+} from "@/lib/queries/city";
 import { createMetadata, generateMetaDescription } from "@/lib/seo-utils";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Country, County } from "payload-types";
 import BuildingList from "@/_components/building-list";
 import SimplePage from "@/_components/simple-page";
@@ -63,9 +67,19 @@ const CityPage = async (props: Props) => {
   const t = await getTranslations();
   if (!slug) return notFound();
 
-  const city = await getCityBySlug(locale, slug);
+  let city = await getCityBySlug(locale, slug);
+  if (!city) {
+    city = await getCityByLegacySlug(locale, slug);
+    if (!city) return notFound();
+
+    const currentPath =
+      locale === "hu"
+        ? `/${locale}/varos/${city.slug}`
+        : `/${locale}/city/${city.slug}`;
+    permanentRedirect(currentPath);
+  }
+
   const buildingTypes = await getBuildingTypes(locale);
-  if (!city) return notFound();
 
   const page =
     typeof searchParams?.page === "string" ? Number(searchParams.page) : 1;

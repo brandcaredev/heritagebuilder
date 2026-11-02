@@ -6,13 +6,17 @@ import { Button } from "@/components/ui";
 import { Locales, LocaleType } from "@/lib/constans";
 import { getBuildingsByFilter } from "@/lib/queries/building";
 import { getBuildingTypes } from "@/lib/queries/building-type";
-import { getCountiesByFilter, getCountyBySlug } from "@/lib/queries/county";
+import {
+  getCountiesByFilter,
+  getCountyByLegacySlug,
+  getCountyBySlug,
+} from "@/lib/queries/county";
 import { createMetadata, generateMetaDescription } from "@/lib/seo-utils";
 import { createClient } from "@/supabase/server";
 import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Country } from "payload-types";
 
 type Props = {
@@ -61,9 +65,19 @@ const CountyPage = async (props: Props) => {
 
   if (!slug) return notFound();
 
-  const county = await getCountyBySlug(locale, slug);
+  let county = await getCountyBySlug(locale, slug);
+  if (!county) {
+    county = await getCountyByLegacySlug(locale, slug);
+    if (!county) return notFound();
+
+    const currentPath =
+      locale === "hu"
+        ? `/${locale}/megye/${county.slug}`
+        : `/${locale}/county/${county.slug}`;
+    permanentRedirect(currentPath);
+  }
+
   const buildingTypes = await getBuildingTypes(locale);
-  if (!county) return notFound();
 
   const page =
     typeof searchParams?.page === "string" ? Number(searchParams.page) : 1;

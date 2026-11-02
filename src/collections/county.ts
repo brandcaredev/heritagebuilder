@@ -5,6 +5,7 @@ import { revalidateTag } from "next/cache";
 import type { CollectionConfig } from "payload";
 import { isNextBuild } from "payload/shared";
 import { countyOptions } from "@/collections/shared/county-options";
+import { recordLocationSlugAlias } from "@/collections/recordLocationSlugAlias";
 
 export const Counties: CollectionConfig = {
   slug: "counties",
@@ -106,10 +107,12 @@ export const Counties: CollectionConfig = {
   hooks: {
     beforeChange: [checkSlugUniqueness("counties")],
     afterChange: [
-      ({ doc, previousDoc }) => {
+      async (args) => {
+        const { doc, previousDoc } = args;
         if (doc._status === "draft" && previousDoc?._status !== "published") {
           return;
         }
+        await recordLocationSlugAlias("county")(args);
         if (!isNextBuild()) {
           revalidateTag("counties", "max");
         }
