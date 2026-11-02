@@ -11,6 +11,7 @@ export const getBuildingTypes = unstable_cache(
     const { docs: buildingTypes } = await payload.find({
       collection: "building-types",
       locale: locale,
+      limit: 12,
       where: {
         _status: {
           equals: "published",
