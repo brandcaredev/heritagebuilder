@@ -98,8 +98,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
 
     record_id := (changed_row ->> 'parent_id')::integer;
     EXECUTE format(
-      'SELECT %I FROM payload.%I WHERE parent_id = $1 AND path = $2 ORDER BY "order" NULLS LAST, id LIMIT 1',
-      TG_ARGV[1],
+      'SELECT building_types_id FROM payload.%I WHERE parent_id = $1 AND path = $2 ORDER BY "order" NULLS LAST, id LIMIT 1',
       TG_TABLE_NAME
     ) INTO building_type_id USING record_id, relation_path;
 
