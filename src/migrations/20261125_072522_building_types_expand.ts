@@ -47,8 +47,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
       WHERE r."parent_id" = s."id"
         AND r."path" = 'buildingTypes'
         AND r."building_types_id" = s."building_type_id"
-    );
+    );`)
 
+  await createBuildingTypeSyncTriggers(db)
+}
+
+export async function createBuildingTypeSyncTriggers(db: MigrateUpArgs['db']): Promise<void> {
+  await db.execute(sql`
   CREATE OR REPLACE FUNCTION "payload"."sync_building_types_to_plural"()
   RETURNS trigger
   LANGUAGE plpgsql
@@ -160,7 +165,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
     );`)
 }
 
-export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+export async function dropBuildingTypeSyncTriggers(db: MigrateDownArgs['db']): Promise<void> {
   await db.execute(sql`
   DROP TRIGGER IF EXISTS "buildings_sync_building_types_insert" ON "payload"."buildings";
   DROP TRIGGER IF EXISTS "buildings_sync_building_types_update" ON "payload"."buildings";
@@ -173,6 +178,10 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TRIGGER IF EXISTS "search_rels_sync_building_type" ON "payload"."search_rels";
   DROP FUNCTION IF EXISTS "payload"."sync_building_types_to_plural"();
   DROP FUNCTION IF EXISTS "payload"."sync_building_types_to_legacy"();`)
+}
+
+export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
+  await dropBuildingTypeSyncTriggers(db)
 
   await db.execute(sql`
    ALTER TABLE "payload"."buildings_rels" DROP CONSTRAINT "buildings_rels_building_types_fk";

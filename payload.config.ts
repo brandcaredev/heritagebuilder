@@ -12,6 +12,8 @@ import { YoutubeLinks } from "@/collections/youtube-links";
 import { env } from "@/env";
 import AboutUs from "@/collections/globals/about-us";
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import { sql } from "drizzle-orm";
+import { uniqueIndex } from "drizzle-orm/pg-core";
 import { lexicalEditor } from "@payloadcms/richtext-lexical";
 import { s3Storage } from "@payloadcms/storage-s3";
 import { hu } from "@payloadcms/translations/languages/hu";
@@ -76,6 +78,28 @@ export default buildConfig({
     pool: { connectionString: env.DATABASE_URL || "" },
     schemaName: "payload",
     push: env.NODE_ENV === "development",
+    afterSchemaInit: [
+      ({ extendTable, schema }) => {
+        const buildingTypeRelations = [
+          ["buildings_rels", "buildingTypes"],
+          ["_buildings_v_rels", "version.buildingTypes"],
+          ["search_rels", "buildingTypes"],
+        ] as const;
+
+        for (const [tableName, path] of buildingTypeRelations) {
+          extendTable({
+            table: schema.tables[tableName]!,
+            extraConfig: (columns) => ({
+              uniqueBuildingTypes: uniqueIndex(`${tableName}_unique_building_type`)
+                .on(columns.parent, columns["building-typesID"])
+                .where(sql`${columns.path} = ${path}`.inlineParams()),
+            }),
+          });
+        }
+
+        return schema;
+      },
+    ],
   }),
   i18n: {
     fallbackLanguage: "hu",

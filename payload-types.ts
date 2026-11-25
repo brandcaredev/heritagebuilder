@@ -187,7 +187,6 @@ export interface Building {
    * Choose one or more building types.
    */
   buildingTypes: (number | BuildingType)[];
-  buildingType?: (number | null) | BuildingType;
   history: string;
   style: string;
   presentDay: string;
@@ -836,7 +835,6 @@ export interface Search {
   name: string;
   summary?: string | null;
   slug: string;
-  buildingType?: (number | null) | BuildingType;
   buildingTypes: (number | BuildingType)[];
   featuredImage: number | BuildingsMedia;
   city?: string | null;
@@ -991,7 +989,6 @@ export interface BuildingsSelect<T extends boolean = true> {
   slug?: T;
   summary?: T;
   buildingTypes?: T;
-  buildingType?: T;
   history?: T;
   style?: T;
   presentDay?: T;
@@ -1419,7 +1416,6 @@ export interface SearchSelect<T extends boolean = true> {
   name?: T;
   summary?: T;
   slug?: T;
-  buildingType?: T;
   buildingTypes?: T;
   featuredImage?: T;
   city?: T;

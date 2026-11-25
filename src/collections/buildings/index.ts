@@ -61,15 +61,6 @@ export const Buildings: CollectionConfig = {
       },
     },
     {
-      name: "buildingType",
-      type: "relationship",
-      relationTo: "building-types",
-      admin: {
-        hidden: true,
-        readOnly: true,
-      },
-    },
-    {
       name: "history",
       type: "textarea",
       localized: true,

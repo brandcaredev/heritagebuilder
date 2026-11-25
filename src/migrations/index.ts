@@ -14,6 +14,7 @@ import * as migration_20261019_090552_guides_and_slug_aliases from './20261019_0
 import * as migration_20261102_083959_location_slug_aliases from './20261102_083959_location_slug_aliases';
 import * as migration_20261125_072522_building_types_expand from './20261125_072522_building_types_expand';
 import * as migration_20261125_082708_fix_building_types_sync_trigger from './20261125_082708_fix_building_types_sync_trigger';
+import * as migration_20261125_084649_remove_legacy_building_type from './20261125_084649_remove_legacy_building_type';
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20261125_082708_fix_building_types_sync_trigger.up,
     down: migration_20261125_082708_fix_building_types_sync_trigger.down,
     name: '20261125_082708_fix_building_types_sync_trigger'
+  },
+  {
+    up: migration_20261125_084649_remove_legacy_building_type.up,
+    down: migration_20261125_084649_remove_legacy_building_type.down,
+    name: '20261125_084649_remove_legacy_building_type'
   },
 ];

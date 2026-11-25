@@ -21,13 +21,6 @@ export const searchFields: Field[] = [
     localized: true,
   },
   {
-    name: "buildingType",
-    type: "relationship",
-    relationTo: "building-types",
-    required: false,
-    index: true,
-  },
-  {
     name: "buildingTypes",
     type: "relationship",
     relationTo: "building-types",

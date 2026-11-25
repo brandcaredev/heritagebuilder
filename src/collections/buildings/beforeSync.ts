@@ -7,7 +7,6 @@ export const beforeSyncWithSearch: BeforeSync = async ({
   const {
     slug,
     name,
-    buildingType,
     buildingTypes,
     featuredImage,
     city,
@@ -18,7 +17,6 @@ export const beforeSyncWithSearch: BeforeSync = async ({
     ...searchDoc,
     slug,
     name,
-    buildingType,
     buildingTypes,
     featuredImage,
     summary,
