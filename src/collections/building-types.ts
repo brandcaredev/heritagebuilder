@@ -39,7 +39,7 @@ export const BuildingTypes: CollectionConfig = {
       name: "relatedBuildings",
       type: "join",
       collection: "buildings",
-      on: "buildingType",
+      on: "buildingTypes",
       where: {
         _status: {
           equals: "published",

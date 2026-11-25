@@ -783,18 +783,15 @@ on conflict (_locale, _parent_id) do update set name = excluded.name, slug = exc
 -- ---------------------------------------------------------------------------
 
 -- 1) Cluj-Napoca: St. Michael's Church (Temples)
-insert into payload.buildings (building_type_id, featured_image_id, position, country_id, county_id, city_id, _status)
+insert into payload.buildings (featured_image_id, position, country_id, county_id, city_id, _status)
 select
-  bt.id,
   bm.id,
   st_setsrid(st_makepoint(23.588, 46.771), 4326),
   c.id,
   co.id,
   ci.id,
   'published'::payload.enum_buildings_status
-from payload.building_types bt
-join payload.building_types_locales btl on btl._parent_id = bt.id and btl._locale = 'en'::payload._locales and btl.slug = 'temples'
-join payload.buildings_media bm on bm.filename = '2.png'
+from payload.buildings_media bm
 join payload.countries c on c.country_code = 'RO'
 join payload.counties co on co.country_id = c.id and co.code = 'RO-CJ'::payload.enum_counties_code
 join payload.cities ci on ci.county_id = co.id
@@ -858,35 +855,16 @@ where m.filename = '2.png'
     where r.parent_id = b.id and r.path = 'images' and r.buildings_media_id = m.id
   );
 
-update payload.buildings b
-set building_type_id = bt.id
-from payload.buildings_locales bl
-join (
-  values
-    ('st-michaels-church-cluj', 'temples'),
-    ('petrovaradin-fortress', 'fortresses'),
-    ('lviv-opera-house', 'public-buildings'),
-    ('bratislava-castle', 'castles')
-) s(building_slug, type_slug) on s.building_slug = bl.slug
-join payload.building_types_locales btl on btl._locale = 'en'::payload._locales and btl.slug = s.type_slug
-join payload.building_types bt on bt.id = btl._parent_id
-where bl._parent_id = b.id
-  and bl._locale = 'en'::payload._locales
-  and b.building_type_id is null;
-
 -- 2) Novi Sad: Petrovaradin Fortress (Fortresses)
-insert into payload.buildings (building_type_id, featured_image_id, position, country_id, county_id, city_id, _status)
+insert into payload.buildings (featured_image_id, position, country_id, county_id, city_id, _status)
 select
-  bt.id,
   bm.id,
   st_setsrid(st_makepoint(19.860, 45.253), 4326),
   c.id,
   co.id,
   ci.id,
   'published'::payload.enum_buildings_status
-from payload.building_types bt
-join payload.building_types_locales btl on btl._parent_id = bt.id and btl._locale = 'en'::payload._locales and btl.slug = 'fortresses'
-join payload.buildings_media bm on bm.filename = '3.png'
+from payload.buildings_media bm
 join payload.countries c on c.country_code = 'RS'
 join payload.counties co on co.country_id = c.id and co.code = 'RS-06'::payload.enum_counties_code
 join payload.cities ci on ci.county_id = co.id
@@ -951,18 +929,15 @@ where m.filename = '3.png'
   );
 
 -- 3) Lviv: Opera House (Public buildings)
-insert into payload.buildings (building_type_id, featured_image_id, position, country_id, county_id, city_id, _status)
+insert into payload.buildings (featured_image_id, position, country_id, county_id, city_id, _status)
 select
-  bt.id,
   bm.id,
   st_setsrid(st_makepoint(24.030, 49.843), 4326),
   c.id,
   co.id,
   ci.id,
   'published'::payload.enum_buildings_status
-from payload.building_types bt
-join payload.building_types_locales btl on btl._parent_id = bt.id and btl._locale = 'en'::payload._locales and btl.slug = 'public-buildings'
-join payload.buildings_media bm on bm.filename = '4.png'
+from payload.buildings_media bm
 join payload.countries c on c.country_code = 'UA'
 join payload.counties co on co.country_id = c.id and co.code = 'lviv'::payload.enum_counties_code
 join payload.cities ci on ci.county_id = co.id
@@ -1027,18 +1002,15 @@ where m.filename = '4.png'
   );
 
 -- 4) Bratislava: Bratislava Castle (Castles)
-insert into payload.buildings (building_type_id, featured_image_id, position, country_id, county_id, city_id, _status)
+insert into payload.buildings (featured_image_id, position, country_id, county_id, city_id, _status)
 select
-  bt.id,
   bm.id,
   st_setsrid(st_makepoint(17.102, 48.142), 4326),
   c.id,
   co.id,
   ci.id,
   'published'::payload.enum_buildings_status
-from payload.building_types bt
-join payload.building_types_locales btl on btl._parent_id = bt.id and btl._locale = 'en'::payload._locales and btl.slug = 'castles'
-join payload.buildings_media bm on bm.filename = '5.png'
+from payload.buildings_media bm
 join payload.countries c on c.country_code = 'SK'
 join payload.counties co on co.country_id = c.id and co.code = 'SKBL'::payload.enum_counties_code
 join payload.cities ci on ci.county_id = co.id
@@ -1102,6 +1074,29 @@ where m.filename = '5.png'
     where r.parent_id = b.id and r.path = 'images' and r.buildings_media_id = m.id
   );
 
+insert into payload.buildings_rels (parent_id, path, "order", building_types_id)
+select
+  b.id,
+  'buildingTypes',
+  0,
+  bt.id
+from payload.buildings b
+join payload.buildings_locales bl on bl._parent_id = b.id and bl._locale = 'en'::payload._locales
+join (
+  values
+    ('st-michaels-church-cluj', 'temples'),
+    ('petrovaradin-fortress', 'fortresses'),
+    ('lviv-opera-house', 'public-buildings'),
+    ('bratislava-castle', 'castles')
+) s(building_slug, type_slug) on s.building_slug = bl.slug
+join payload.building_types_locales btl on btl._locale = 'en'::payload._locales and btl.slug = s.type_slug
+join payload.building_types bt on bt.id = btl._parent_id
+where not exists (
+  select 1
+  from payload.buildings_rels r
+    where r.parent_id = b.id and r.path = 'buildingTypes' and r.building_types_id = bt.id
+);
+
 if exists (
   select 1
   from payload.buildings b
@@ -1113,7 +1108,11 @@ if exists (
     'bratislava-castle'
   )
   and (
-    b.building_type_id is null
+    not exists (
+      select 1
+      from payload.buildings_rels r
+      where r.parent_id = b.id and r.path = 'buildingTypes' and r.building_types_id is not null
+    )
     or b.featured_image_id is null
     or b.country_id is null
     or b.county_id is null
@@ -1381,7 +1380,6 @@ where not exists (
 
 insert into payload._buildings_v (
   parent_id,
-  version_building_type_id,
   version_featured_image_id,
   version_position,
   version_country_id,
@@ -1398,7 +1396,6 @@ insert into payload._buildings_v (
 )
 select
   b.id,
-  b.building_type_id,
   b.featured_image_id,
   b.position,
   b.country_id,
@@ -1418,6 +1415,24 @@ where not exists (
   from payload._buildings_v v
   where v.parent_id = b.id and v.latest is true
 );
+
+insert into payload._buildings_v_rels (parent_id, path, "order", building_types_id)
+select
+  v.id,
+  'version.buildingTypes',
+  0,
+  r.building_types_id
+from payload._buildings_v v
+join payload.buildings_rels r on r.parent_id = v.parent_id and r.path = 'buildingTypes'
+where v.latest is true
+  and r.building_types_id is not null
+  and not exists (
+    select 1
+    from payload._buildings_v_rels vr
+    where vr.parent_id = v.id
+      and vr.path = 'version.buildingTypes'
+      and vr.building_types_id = r.building_types_id
+  );
 
 insert into payload._buildings_v_locales (
   version_name,

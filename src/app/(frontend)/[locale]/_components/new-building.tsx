@@ -2,6 +2,7 @@
 import { FileUploader } from "@/components/file-uploader";
 import { Icons, Divider } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -129,7 +131,7 @@ const sourceSchema = z
 
 export const formSchema = z.object({
   country: z.string(),
-  type: z.string(),
+  type: z.array(z.string()).min(1, "Select at least one type"),
   en: optionalSchema.optional().superRefine((values, ctx) => {
     // if `en` is not even provided, skip
     if (!values) {
@@ -302,7 +304,7 @@ export default function BuildingForm({
         presentDay: values.hu.presentDay,
         famousResidents: values.hu.famousResidents || "",
         renovation: values.hu.renovation || "",
-        buildingType: parseInt(values.type),
+        buildingTypes: values.type.map(Number),
         country: country.id,
         position: [values.position[0], values.position[1]],
         creatorName: values.creatorname || "",
@@ -543,26 +545,41 @@ export default function BuildingForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel required>{t("form.type")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger value={field.value}>
-                            <SelectValue placeholder={t("form.type")} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {buildingTypes.map((type) => (
-                            <SelectItem
+                      <FormDescription>
+                        {t("form.typeDescription")}
+                      </FormDescription>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {buildingTypes.map((type) => {
+                          const value = type.id.toString();
+                          const selectedTypes = field.value ?? [];
+
+                          return (
+                            <FormItem
                               key={type.id}
-                              value={type.id.toString()}
+                              className="flex items-center gap-3 rounded-md border border-brown-200 p-3"
                             >
-                              {type.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                              <FormControl>
+                                <Checkbox
+                                  checked={selectedTypes.includes(value)}
+                                  onCheckedChange={(checked) => {
+                                    field.onChange(
+                                      checked
+                                        ? [...selectedTypes, value]
+                                        : selectedTypes.filter(
+                                            (selected) => selected !== value,
+                                          ),
+                                    );
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="cursor-pointer font-normal">
+                                {type.name}
+                              </FormLabel>
+                            </FormItem>
+                          );
+                        })}
+                      </div>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />

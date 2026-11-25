@@ -27,7 +27,7 @@ const SearchPage = async (props: {
     page,
     {
       ...(searchParams?.buildingType && {
-        "buildingType.slug": {
+        "buildingTypes.slug": {
           equals: searchParams.buildingType as string,
         },
       }),

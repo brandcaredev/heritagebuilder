@@ -88,7 +88,7 @@ const CountyPage = async (props: Props) => {
         equals: county.id,
       },
       ...(searchParams?.buildingType && {
-        "buildingType.slug": {
+        "buildingTypes.slug": {
           equals: searchParams.buildingType as string,
         },
       }),

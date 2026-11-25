@@ -81,7 +81,7 @@ const BuildingTypePage = async (props: Props) => {
     {
       and: [
         {
-          buildingType: {
+          buildingTypes: {
             equals: buildingType.id,
           },
         },

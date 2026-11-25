@@ -50,10 +50,24 @@ export const Buildings: CollectionConfig = {
       },
     },
     {
+      name: "buildingTypes",
+      type: "relationship",
+      relationTo: "building-types",
+      hasMany: true,
+      required: true,
+      minRows: 1,
+      admin: {
+        description: "Choose one or more building types.",
+      },
+    },
+    {
       name: "buildingType",
       type: "relationship",
       relationTo: "building-types",
-      required: true,
+      admin: {
+        hidden: true,
+        readOnly: true,
+      },
     },
     {
       name: "history",

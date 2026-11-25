@@ -96,7 +96,8 @@
   },
   "form": {
     "country": "Ország",
-    "type": "Típus",
+    "type": "Típusok",
+    "typeDescription": "Válassz ki egy vagy több, az épületre illő típust.",
     "name": "Név",
     "city": "Város",
     "county": "Megye",

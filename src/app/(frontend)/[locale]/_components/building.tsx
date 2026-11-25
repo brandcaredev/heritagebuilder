@@ -10,10 +10,11 @@ import {
 import { BadgeCheck, ArrowRight, Loader2, Pencil } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { getMediaUrl } from "@/lib/media";
+import { getPopulatedBuildingTypes } from "@/lib/building-type-utils";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import type { Building, BuildingType, Guide } from "payload-types";
+import type { Building, Guide } from "payload-types";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import GalleryWithDialog from "./image-gallery";
@@ -483,7 +484,7 @@ export default function BuildingComponent({
           <div data-section="map">
             <MapPosition
               position={building.position}
-              type={(building.buildingType as BuildingType).id}
+              type={getPopulatedBuildingTypes(building.buildingTypes)[0]?.id ?? 0}
               className="h-[400px] w-full md:h-[600px]"
             />
           </div>

@@ -12,6 +12,7 @@ import * as migration_20251214_140446 from './20251214_140446';
 import * as migration_20260515_203538 from './20260515_203538';
 import * as migration_20261019_090552_guides_and_slug_aliases from './20261019_090552_guides_and_slug_aliases';
 import * as migration_20261102_083959_location_slug_aliases from './20261102_083959_location_slug_aliases';
+import * as migration_20261125_072522_building_types_expand from './20261125_072522_building_types_expand';
 
 export const migrations = [
   {
@@ -82,6 +83,11 @@ export const migrations = [
   {
     up: migration_20261102_083959_location_slug_aliases.up,
     down: migration_20261102_083959_location_slug_aliases.down,
-    name: '20261102_083959_location_slug_aliases'
+    name: '20261102_083959_location_slug_aliases',
+  },
+  {
+    up: migration_20261125_072522_building_types_expand.up,
+    down: migration_20261125_072522_building_types_expand.down,
+    name: '20261125_072522_building_types_expand'
   },
 ];

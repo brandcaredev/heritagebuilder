@@ -11,6 +11,7 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import { useRouter } from "@/i18n/routing";
 import { api } from "@/trpc/react";
+import { getPopulatedBuildingTypes } from "@/lib/building-type-utils";
 import { Loader2, Search } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -108,45 +109,53 @@ const ExpandableSearch = () => {
           {/* Search Results */}
           {searchResults && searchResults.length > 0 && (
             <div className="mt-4 space-y-2">
-              {searchResults.map((result, index) => (
-                <div
-                  key={index}
-                  className="cursor-pointer rounded-lg p-3 hover:bg-brown-100/70"
-                  onClick={() => {
-                    setIsOpen(false);
-                    router.push({
-                      pathname: `/building/[slug]`,
-                      params: {
-                        slug: result.slug,
-                      },
-                    });
-                  }}
-                >
-                  <div className="flex flex-wrap items-center gap-x-1 text-base">
-                    <span className="text-brown-900">
-                      {highlightText(result.name, debouncedValue)}
-                    </span>
-                    {typeof result.buildingType !== "number" && (
-                      <>
-                        <span className="text-brown">•</span>
-                        <span className="text-brown">
-                          {highlightText(
-                            result.buildingType.name,
-                            debouncedValue,
-                          )}
-                        </span>
-                      </>
-                    )}
-                    <span className="text-brown">•</span>
-                    <span className="break-all text-brown">
-                      {highlightText(
-                        `${result.city ?? ""} ${result.city && result.country ? ", " : ""} ${result.country ?? ""}`,
-                        debouncedValue,
+              {searchResults.map((result, index) => {
+                const typeNames = getPopulatedBuildingTypes(
+                  result.buildingTypes,
+                )
+                  .map((buildingType) => buildingType.name)
+                  .filter((name): name is string => Boolean(name));
+
+                return (
+                  <div
+                    key={index}
+                    className="cursor-pointer rounded-lg p-3 hover:bg-brown-100/70"
+                    onClick={() => {
+                      setIsOpen(false);
+                      router.push({
+                        pathname: `/building/[slug]`,
+                        params: {
+                          slug: result.slug,
+                        },
+                      });
+                    }}
+                  >
+                    <div className="flex flex-wrap items-center gap-x-1 text-base">
+                      <span className="text-brown-900">
+                        {highlightText(result.name, debouncedValue)}
+                      </span>
+                      {typeNames.length > 0 && (
+                        <>
+                          <span className="text-brown">•</span>
+                          <span className="text-brown">
+                            {highlightText(
+                              typeNames.join(", "),
+                              debouncedValue,
+                            )}
+                          </span>
+                        </>
                       )}
-                    </span>
+                      <span className="text-brown">•</span>
+                      <span className="break-all text-brown">
+                        {highlightText(
+                          `${result.city ?? ""} ${result.city && result.country ? ", " : ""} ${result.country ?? ""}`,
+                          debouncedValue,
+                        )}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
