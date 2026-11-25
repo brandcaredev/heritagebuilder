@@ -183,7 +183,11 @@ export interface Building {
   name: string;
   slug: string;
   summary: string;
-  buildingType: number | BuildingType;
+  /**
+   * Choose one or more building types.
+   */
+  buildingTypes: (number | BuildingType)[];
+  buildingType?: (number | null) | BuildingType;
   history: string;
   style: string;
   presentDay: string;
@@ -832,7 +836,8 @@ export interface Search {
   name: string;
   summary?: string | null;
   slug: string;
-  buildingType: number | BuildingType;
+  buildingType?: (number | null) | BuildingType;
+  buildingTypes: (number | BuildingType)[];
   featuredImage: number | BuildingsMedia;
   city?: string | null;
   country?: string | null;
@@ -985,6 +990,7 @@ export interface BuildingsSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   summary?: T;
+  buildingTypes?: T;
   buildingType?: T;
   history?: T;
   style?: T;
@@ -1414,6 +1420,7 @@ export interface SearchSelect<T extends boolean = true> {
   summary?: T;
   slug?: T;
   buildingType?: T;
+  buildingTypes?: T;
   featuredImage?: T;
   city?: T;
   country?: T;

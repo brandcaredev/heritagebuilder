@@ -1,5 +1,6 @@
 import Script from 'next/script'
 import { extractPlainTextFromRichtext } from '@/lib/seo-utils'
+import { getPopulatedBuildingTypes } from '@/lib/building-type-utils'
 
 interface BuildingStructuredDataProps {
   building: any // Use any to handle the complex Payload types
@@ -20,6 +21,9 @@ export function BuildingStructuredData({ building, locale }: BuildingStructuredD
   ].filter(Boolean).join(' ')
 
   const images = []
+  const buildingTypeNames = getPopulatedBuildingTypes(building.buildingTypes)
+    .map((buildingType) => buildingType.name)
+    .filter((name): name is string => Boolean(name))
   if (building.featuredImage?.url) {
     images.push(`${baseUrl}${building.featuredImage.url}`)
   }
@@ -51,8 +55,8 @@ export function BuildingStructuredData({ building, locale }: BuildingStructuredD
         addressCountry: building.country.name,
       },
     }),
-    ...(building.buildingType && typeof building.buildingType === 'object' && {
-      additionalType: building.buildingType.name,
+    ...(buildingTypeNames.length > 0 && {
+      additionalType: buildingTypeNames.join(', '),
     }),
     dateCreated: building.createdAt,
     dateModified: building.updatedAt,

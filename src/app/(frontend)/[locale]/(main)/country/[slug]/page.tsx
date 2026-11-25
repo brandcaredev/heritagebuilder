@@ -66,7 +66,7 @@ const CountryMainPage = async (props: Props) => {
         equals: country.id,
       },
       ...(searchParams?.buildingType && {
-        "buildingType.slug": {
+        "buildingTypes.slug": {
           equals: searchParams.buildingType,
         },
       }),

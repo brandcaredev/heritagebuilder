@@ -23,6 +23,12 @@ export type AIDocContextResult = {
 };
 
 const getName = (value: unknown): string | undefined => {
+  if (Array.isArray(value)) {
+    const names = value
+      .map((item) => getName(item))
+      .filter((name): name is string => Boolean(name));
+    return names.length > 0 ? names.join(", ") : undefined;
+  }
   if (!value) return undefined;
   if (typeof value === "string") return value;
   if (typeof value === "object" && "name" in value) {
@@ -88,7 +94,7 @@ const buildContextDoc = (
   if (collection === "buildings") {
     return {
       name: typeof doc.name === "string" ? doc.name : undefined,
-      buildingTypeName: getName(doc.buildingType),
+      buildingTypeName: getName(doc.buildingTypes),
       location: {
         countryName: getName(doc.country),
         countyName: getName(doc.county),

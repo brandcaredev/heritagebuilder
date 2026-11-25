@@ -10,10 +10,11 @@ import {
 } from "@/components/icons/leaflet-icons";
 import { Link } from "@/i18n/routing";
 import { getMediaUrl } from "@/lib/media";
+import { getPopulatedBuildingTypes } from "@/lib/building-type-utils";
 import L, { type MarkerCluster } from "leaflet";
 import { GeoSearchControl, OpenStreetMapProvider } from "leaflet-geosearch";
 import Image from "next/image";
-import type { Building, BuildingType, Media } from "payload-types";
+import type { Building, Media } from "payload-types";
 import { useCallback, useEffect } from "react";
 import {
   MapContainer,
@@ -70,17 +71,21 @@ class BuildingsAndLocationProvider extends OpenStreetMapProvider {
           searchQuery.toLowerCase().includes(name.toLowerCase())
         );
       })
-      .map((building) => ({
-        x: building.position[1], // longitude
-        y: building.position[0], // latitude
-        label: `${building.name}${
-          (building.buildingType as BuildingType).name
-            ? `, ${(building.buildingType as BuildingType).name}`
-            : ""
-        }`,
-        bounds: null,
-        raw: building,
-      }));
+      .map((building) => {
+        const typeNames = getPopulatedBuildingTypes(building.buildingTypes)
+          .map((buildingType) => buildingType.name)
+          .filter((name): name is string => Boolean(name));
+
+        return {
+          x: building.position[1], // longitude
+          y: building.position[0], // latitude
+          label: `${building.name}${
+            typeNames.length ? `, ${typeNames.join(", ")}` : ""
+          }`,
+          bounds: null,
+          raw: building,
+        };
+      });
 
     results.push(...buildingResults);
 
@@ -184,11 +189,15 @@ const BuildingsMap = ({
           removeOutsideVisibleBounds={false}
         >
           {buildings.map((building) => {
+            const firstBuildingType = getPopulatedBuildingTypes(
+              building.buildingTypes,
+            )[0];
+
             return (
               <Marker
                 key={building.id}
                 position={[building.position[0], building.position[1]]}
-                icon={typeBasedIcon((building.buildingType as BuildingType).id)}
+                icon={typeBasedIcon(firstBuildingType?.id ?? 0)}
               >
                 <Popup className="rounded-lg">
                   <Link

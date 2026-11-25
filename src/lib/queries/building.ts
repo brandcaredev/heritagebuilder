@@ -25,7 +25,7 @@ export const searchBuildings = unstable_cache(
             },
           },
           {
-            "buildingType.name": {
+            "buildingTypes.name": {
               like: q,
             },
           },
@@ -126,7 +126,7 @@ export const getBuildings = unstable_cache(
         slug: true,
         featuredImage: true,
         summary: true,
-        buildingType: true,
+        buildingTypes: true,
         position: true,
         history: true,
         country: true,
@@ -160,7 +160,7 @@ export const getBuildingsByFilter = unstable_cache(
         slug: true,
         featuredImage: true,
         summary: true,
-        buildingType: true,
+        buildingTypes: true,
         position: true,
         history: true,
       },

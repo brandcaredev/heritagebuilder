@@ -96,7 +96,8 @@
   },
   "form": {
     "country": "Country",
-    "type": "Type",
+    "type": "Types",
+    "typeDescription": "Choose one or more types that fit this building.",
     "name": "Name",
     "city": "City",
     "county": "County",

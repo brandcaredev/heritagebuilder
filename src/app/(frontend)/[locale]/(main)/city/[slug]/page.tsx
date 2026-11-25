@@ -90,7 +90,7 @@ const CityPage = async (props: Props) => {
         equals: city.id,
       },
       ...(searchParams?.buildingType && {
-        "buildingType.slug": {
+        "buildingTypes.slug": {
           equals: searchParams.buildingType as string,
         },
       }),

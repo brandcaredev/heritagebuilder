@@ -2310,7 +2310,7 @@ const createBuildingDraft = async (args: {
     presentDay: args.proposal.presentDay.hu,
     famousResidents: args.proposal.famousResidents.hu,
     renovation: args.proposal.renovation.hu,
-    buildingType: args.proposal.buildingTypeId,
+    buildingTypes: [args.proposal.buildingTypeId],
     country: args.countryId,
     county: args.countyId,
     city: args.cityId,
